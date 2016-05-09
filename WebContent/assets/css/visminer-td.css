@@ -213,3 +213,8 @@
     margin-left: 30px;
     padding: 0px 200px 8px 10px;
 }
+
+.highcharts-container{
+    width:100% !important;
+    height:100% !important;
+}

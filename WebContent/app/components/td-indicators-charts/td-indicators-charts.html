@@ -1,5 +1,5 @@
 <div id="tdIndicatorsModal" class="modal fade bs-example-modal-sm" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog" id="ttt" style="width: 90%">
 	  <div class="modal-content">
 	    <div class="modal-header modal-header-info">
 	      <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -10,7 +10,12 @@
 
 	    <div class="modal-body" style="font-size: 20px;">
         <div class="row">
-          <highchart id="godclass-chart" config="chartConfig"></highchart>
+        	<div class="col-sm-12 col-md-6 col-lg-6">
+          	<highchart id="godclass-chart" config="configGodClassChart"></highchart>
+          </div>
+          <div class="col-sm-12 col-md-6 col-lg-6">
+          	<highchart id="long-method-chart" config="configLongMethodChart"></highchart>
+          </div>
         </div>
 	    </div>
 
