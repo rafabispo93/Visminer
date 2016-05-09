@@ -25,7 +25,7 @@ function loadBar(){
         $('.progress').removeClass('active');
         $(progressBarModal).modal("hide");
     } else {
-        $bar.width($bar.width()+60);
+        $bar.width($bar.width()+300);
     }
     if($bar.width()/6>=100){
         $bar.width(0);
