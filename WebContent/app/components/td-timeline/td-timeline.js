@@ -1,5 +1,5 @@
 angular.module('homeApp').component('tdTimeline', {
-  controller: function($scope, $http, sidebarService) {
+  controller: function($scope, $http, sidebarService, tdIndicatorsService) {
 
     $scope.$on('showTdTimeline', function(event, type){
       $scope.type = type;
@@ -63,6 +63,12 @@ angular.module('homeApp').component('tdTimeline', {
        } 
 
        return "NONE";
+     }
+
+     $scope.showTdIndicators = function() {
+      $('#tdTimelineModal').modal('hide');
+      tdIndicatorsService.setType($scope.type, $scope.timelineList);
+      $('#tdIndicatorsModal').modal('show');
      }
 
    },
