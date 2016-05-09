@@ -54,7 +54,7 @@ homeApp.controller('TDManagementCtrl', function($scope, $http,
 		var hasDebt = false;
 		if (debtsList.length > 0) {
 			for (var j = 0; j < debtsList.length; j++) {
-				if (debtsList[j].name == 'Code Debt' && $.inArray('CODE', $scope.filtered.debts) > -1 && debtsList[j].value) {
+				if (debtsList[j].name == 'Code Debt' && $.inArray('CODE', $scope.filtered.debts) > -1 && debtsList[j].value && debtsList[j].status > 0) {
 					hasDebt = true;
 					switch (debtsList[j].status) {
 						case DebtStatus.TODO: 
@@ -68,7 +68,7 @@ homeApp.controller('TDManagementCtrl', function($scope, $http,
 							break;	
 					}
 				}
-				if (debtsList[j].name == 'Design Debt'  && $.inArray('DESIGN', $scope.filtered.debts) > -1 && debtsList[j].value) {
+				if (debtsList[j].name == 'Design Debt'  && $.inArray('DESIGN', $scope.filtered.debts) > -1 && debtsList[j].value && debtsList[j].status > 0) {
 					hasDebt = true;
 					switch (debtsList[j].status) {
 						case DebtStatus.TODO: 
