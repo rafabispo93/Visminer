@@ -119,9 +119,10 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 	thisCtrl.getTotalOfDesignDebts = function(types) {
 		var total = 0;
 		for (var i = 0; i < types.length; i++) {
-				if (types[i].abstract_types[0].technicaldebts[0].value) {
-					total++;
-				}
+			var debt = types[i].abstract_types[0].technicaldebts[0];
+			if (debt.value && debt.status == 1) {
+				total++;
+			}
 		}	
 		return total;
 	}
@@ -129,9 +130,10 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 	thisCtrl.getTotalOfCodeDebts = function(types) {
 		var total = 0;
 		for (var i = 0; i < types.length; i++) {
-				if (types[i].abstract_types[0].technicaldebts[1].value) {
-					total++;
-				}
+			var debt = types[i].abstract_types[0].technicaldebts[1];
+			if (debt.value && debt.status == 1) {
+				total++;
+			}
 		}	
 		return total;
 	}
