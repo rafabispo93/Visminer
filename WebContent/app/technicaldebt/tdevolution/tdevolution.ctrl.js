@@ -43,7 +43,7 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
             floor: 1,
             showTicksValues: true,
             draggableRange: true,
-            onChange: function () {
+            onEnd: function () {
             		thisCtrl.loadSliderTags();
             },
             translate: function (value) {
@@ -106,12 +106,14 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 	thisCtrl.getTotalOfCodeSmells = function(tag, types) {
 		var total = 0;
 		for (var i = 0; i < types.length; i++) {
-			var smells = types[i].abstract_types[0].codesmells;
-			for (var j = 0; j < smells.length; j++) {
-				if (smells[j].value) {
-					total++;
+			if (types[i].abstract_types[0]) {
+				var smells = types[i].abstract_types[0].codesmells;
+				for (var j = 0; j < smells.length; j++) {
+					if (smells[j].value) {
+						total++;
+					}
 				}
-			}
+			}	
 		}	
 		tag.totalSmells = total;
 	}
@@ -119,10 +121,12 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 	thisCtrl.getTotalOfDesignDebts = function(types) {
 		var total = 0;
 		for (var i = 0; i < types.length; i++) {
-			var debt = types[i].abstract_types[0].technicaldebts[0];
-			if (debt.value && debt.status == 1) {
-				total++;
-			}
+			if (types[i].abstract_types[0]) {
+				var debt = types[i].abstract_types[0].technicaldebts[0];
+				if (debt.value && debt.status == 1) {
+					total++;
+				}
+			}	
 		}	
 		return total;
 	}
@@ -130,10 +134,12 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 	thisCtrl.getTotalOfCodeDebts = function(types) {
 		var total = 0;
 		for (var i = 0; i < types.length; i++) {
-			var debt = types[i].abstract_types[0].technicaldebts[1];
-			if (debt.value && debt.status == 1) {
-				total++;
-			}
+			if (types[i].abstract_types[0]) {
+				var debt = types[i].abstract_types[0].technicaldebts[1];
+				if (debt.value && debt.status == 1) {
+					total++;
+				}
+			}	
 		}	
 		return total;
 	}

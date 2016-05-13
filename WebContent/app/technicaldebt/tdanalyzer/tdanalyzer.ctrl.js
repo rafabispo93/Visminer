@@ -24,9 +24,11 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		.success(function(data) {
 			console.log('found', data.length, ' types'); 
 			for (var i = 0; i < data.length; i++) {
-				var hasDebt = thisCtrl.hasDebt(data[i].abstract_types[0].technicaldebts);
-				if (hasDebt) {
-					$scope.types.push(data[i]);				
+				if (data[i].abstract_types[0]) {
+					var hasDebt = thisCtrl.hasDebt(data[i].abstract_types[0].technicaldebts);
+					if (hasDebt) {
+						$scope.types.push(data[i]);				
+					}	
 				}				
 			}
 		});
