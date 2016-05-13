@@ -218,3 +218,15 @@
     width:100% !important;
     height:100% !important;
 }
+
+.input-indicator {
+    height: 25px;
+    font-size: 12px;
+    width: 60%;
+}
+
+.label-indicator {
+    color: rgb(197, 197, 197); 
+    font-weight: inherit;
+    width: 35px;
+}
