@@ -230,3 +230,8 @@
     font-weight: inherit;
     width: 35px;
 }
+
+.btn-miner {
+    margin: 7px 14px 7px 7px; 
+    font-weight: bold;
+}
