@@ -33,9 +33,13 @@
                   			<span class="label bg-green span-analyze-debt" ng-show="item.noDebt" style="margin-right: 5px;">
 													NONE                     
                   			</span>
-                  			<span class="label span-analyze-debt" style="color: rgba(242, 242, 242, 0.89); background-color: rgba(242, 242, 242, 0.89)" ng-show="item.noDebt || (item.designDebt && !item.codeDebt) || (!item.designDebt && item.codeDebt)" style="margin-right: 5px;">
+                  			<span class="label span-analyze-debt" style="color: rgba(242, 242, 242, 0.89); background-color: rgba(242, 242, 242, 0.89)" ng-show="item.noDebt" style="margin-right: 5px;">
 													DESIGN                     
                   			</span>
+                  			<span class="label span-analyze-debt" style="color: rgba(242, 242, 242, 0.89); background-color: rgba(242, 242, 242, 0.89)" ng-show="item.designDebt && !item.codeDebt" style="margin-right: 5px;">
+													CODE                     
+                  			</span>
+
 											</div>
                 		</li>
 									</ul>
