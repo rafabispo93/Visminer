@@ -6,7 +6,7 @@ angular.module('homeApp').component('tdTimeline', {
       $http.get('TypeServlet', {params:{"action": "getTypeTimeline", 
                  "idRepository": $scope.type.repository, "fileHash": $scope.type.file_hash}})
        .success(function(data) {
-          $scope.dataList = data.reverse();          
+          $scope.dataList = data;         
           buildTimelineList();
        });
     }); 

@@ -50,40 +50,42 @@ homeApp.controller('TDManagementCtrl', function($scope, $http,
 	}
 
 	thisCtrl.loadCards = function(type) {
-		var debtsList = type.abstract_types[0].technicaldebts;
 		var hasDebt = false;
-		if (debtsList.length > 0) {
-			for (var j = 0; j < debtsList.length; j++) {
-				if (debtsList[j].name == 'Code Debt' && $.inArray('CODE', $scope.filtered.debts) > -1 && debtsList[j].value && debtsList[j].status > 0) {
-					hasDebt = true;
-					switch (debtsList[j].status) {
-						case DebtStatus.TODO: 
-							$scope.todoCode.push(type);
-							break;
-						case DebtStatus.DOING: 
-							$scope.doingCode.push(type);
-							break;
-						case DebtStatus.DONE: 
-							$scope.doneCode.push(type);
-							break;	
+		if (type.abstract_types[0]) {
+			var debtsList = type.abstract_types[0].technicaldebts;
+			if (debtsList.length > 0) {
+				for (var j = 0; j < debtsList.length; j++) {
+					if (debtsList[j].name == 'Code Debt' && $.inArray('CODE', $scope.filtered.debts) > -1 && debtsList[j].value && debtsList[j].status > 0) {
+						hasDebt = true;
+						switch (debtsList[j].status) {
+							case DebtStatus.TODO: 
+								$scope.todoCode.push(type);
+								break;
+							case DebtStatus.DOING: 
+								$scope.doingCode.push(type);
+								break;
+							case DebtStatus.DONE: 
+								$scope.doneCode.push(type);
+								break;	
+						}
 					}
-				}
-				if (debtsList[j].name == 'Design Debt'  && $.inArray('DESIGN', $scope.filtered.debts) > -1 && debtsList[j].value && debtsList[j].status > 0) {
-					hasDebt = true;
-					switch (debtsList[j].status) {
-						case DebtStatus.TODO: 
-							$scope.todoDesign.push(type);
-							break;
-						case DebtStatus.DOING: 
-							$scope.doingDesign.push(type);
-							break;
-						case DebtStatus.DONE: 
-							$scope.doneDesign.push(type);
-							break;	
+					if (debtsList[j].name == 'Design Debt'  && $.inArray('DESIGN', $scope.filtered.debts) > -1 && debtsList[j].value && debtsList[j].status > 0) {
+						hasDebt = true;
+						switch (debtsList[j].status) {
+							case DebtStatus.TODO: 
+								$scope.todoDesign.push(type);
+								break;
+							case DebtStatus.DOING: 
+								$scope.doingDesign.push(type);
+								break;
+							case DebtStatus.DONE: 
+								$scope.doneDesign.push(type);
+								break;	
+						}
 					}
-				}
-			}			
-		}
+				}			
+			}
+		}	
 		return hasDebt;
 	}
 
