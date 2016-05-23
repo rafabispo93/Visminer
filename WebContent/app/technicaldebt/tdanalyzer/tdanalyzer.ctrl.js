@@ -1,7 +1,7 @@
 homeApp = angular.module('homeApp');
 
 homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
- sidebarService, alertModalService, typeSmellsDetailsService){
+ sidebarService, alertModalService, tdItemModalService, typeSmellsDetailsService){
 	var thisCtrl = this;
 	
 	$scope.currentPage = sidebarService.getCurrentPage();
@@ -14,759 +14,9 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	$scope.currentDesignDebt = null;
 	$scope.currentCodeDebt = null;
 
-	// When this controller is called
-	$scope.$on('$routeChangeStart', function (next, last) {
-		setTimeout(function(){
-			if(sidebarService.getCurrentPage() == 'tdanalyzer') {
-				$('.sidebar-toggle').click();
-				$('#filter-identificationdate').daterangepicker();
-				$("#tditem-datatable").DataTable({
-					"ordering": false
-				});
-			}
-		}, 500);
-	});
+	$scope.test = [];
 
-	$scope.data = [
-		{
-			"identificationDate": "2016-01-12",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-02-09",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": true,
-			"principal": "5",
-			"interestAmount": "2",
-			"newInterestProbability": "15",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-03-22",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-04-13",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-02-09",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": true,
-			"principal": "5",
-			"interestAmount": "2",
-			"newInterestProbability": "15",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-03-22",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-04-13",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-02-09",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": true,
-			"principal": "5",
-			"interestAmount": "2",
-			"newInterestProbability": "15",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-03-22",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-04-13",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-02-09",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": true,
-			"principal": "5",
-			"interestAmount": "2",
-			"newInterestProbability": "15",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-03-22",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-04-13",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-02-09",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": true,
-			"principal": "5",
-			"interestAmount": "2",
-			"newInterestProbability": "15",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-03-22",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-04-13",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-02-09",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": true,
-			"principal": "5",
-			"interestAmount": "2",
-			"newInterestProbability": "15",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-03-22",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-04-13",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-02-09",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": true,
-			"principal": "5",
-			"interestAmount": "2",
-			"newInterestProbability": "15",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-03-22",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-04-13",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-02-09",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": true,
-			"principal": "5",
-			"interestAmount": "2",
-			"newInterestProbability": "15",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-03-22",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-04-13",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Design",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-02-09",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": true,
-			"principal": "5",
-			"interestAmount": "2",
-			"newInterestProbability": "15",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-03-22",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-04-13",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Design",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-02-09",
-			"type": "Design",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": true,
-			"principal": "5",
-			"interestAmount": "2",
-			"newInterestProbability": "15",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-03-22",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-04-13",
-			"type": "Design",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Design",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-02-09",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": true,
-			"principal": "5",
-			"interestAmount": "2",
-			"newInterestProbability": "15",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-03-22",
-			"type": "Code",
-			"tdItem": "Long Method",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-04-13",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Thiago Mendes",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": false,
-			"principal": "",
-			"interestAmount": "",
-			"newInterestProbability": "",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		},{
-			"identificationDate": "2016-01-01",
-			"type": "Code",
-			"tdItem": "Duplicated Code",
-			"occurredBy": "Sandro Campos",
-			"location": "RepositoryAnalyzer.java",
-			"isTdItem": "true",
-			"principal": "4",
-			"interestAmount": "1",
-			"newInterestProbability": "45",
-			"notes": "Some method where added to resolve this questions. This is only an example to fill this field."
-		}
-	];
+	$scope.data = [];
 
 	$scope.tdItemFiltered = $scope.data;
 
@@ -799,14 +49,25 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	}
 	
 	$scope.tdItemFormatDate = function(date) {
-	  return moment(date, 'YYYY-MM-DD').format('l');
+	  return moment(date).format('l');
+	}
+
+	// Return the file name
+	$scope.tdItemFormatLocation = function(location) {
+		var loc = location.split('/');
+	  return loc[loc.length-1];
 	}
 
 	$scope.tdItemFormatNotes = function(notes) {
-	  return (notes.length > 20) ? notes.substring(1,17)+'...' : notes;
+	  return (notes.length > 20) ? notes.substring(0,17)+'...' : notes;
 	}
 
-	thisCtrl.selectView = function(view) { console.log('view', view)
+	$scope.tdItemEdit = function(tdItem) {
+		tdItemModalService.loadObj(tdItem);
+		$('#tdItemModal').modal('show');
+	}
+
+	thisCtrl.selectView = function(view) {
 		$scope.currentPage = view;
 		sidebarService.setCurrentPage(view);
 	}
@@ -814,12 +75,29 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	thisCtrl.loadTypes = function(tagId) {
 		$http.get('TypeServlet', {params:{"action": "getAllByTree", "treeId": tagId}})
 		.success(function(data) {
-			console.log('found', data.length, ' types'); 
+			console.log('found', data.length, 'types'); 
 			for (var i = 0; i < data.length; i++) {
 				var hasDebt = thisCtrl.hasDebt(data[i].abstract_types[0].technicaldebts);
-				if (hasDebt) {
-					$scope.types.push(data[i]);				
-				}				
+				var hasLongMethod = thisCtrl.hasDebt(data[i].abstract_types[0]);
+				hasLongMethod = true;
+				if (hasDebt || hasLongMethod) {
+					$scope.types.push(data[i]);
+					console.log('data[i]', data[i])
+					$scope.data.push({
+						"repository": data[i].repository,
+						"commit": data[i].commit,
+						"identificationDate": new Date(data[i].commit_date.$date),
+						"type": "Code",
+						"tdItem": "Long Method",
+						"occurredBy": "Sandro Campos",
+						"location": data[i].file,
+						"isTdItem": false,
+						"principal": "",
+						"interestAmount": "",
+						"newInterestProbability": "",
+						"notes": ""
+					});
+				}
 			}
 		});
 	}
@@ -837,6 +115,23 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 			}			
 		}
 		return hasDebt;
+	}
+
+	thisCtrl.hasLongMethod = function(list) {
+		// var hasDebt = false;
+		// if (debtsList.length > 0) {
+		// 	for (var j = 0; j < debtsList.length; j++) {
+		// 		if (debtsList[j].name == 'Code Debt' && $.inArray('CODE', $scope.filtered.debts) > -1 && debtsList[j].value) {
+		// 			hasDebt = true;
+		// 		}
+		// 		if (debtsList[j].name == 'Design Debt'  && $.inArray('DESIGN', $scope.filtered.debts) > -1 && debtsList[j].value) {
+		// 			hasDebt = true;
+		// 		}
+		// 		if (debtsList[j])
+		// 		console.log(debtsList[j])
+		// 	}			
+		// }
+		// return hasDebt;
 	}
 
 	// thisCtrl.loadTypes($scope.selectedTag._id);
@@ -900,5 +195,14 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	$scope.showTypeSmellsDetails = function(type) {
 		typeSmellsDetailsService.setType(type);
 		$('#typeSmellsDetails').modal('show');
+	}
+
+	if ($scope.currentPage == 'tdanalyzer') {
+		thisCtrl.loadTypes($scope.selectedTag._id)
+		$('.sidebar-toggle').click();
+		$('#filter-identificationdate').daterangepicker();
+		// $("#tditem-datatable").DataTable({
+		// 	"ordering": false
+		// });
 	}
 });
