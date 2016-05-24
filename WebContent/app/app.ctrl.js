@@ -63,6 +63,7 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		.success(function(data) {
 			console.log('found', data.length, 'commits');
 			$scope.commits = data;
+			sidebarService.setCommits(data);
 			for (var i in data) {
 				$scope.committerEvolution.push({
 					commit: data[i]._id,

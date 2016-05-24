@@ -3,6 +3,7 @@ homeApp.service('sidebarService', function($rootScope){
 	this.data = {currentPage : "tdevolution"};
 	this.data.repository = null;
 	this.data.tags = [];
+	this.data.commits = [];
 	this.data.committers = [];
 	this.data.debts = ["CODE", "DESIGN"];
 
@@ -34,6 +35,14 @@ homeApp.service('sidebarService', function($rootScope){
 
 	this.getTags = function() {
 		return this.data.tags;
+	}
+
+	this.setCommits = function(commits) {
+		this.data.commits = commits;
+	}
+
+	this.getCommits = function() {
+		return this.data.commits;
 	}
 
 	this.addCommitter = function(committer) {

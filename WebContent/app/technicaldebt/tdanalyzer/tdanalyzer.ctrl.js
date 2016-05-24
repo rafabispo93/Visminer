@@ -7,10 +7,12 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	$scope.currentPage = sidebarService.getCurrentPage();
 	$scope.filtered.repository = sidebarService.getRepository();
 	$scope.filtered.tags = sidebarService.getTags();
+	$scope.filtered.commits = sidebarService.getCommits();
 	$scope.filtered.committers = sidebarService.getCommitters();
 	$scope.filtered.debts = sidebarService.getDebts();
 	$scope.selectedTag = $scope.filtered.tags[0];
 	$scope.types = [];
+	$scope.typesAnalized = 0;
 	$scope.currentDesignDebt = null;
 	$scope.currentCodeDebt = null;
 
@@ -77,19 +79,26 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		.success(function(data) {
 			console.log('found', data.length, 'types'); 
 			for (var i = 0; i < data.length; i++) {
-				var hasDebt = thisCtrl.hasDebt(data[i].abstract_types[0].technicaldebts);
-				var hasLongMethod = thisCtrl.hasDebt(data[i].abstract_types[0]);
-				hasLongMethod = true;
-				if (hasDebt || hasLongMethod) {
+				// var hasDebt = thisCtrl.hasDebt(data[i].abstract_types[0].technicaldebts);
+				// var hasLongMethod = thisCtrl.hasDebt(data[i].abstract_types[0]);
+				// hasLongMethod = true;
+				// if (hasDebt || hasLongMethod) {
 					$scope.types.push(data[i]);
-					console.log('data[i]', data[i])
+
+					var commit = null;
+					for (x in $scope.filtered.commits) {
+						if ($scope.filtered.commits[x]._id == data[i].commit) {
+							commit = $scope.filtered.commits[x];
+							break;
+						}
+					}
 					$scope.data.push({
 						"repository": data[i].repository,
-						"commit": data[i].commit,
+						"commit": commit._id,
 						"identificationDate": new Date(data[i].commit_date.$date),
 						"type": "Code",
 						"tdItem": "Long Method",
-						"occurredBy": "Sandro Campos",
+						"occurredBy": commit.author.name,
 						"location": data[i].file,
 						"isTdItem": true,
 						"principal": Math.floor(Math.random() * (50 - 5)) + 5,
@@ -97,11 +106,13 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 						"newInterestProbability": Math.floor(Math.random() * (80 - 5)) + 5,
 						"notes": ""
 					});
-				}
+				// }
+				$scope.typesAnalized++;
 			}
 		});
 	}
 
+	
 	thisCtrl.hasDebt = function(debtsList) {
 		var hasDebt = false;
 		if (debtsList.length > 0) {
