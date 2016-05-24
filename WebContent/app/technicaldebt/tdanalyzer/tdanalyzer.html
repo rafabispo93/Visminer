@@ -34,7 +34,6 @@
             <span class="label label-default pull-right"><i class="fa fa-filter"></i></span>
           </div><!-- /.box-header -->
           <div class="box-body">
-
             <div class="col-sm-3">
               <div class="form-group">
                 <label>Identification date:</label>
@@ -86,8 +85,12 @@
       <div class="col-xs-12">
 
         <div class="box box-primary">
-          <div class="box-body">
+          <div class="box-header with-border">
+            <h3 class="box-title">TD Data Collection</h3>
+            <span class="label label-default pull-right"><i class="fa fa-filter"></i></span>
+          </div><!-- /.box-header -->
 
+          <div class="box-body">
             <table id="tditem-datatable" class="table table-bordered table-striped">
               <thead>
                 <tr>
@@ -111,9 +114,9 @@
                   <td>{{item.occurredBy}}</td>
                   <td>{{tdItemFormatLocation(item.location)}}<i class="fa fa-fw fa-search"></i></td>
                   <td><input type="checkbox" class="minimal" ng-checked="item.isTdItem == 'true'"></td>
-                  <td><input ng-show="item.isTdItem == 'true'" class="form-control input-sm input-time" type="text" value="{{item.principal}}h"></td>
-                  <td><input ng-show="item.isTdItem == 'true'" class="form-control input-sm input-time" type="text" value="{{item.interestAmount}}h"></td>
-                  <td><input ng-show="item.isTdItem == 'true'" class="form-control input-sm input-time" type="text" value="{{item.newInterestProbability}}%"></td>
+                  <td><input ng-show="item.isTdItem == true" class="form-control input-sm input-time" style="width: 45px;" type="text" value="{{item.principal}}h"></td>
+                  <td><input ng-show="item.isTdItem == true" class="form-control input-sm input-time" style="width: 45px;" type="text" value="{{item.interestAmount}}h"></td>
+                  <td><input ng-show="item.isTdItem == true" class="form-control input-sm input-time" style="width: 45px;" type="text" value="{{item.newInterestProbability}}%"></td>
                   <td>{{tdItemFormatNotes(item.notes)}}</td>
                 </tr>
               </tbody>

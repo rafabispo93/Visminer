@@ -91,10 +91,10 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 						"tdItem": "Long Method",
 						"occurredBy": "Sandro Campos",
 						"location": data[i].file,
-						"isTdItem": false,
-						"principal": "",
-						"interestAmount": "",
-						"newInterestProbability": "",
+						"isTdItem": true,
+						"principal": Math.floor(Math.random() * (50 - 5)) + 5,
+						"interestAmount": Math.floor(Math.random() * (10 - 6)) + 6,
+						"newInterestProbability": Math.floor(Math.random() * (80 - 5)) + 5,
 						"notes": ""
 					});
 				}
