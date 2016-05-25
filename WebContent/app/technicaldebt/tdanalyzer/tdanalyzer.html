@@ -111,16 +111,16 @@
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="item in tdItemFiltered" ng-click="tdItemEdit(item)">
+                <tr ng-repeat="item in tdItemFiltered" ng-click="tdItemEdit(item)" style="cursor: pointer;">
                   <td>{{tdItemFormatDate(item.identificationDate)}}</td>
-                  <td><span class="label" style="background-color:#1B93A7!important">{{item.type}}</span></td>
-                  <td><span class="label label-default">{{item.tdItem}}</span></td>
+                  <td><span ng-repeat="debt in item.debts" class="label" style="background-color:#1B93A7!important; margin-right:3px;">{{debt.type}}</span></td>
+                  <td><span ng-repeat="debt in item.debts" class="label label-default">{{debt.name}}</span></td>
                   <td>{{item.occurredBy}}</td>
                   <td>{{tdItemFormatLocation(item.location)}}<i class="fa fa-fw fa-search"></i></td>
-                  <td><input type="checkbox" class="minimal" ng-checked="item.isTdItem == true" disabled="disabled"></td>
-                  <td><input ng-show="item.isTdItem == true" class="form-control input-sm input-time" style="width: 45px;" type="text" value="{{item.principal}}h"></td>
-                  <td><input ng-show="item.isTdItem == true" class="form-control input-sm input-time" style="width: 45px;" type="text" value="{{item.interestAmount}}h"></td>
-                  <td><input ng-show="item.isTdItem == true" class="form-control input-sm input-time" style="width: 45px;" type="text" value="{{item.newInterestProbability}}%"></td>
+                  <td>{{(item.isTdItem) ? "Yes" : "No"}}</td>
+                  <td>{{item.principal}}h</td>
+                  <td>{{item.interestAmount}}h</td>
+                  <td>{{item.newInterestProbability}}%</td>
                   <td>{{tdItemFormatNotes(item.notes)}}</td>
                 </tr>
               </tbody>

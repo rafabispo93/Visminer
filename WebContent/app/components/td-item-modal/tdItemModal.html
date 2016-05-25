@@ -9,94 +9,156 @@
 	    </div>
 
 	    <div class="modal-body">
-        <div class="row">
-        	<form class="form-horizontal">
 
-        		<div class="col-sm-6">
+	    	<div class="nav-tabs-custom">
+	    	  <ul class="nav nav-tabs">
+	    	    <li ng-class="{'active': tabTd}">
+	    	    	<a href="#"  ng-click="activeTab('td')">TD</a>
+	    	    </li>
+	    	    <li ng-class="{'active': tabMetrics}">
+	    	    	<a href="#" ng-click="activeTab('metrics')">Metrics</a>
+	    	    </li>
+	    	    <li ng-class="{'active': tabGraphs}">
+	    	    	<a href="#" ng-click="activeTab('graphs')">Graphs</a>
+	    	    </li>
+	    	  </ul>
+	    	  <div class="tab-content">
+	    	    <div class="tab-pane" ng-class="{'active': tabTd}" ng-show="tabTd">
 
-						  <div class="form-group">
-						    <label for="inputName" class="col-sm-3 control-label">Identification date</label>
-						    <div class="col-sm-8">
-						      <input type="text" class="form-control" id="inputName" ng-model="tdItemModalObj.identificationDate" readonly="readonly">
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="inputDescription" class="col-sm-3 control-label">Type</label>
-						    <div class="col-sm-8">
-						      <select  class="form-control" id="inputCvs" ng-model="tdItemModalObj.type">
-						    		<option>Code</option>
-						    		<option>Design</option>
-						    	</select>
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="inputPath" class="col-sm-3 control-label">TD Item</label>
-						    <div class="col-sm-8">
-						      <select  class="form-control" ng-model="tdItemModalObj.tdItem">
-						    		<option value="Duplicated code">Duplicated code</option>
-						    		<option value="Long method">Long method</option>
-						    	</select>
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="inputPath" class="col-sm-3 control-label">Occurred by</label>
-						    <div class="col-sm-8">
-						    	<input type="text" class="form-control" id="inputPath" placeholder="Committer name" ng-model="tdItemModalObj.occurredBy" readonly="readonly">
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="inputPath" class="col-sm-3 control-label">Location</label>
-						    <div class="col-sm-8">
-						      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: /Users/John/Project/name.java" ng-model="tdItemModalObj.location" readonly="readonly">
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="inputPath" class="col-sm-3 control-label">Notes</label>
-						    <div class="col-sm-8">
-						      <textarea class="form-control" ng-model="tdItemModalObj.notes"></textarea>
-						    </div>
-						  </div>
-						  
+    	        <div class="row">
+    	        	<form class="form-horizontal">
+
+    	        		<div class="col-sm-6">
+
+    							  <div class="form-group">
+    							    <label for="inputName" class="col-sm-3 control-label">Identification date</label>
+    							    <div class="col-sm-8">
+    							      <input type="text" class="form-control" id="inputName" ng-model="tdItemModalObj.identificationDate" readonly="readonly">
+    							    </div>
+    							  </div>
+    							  <div class="form-group">
+    							    <label for="inputDescription" class="col-sm-3 control-label">Type</label>
+    							    <div class="col-sm-8">
+    							      <select  class="form-control" id="inputCvs" ng-model="tdItemModalObj.type">
+    							    		<option>Code debt</option>
+    							    		<option>Design debt</option>
+    							    	</select>
+    							    </div>
+    							  </div>
+    							  <div class="form-group">
+    							    <label for="inputPath" class="col-sm-3 control-label">TD Item</label>
+    							    <div class="col-sm-8">
+    							      <select  class="form-control" ng-model="tdItemModalObj.tdItem">
+    							    		<option value="Duplicated code">Duplicated code</option>
+    							    		<option value="Long method">Long method</option>
+    							    	</select>
+    							    </div>
+    							  </div>
+    							  <div class="form-group">
+    							    <label for="inputPath" class="col-sm-3 control-label">Occurred by</label>
+    							    <div class="col-sm-8">
+    							    	<input type="text" class="form-control" id="inputPath" placeholder="Committer name" ng-model="tdItemModalObj.occurredBy" readonly="readonly">
+    							    </div>
+    							  </div>
+    							  <div class="form-group">
+    							    <label for="inputPath" class="col-sm-3 control-label">Location</label>
+    							    <div class="col-sm-8">
+    							      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: /Users/John/Project/name.java" ng-model="tdItemModalObj.location" readonly="readonly">
+    							    </div>
+    							  </div>
+    							  <div class="form-group">
+    							    <label for="inputPath" class="col-sm-3 control-label">Notes</label>
+    							    <div class="col-sm-8">
+    							      <textarea class="form-control" ng-model="tdItemModalObj.notes"></textarea>
+    							    </div>
+    							  </div>
+    							  
 
 
-				  	</div>
-				  	<div class="col-sm-6">
-				  		<div class="form-group">
-				  		  <label for="inputPath" class="col-sm-3 control-label">TD item?</label>
-				  		  <div class="col-sm-8">
-				  		    <input type="checkbox" class="minimal" ng-checked="tdItemModalObj.isTdItem == true">
-				  		  </div>
-				  		</div>
-				  		<div class="form-group">
-				  		  <label for="inputPath" class="col-sm-3 control-label">Principal</label>
-				  		  <div class="col-sm-8">
-				  		    <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.principal">
-				  		  </div>
-				  		</div>
-				  		<div class="form-group">
-				  		  <label for="inputPath" class="col-sm-3 control-label">Interest amount</label>
-				  		  <div class="col-sm-8">
-				  		    <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.interestAmount">
-				  		  </div>
-				  		</div>
-				  		<div class="form-group">
-				  		  <label for="inputPath" class="col-sm-3 control-label">New interest probability</label>
-				  		  <div class="col-sm-8">
-				  		    <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.newInterestProbability">
-				  		  </div>
-				  		</div>
-				  	</div>
+    					  	</div>
+    					  	<div class="col-sm-6">
+    					  		<div class="form-group">
+    					  		  <label for="inputPath" class="col-sm-3 control-label">TD item?</label>
+    					  		  <div class="col-sm-8">
+    					  		    <input type="checkbox" class="minimal" ng-checked="tdItemModalObj.isTdItem == true">
+    					  		  </div>
+    					  		</div>
+    					  		<div class="form-group">
+    					  		  <label for="inputPath" class="col-sm-3 control-label">Principal</label>
+    					  		  <div class="col-sm-8">
+    					  		    <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.principal">
+    					  		  </div>
+    					  		</div>
+    					  		<div class="form-group">
+    					  		  <label for="inputPath" class="col-sm-3 control-label">Interest amount</label>
+    					  		  <div class="col-sm-8">
+    					  		    <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.interestAmount">
+    					  		  </div>
+    					  		</div>
+    					  		<div class="form-group">
+    					  		  <label for="inputPath" class="col-sm-3 control-label">New interest probability</label>
+    					  		  <div class="col-sm-8">
+    					  		    <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.newInterestProbability">
+    					  		  </div>
+    					  		</div>
+    					  	</div>
 
-				  	<div class="form-group">
-					    <div class="col-sm-offset-3 col-sm-9">
-					      <button ng-click="mineRepository()" class="btn btn-danger">Cancel</button>
-					      <button ng-click="mineRepository()" class="btn btn-success">Save</button>
-					    </div>
-					  </div>
+    					  	<div class="form-group">
+    						    <div class="col-sm-offset-3 col-sm-9">
+    						      <button ng-click="mineRepository()" class="btn btn-danger">Cancel</button>
+    						      <button ng-click="mineRepository()" class="btn btn-success">Save</button>
+    						    </div>
+    						  </div>
 
-					</form>
-        </div>
-	    </div>
+    						</form>
+
+	    		    </div>
+
+	    	    </div>
+	    	    <!-- /.tab-pane -->
+	    	    <div class="tab-pane" ng-class="{'active': tabMetrics}" ng-show="tabMetrics">
+	    	      <table class="table table-bordered">
+                <tr>
+                  <th style="width: 10px">#</th>
+                  <th>Name</th>
+                  <th>Methods</th>
+                  <th style="width: 40px">Value</th>
+                </tr>
+                <tr ng-repeat="metrics in tdItemModalObj.metrics">
+                  <td>{{$index+1}}</td>
+                  <td>{{metrics.name}}</td>
+                  <td><div ng-repeat="method in metrics.methods">{{method.method}}</div></td>
+                  <td><div ng-repeat="method in metrics.methods">{{method.value}}</div></td>
+                </tr>
+              </table>
+	    	    </div>
+	    	    <!-- /.tab-pane -->
+	    	    <div class="tab-pane" ng-class="{'active': tabGraphs}" ng-show="tabGraphs">
+	    	      <div class="box box-solid">
+                <div class="box-header">
+                  <h3 class="box-title text-blue">TD Evolution</h3>
+
+                  <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+                  </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body text-center">
+                  <div class="sparkline" data-type="line" data-spot-Radius="3" data-highlight-Spot-Color="#f39c12" data-highlight-Line-Color="#222" data-min-Spot-Color="#f56954" data-max-Spot-Color="#00a65a" data-spot-Color="#39CCCC" data-offset="90" data-width="100%" data-height="100px" data-line-Width="2" data-line-Color="#39CCCC" data-fill-Color="rgba(57, 204, 204, 0.08)">
+                    6,4,7,8,4,3,2,2,5,6,7,4,1,5,7,9,9,8,7,6
+                  </div>
+                </div>
+                <!-- /.box-body -->
+              </div>
+	    	    </div>
+	    	    <!-- /.tab-pane -->
+	    	  </div>
+	    	  <!-- /.tab-content -->
+	    	</div>
+	    	<!-- nav-tabs-custom -->
+
+
+        
 	  </div>
 	</div>
 </div>

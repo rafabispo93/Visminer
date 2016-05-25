@@ -79,25 +79,24 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		.success(function(data) {
 			console.log('found', data.length, 'types'); 
 			for (var i = 0; i < data.length; i++) {
-				// var hasDebt = thisCtrl.hasDebt(data[i].abstract_types[0].technicaldebts);
-				// var hasLongMethod = thisCtrl.hasDebt(data[i].abstract_types[0]);
-				// hasLongMethod = true;
-				// if (hasDebt || hasLongMethod) {
-					$scope.types.push(data[i]);
-
-					var commit = null;
-					for (x in $scope.filtered.commits) {
-						if ($scope.filtered.commits[x]._id == data[i].commit) {
-							commit = $scope.filtered.commits[x];
-							break;
-						}
+				$scope.types.push(data[i]);
+				var commit = null;
+				for (x in $scope.filtered.commits) {
+					if ($scope.filtered.commits[x]._id == data[i].commit) {
+						commit = $scope.filtered.commits[x];
+						break;
 					}
+				}
+				var debts = thisCtrl.getDebts(data[i]);
+				if (debts.length > 0) {
 					$scope.data.push({
 						"repository": data[i].repository,
 						"commit": commit._id,
 						"identificationDate": new Date(data[i].commit_date.$date),
 						"type": "Code",
 						"tdItem": "Long Method",
+						"debts": debts,
+						"metrics": (debts.length > 0) ? data[i].abstract_types[0].metrics : [],
 						"occurredBy": commit.author.name,
 						"location": data[i].file,
 						"isTdItem": true,
@@ -106,26 +105,53 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 						"newInterestProbability": Math.floor(Math.random() * (80 - 5)) + 5,
 						"notes": ""
 					});
-				// }
+				}
 				$scope.typesAnalized++;
 			}
 		});
 	}
 
 	
-	thisCtrl.hasDebt = function(debtsList) {
-		var hasDebt = false;
-		if (debtsList.length > 0) {
-			for (var j = 0; j < debtsList.length; j++) {
-				if (debtsList[j].name == 'Code Debt' && $.inArray('CODE', $scope.filtered.debts) > -1 && debtsList[j].value) {
-					hasDebt = true;
+	thisCtrl.getDebts = function(list) {
+		var debts = [];
+
+		if (typeof list.abstract_types != 'undefined' && list.abstract_types.length > 0) {
+			// looking for long methods
+			if (list.abstract_types[0].codesmells) {
+					for (i in list.abstract_types[0].codesmells) {
+					var codesmells = list.abstract_types[0].codesmells[i];
+					if (codesmells.name == 'Long Method') { 
+						for (j in codesmells.methods) {
+							if (codesmells.methods[j].value == true) {
+								debts.push({
+									type: 'Code Debt',
+									name: 'Long Method',
+									method: codesmells.methods[j].method
+								});
+							}
+						}
+					}
 				}
-				if (debtsList[j].name == 'Design Debt'  && $.inArray('DESIGN', $scope.filtered.debts) > -1 && debtsList[j].value) {
-					hasDebt = true;
-				}
-			}			
+			}
+
+			 // && list.abstract_types[0].technicaldebts != 'undefined'
+			debtsList = list.abstract_types[0].technicaldebts;
+			if (debtsList.length > 0) {
+				for (var j = 0; j < debtsList.length; j++) {
+					if (debtsList[j].name == 'Code Debt' && $.inArray('CODE', $scope.filtered.debts) > -1 && debtsList[j].value) {
+						debts.push({
+							type: 'Code Debt'
+						});
+					}
+					if (debtsList[j].name == 'Design Debt'  && $.inArray('DESIGN', $scope.filtered.debts) > -1 && debtsList[j].value) {
+						debts.push({
+							type: 'Design Debt'
+						});
+					}
+				}			
+			}
 		}
-		return hasDebt;
+		return debts;
 	}
 
 	thisCtrl.hasLongMethod = function(list) {
