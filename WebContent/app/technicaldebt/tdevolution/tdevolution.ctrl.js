@@ -29,7 +29,9 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 		 $http.get('TreeServlet', {params:{"action": "getAllTagsAndMaster", "repositoryId": repositoryId}})
 		.success(function(data) {
 			console.log('found', data.length, 'tags');
-			$scope.tags = data;
+			$scope.tags = data.sort(function(tag1, tag2) {
+											return tag1.commits.length - tag2.commits.length;
+										});
 			thisCtrl.loadSlider();
 		});
 	}
@@ -98,6 +100,7 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 		}
 		return $http.get('TypeServlet', {params:{"action": "getListOfTypesByListOfTags", "ids": JSON.stringify(ids)}})
 		.success(function(data) {
+			console.log("success getListOfTypesByListOfTags");
 			for (var j = 0; j < data.length; j++) 
 				list.push(data[j]);
 		});

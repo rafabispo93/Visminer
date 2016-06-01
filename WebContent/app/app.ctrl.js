@@ -50,7 +50,9 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		$http.get('TreeServlet', {params:{"action": "getAllTagsAndMaster", "repositoryId": repositoryId}})
 		.success(function(data) {
 			console.log('found', data.length, 'tags');
-			$scope.tags = data;
+			$scope.tags = data.sort(function(tag1, tag2) {
+											return tag1.commits.length - tag2.commits.length;
+										});
 			thisCtrl.commitsLoad(repositoryId);
 		});
 	}
