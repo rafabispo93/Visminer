@@ -19,19 +19,22 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		sidebarService.setCurrentPage(view);
 	}
 
-	thisCtrl.loadTypes = function(tagId) {
-		$http.get('TypeServlet', {params:{"action": "getAllByTree", "treeId": tagId}})
-		.success(function(data) {
-			console.log('found', data.length, ' types'); 
-			for (var i = 0; i < data.length; i++) {
-				if (data[i].abstract_types[0]) {
-					var hasDebt = thisCtrl.hasDebt(data[i].abstract_types[0].technicaldebts);
-					if (hasDebt) {
-						$scope.types.push(data[i]);				
-					}	
-				}				
-			}
-		});
+	thisCtrl.loadTypes = function() {
+		if ($scope.selectedTag) {
+			var tagId = $scope.selectedTag._id;
+			$http.get('TypeServlet', {params:{"action": "getAllByTree", "treeId": tagId}})
+			.success(function(data) {
+				console.log('found', data.length, ' types'); 
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].abstract_types[0]) {
+						var hasDebt = thisCtrl.hasDebt(data[i].abstract_types[0].technicaldebts);
+						if (hasDebt) {
+							$scope.types.push(data[i]);				
+						}	
+					}				
+				}
+			});
+		}	
 	}
 
 	thisCtrl.hasDebt = function(debtsList) {
@@ -49,7 +52,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		return hasDebt;
 	}
 
-	thisCtrl.loadTypes($scope.selectedTag._id);
+	thisCtrl.loadTypes();
 
 	$scope.loadCurrentDebts = function(type) {
 		var tdList = type.abstract_types[0].technicaldebts;
@@ -104,7 +107,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 
 	$scope.updateViewByTag = function() {
 		$scope.types = [];
-		thisCtrl.loadTypes($scope.selectedTag._id);
+		thisCtrl.loadTypes();
 	}
 
 	$scope.showTypeSmellsDetails = function(type) {

@@ -49,7 +49,10 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
             		thisCtrl.loadSliderTags();
             },
             translate: function (value) {
-                return $scope.tags[value-1].name;
+            	  var name = $scope.tags[value-1].name;
+            		if (name.length > 7)
+            			name = name.substring(0, 7);
+                return name;
             }
         }
   	};
