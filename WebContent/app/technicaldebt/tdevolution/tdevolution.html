@@ -15,18 +15,14 @@
   <!-- Main content -->
   <section class="content" style="padding-top: 10px">
 
-      <div  style="padding-bottom: 15px;">
-         <rzslider id="slider-versions" rz-slider-model="slider.minValue" rz-slider-high="slider.maxValue" rz-slider-options="slider.options">
-         </rzslider>
-      </div>
-
       <div ng-include="'app/technicaldebt/tdevolution/small-boxes.html'"></div>  
 
       <div>
-        <highchart id="stacked-column-chart" config="chartConfig"></highchart>
+        <nvd3 options="options" data="data"></nvd3>
       </div>
 
   </section><!-- /.content -->
+
 
 </div>
 

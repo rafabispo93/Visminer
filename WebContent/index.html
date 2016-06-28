@@ -13,12 +13,14 @@
     <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
     <link rel="stylesheet" href="assets/css/AdminLTE.css">
     <link rel="stylesheet" href="assets/css/skins/skin-blue.min.css">
-    <link rel="stylesheet" href="assets/plugins/iCheck/flat/blue.css">
+    <link rel="stylesheet" href="assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+    <link rel="stylesheet" href="assets/plugins/datatables/dataTables.bootstrap.css">
     <link rel="stylesheet" href="assets/plugins/datepicker/datepicker3.css">
     <link rel="stylesheet" href="assets/plugins/daterangepicker/daterangepicker-bs3.css">
-    <link rel="stylesheet" href="assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+    <link rel="stylesheet" href="assets/plugins/iCheck/flat/blue.css">
     <link rel="stylesheet" href="assets/plugins/jQDateRangeSlider/css/classic-min.css">
     <link rel="stylesheet" href="app/bower_components/angularjs-slider/dist/rzslider.css"/>
+    <link rel="stylesheet" href="app/bower_components/nvd3/build/nv.d3.css">
     <link rel="stylesheet" href="assets/plugins/select2/select2.css">
     <link rel="stylesheet" href="assets/css/visminer-td.css">
   </head>
@@ -27,9 +29,9 @@
     <div class="wrapper">
 
       <div ng-include="'app/shared/navbar/navbar.html'"></div>
-	  
-	    <div ng-include="'app/shared/sidebar/sidebar.html'"></div>  
-	  
+      
+        <div ng-include="'app/shared/sidebar/sidebar.html'"></div>  
+      
       <!-- Content Wrapper. Contains page content -->
       <div class="content-wrapper">
         <div ng-show="repositories.length == 0">
@@ -63,6 +65,8 @@
 
     <!-- components -->
     <alert-modal></alert-modal>
+    <modal></modal>
+    <td-item-modal></td-item-modal>
     <progress-bar></progress-bar>
     <type-smells></type-smells>
     <td-timeline></td-timeline>
@@ -76,8 +80,12 @@
     </script>
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/bootstrap-select.min.js"></script>
+    <script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="assets/plugins/datatables/dataTables.bootstrap.min.js"></script>
     <script src="assets/plugins/sparkline/jquery.sparkline.min.js"></script>
     <script src="assets/plugins/knob/jquery.knob.js"></script>
+    <!-- <script src="app/bower_components/moment/moment.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
     <script src="assets/plugins/daterangepicker/daterangepicker.js"></script>
     <script src="assets/plugins/datepicker/bootstrap-datepicker.js"></script>
     <script src="assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
@@ -88,13 +96,16 @@
     <script src="app/bower_components/ngstorage/ngStorage.js"></script>
     <script src="app/bower_components/angularjs-slider/dist/rzslider.min.js"></script>
     <script src="app/bower_components/highcharts-ng/dist/highcharts-ng.min.js"></script>
-    <script src="app/bower_components/moment/moment.js"></script>
     <script src="http://code.highcharts.com/highcharts.src.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-route.min.js"></script>
     <script src="assets/plugins/jQDateRangeSlider/jQDateRangeSlider-min.js"></script>
     <script src="assets/plugins/select2/select2.full.min.js"></script>
     <script src="assets/js/ui-bootstrap-1.0.0.min.js"></script>
     <script src="app/bower_components/angularjs-slider/demo/lib/ui-bootstrap-tpls.js"></script>
+    <script src="app/bower_components/d3/d3.js"></script>
+    <script src="app/bower_components/nvd3/build/nv.d3.js"></script> <!-- or use another assembly -->
+    <script src="app/bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
+
 
     <!-- APP imports -->
     <script src="app/app.module.js"></script>
@@ -115,6 +126,8 @@
     <script src="app/components/type-smells-details/type-smells-details.js"></script>
     <script src="app/components/td-timeline/td-timeline.service.js"></script>
     <script src="app/components/td-timeline/td-timeline.js"></script>
+    <script src="app/components/td-item-modal/tdItemModal.service.js"></script>
+    <script src="app/components/td-item-modal/tdItemModal.js"></script>
     <script src="app/components/miner-modal/miner-modal.js"></script>
     <script src="app/components/td-indicators-charts/td-indicators-charts.service.js"></script>
     <script src="app/components/td-indicators-charts/td-indicators-charts.js"></script>
