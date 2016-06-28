@@ -117,6 +117,8 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 						"repository": data[i].repository,
 						"commit": commit._id,
 						"identificationDate": new Date(data[i].commit_date.$date),
+						"type": "Code",
+						"tdItem": "Long Method",
 						"debts": debts,
 						"metrics": (debts.length > 0) ? data[i].abstract_types[0].metrics : [],
 						"occurredBy": commit.author.name,
@@ -155,6 +157,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 					}
 				}
 			}
+			 // && list.abstract_types[0].technicaldebts != 'undefined'
 			debtsList = list.abstract_types[0].technicaldebts;
 			if (debtsList.length > 0) {
 				for (var j = 0; j < debtsList.length; j++) {
@@ -173,6 +176,25 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		}
 		return debts;
 	}
+
+	thisCtrl.hasLongMethod = function(list) {
+		// var hasDebt = false;
+		// if (debtsList.length > 0) {
+		// 	for (var j = 0; j < debtsList.length; j++) {
+		// 		if (debtsList[j].name == 'Code Debt' && $.inArray('CODE', $scope.filtered.debts) > -1 && debtsList[j].value) {
+		// 			hasDebt = true;
+		// 		}
+		// 		if (debtsList[j].name == 'Design Debt'  && $.inArray('DESIGN', $scope.filtered.debts) > -1 && debtsList[j].value) {
+		// 			hasDebt = true;
+		// 		}
+		// 		if (debtsList[j])
+		// 		console.log(debtsList[j])
+		// 	}			
+		// }
+		// return hasDebt;
+	}
+
+	// thisCtrl.loadTypes($scope.selectedTag._id);
 
 	$scope.loadCurrentDebts = function(type) {
 		var tdList = type.abstract_types[0].technicaldebts;
