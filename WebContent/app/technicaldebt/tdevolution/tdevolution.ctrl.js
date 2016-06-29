@@ -56,14 +56,72 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
             }
         }
   	};
-  	thisCtrl.loadSliderTags();
+  	thisCtrl.loadListOfTypesByListOfTags();
+	}
+
+	thisCtrl.loadListOfTypesByListOfTags = function() {
+		$scope.listTypesByTags = [];
+		var ids = [];
+		for (var i = $scope.slider.minValue-1; i < $scope.slider.maxValue; i++) {
+			ids.push($scope.tags[i]._id);
+		}
+		var request =  $http.get('TypeServlet', {params:{"action": "getListOfTypesByListOfTags", "ids": JSON.stringify(ids)}})
+		.success(function(data) {
+			console.log("success getListOfTypesByListOfTags");
+			for (var j = 0; j < data.length; j++) 
+				$scope.listTypesByTags.push(data[j]);
+		});
+
+		$q.all([request]).then(function(){
+			thisCtrl.loadTagsInfo();
+			thisCtrl.loadSliderTags();
+		});
+	}
+
+	thisCtrl.loadTagsInfo = function() {
+		$scope.totalOfCodeSmells = [];
+		$scope.totalOfDesignDebt = [];
+		$scope.totalOfCodeDebt = [];
+
+		for (var k = 0; k < $scope.listTypesByTags.length; k++) {
+			var totalSmells = 0;
+			var totalCodeDebt = 0;
+			var totalDesignDebt = 0;
+			var types = $scope.listTypesByTags[k];
+			for (var i = 0; i < types.length; i++) {
+				var typeInfo = types[i].abstract_types[0];
+				if (typeInfo) {
+					totalSmells += countCodeSmell(typeInfo);
+					totalDesignDebt += countDebt(typeInfo, 0);
+					totalCodeDebt += countDebt(typeInfo, 1);
+				}	
+			}	
+			$scope.totalOfCodeSmells.push(totalSmells);
+			$scope.totalOfDesignDebt.push(totalDesignDebt);
+			$scope.totalOfCodeDebt.push(totalCodeDebt);
+		}	
+	}
+
+	function countCodeSmell(typeInfo) {
+		var total = 0;
+		var smells = typeInfo.codesmells;
+		for (var j = 0; j < smells.length; j++) {
+			if (smells[j].value) {
+				total++;
+			}
+		}
+		return total;
+	}	
+
+	function countDebt(typeInfo, position) {
+		var debt = typeInfo.technicaldebts[position];
+		if (debt.value && debt.status == 1)
+			return 1;
+
+		return 0;
 	}
 
 	thisCtrl.loadSliderTags = function() {
-		var listTypesByTags = [];
-		var request = thisCtrl.getListOfTypesByListOfTags(listTypesByTags);
-
-		$q.all([request]).then(function() {
 			$scope.tagsNames = [];
 			$scope.sliderTags = [];
 			$scope.chartCodeDebtSeries = [];
@@ -80,74 +138,18 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 						totalDebts: 0
 					};
 					tag.tag = $scope.tags[i];
-					tag.types = listTypesByTags[j];
-					j++;
+					tag.types = $scope.listTypesByTags[i];
 
-					var totalCodeDebt = thisCtrl.getTotalOfCodeDebts(tag.types);
-					var totalDesignDebt = thisCtrl.getTotalOfDesignDebts(tag.types)
+					var totalCodeDebt = $scope.totalOfCodeDebt[i];
+					var totalDesignDebt = $scope.totalOfDesignDebt[i];
 					$scope.chartCodeDebtSeries.push(totalCodeDebt);
 					$scope.chartDesignDebtSeries.push(totalDesignDebt);
 
 					tag.totalDebts = totalCodeDebt + totalDesignDebt;
-					thisCtrl.getTotalOfCodeSmells(tag, tag.types);
+					tag.totalSmells = $scope.totalOfCodeSmells[i];
 					$scope.sliderTags.push(tag);
 			}
 			thisCtrl.loadColumnChart();
-		});
-	}
-
-	thisCtrl.getListOfTypesByListOfTags = function(list) {
-		var ids = [];
-		for (var i = $scope.slider.minValue-1; i < $scope.slider.maxValue; i++) {
-			ids.push($scope.tags[i]._id);
-		}
-		return $http.get('TypeServlet', {params:{"action": "getListOfTypesByListOfTags", "ids": JSON.stringify(ids)}})
-		.success(function(data) {
-			console.log("success getListOfTypesByListOfTags");
-			for (var j = 0; j < data.length; j++) 
-				list.push(data[j]);
-		});
-	}
-
-	thisCtrl.getTotalOfCodeSmells = function(tag, types) {
-		var total = 0;
-		for (var i = 0; i < types.length; i++) {
-			if (types[i].abstract_types[0]) {
-				var smells = types[i].abstract_types[0].codesmells;
-				for (var j = 0; j < smells.length; j++) {
-					if (smells[j].value) {
-						total++;
-					}
-				}
-			}	
-		}	
-		tag.totalSmells = total;
-	}
-
-	thisCtrl.getTotalOfDesignDebts = function(types) {
-		var total = 0;
-		for (var i = 0; i < types.length; i++) {
-			if (types[i].abstract_types[0]) {
-				var debt = types[i].abstract_types[0].technicaldebts[0];
-				if (debt.value && debt.status == 1) {
-					total++;
-				}
-			}	
-		}	
-		return total;
-	}
-
-	thisCtrl.getTotalOfCodeDebts = function(types) {
-		var total = 0;
-		for (var i = 0; i < types.length; i++) {
-			if (types[i].abstract_types[0]) {
-				var debt = types[i].abstract_types[0].technicaldebts[1];
-				if (debt.value && debt.status == 1) {
-					total++;
-				}
-			}	
-		}	
-		return total;
 	}
 
 	thisCtrl.loadColumnChart = function() {
