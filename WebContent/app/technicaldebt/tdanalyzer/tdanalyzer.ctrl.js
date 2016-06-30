@@ -81,6 +81,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	}
 
 	thisCtrl.loadTypes = function(tagId) {
+		console.log('loadTypes')
 		$http.get('TypeServlet', {params:{"action": "getAllByTree", "treeId": tagId}})
 		.success(function(data) {
 			console.log('found', data.length, 'types');
@@ -105,9 +106,16 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 			for (var i = 0; i < data.length; i++) {
 				$scope.types.push(data[i]);
 				var commit = null;
+				var committer = null;
 				for (x in $scope.filtered.commits) {
 					if ($scope.filtered.commits[x]._id == data[i].commit) {
 						commit = $scope.filtered.commits[x];
+						for (y in $scope.filtered.committers) {
+							if (commit.committer.email == $scope.filtered.committers[y].email) {
+								committer = $scope.filtered.committers[y];
+								break;
+							}
+						}
 						break;
 					}
 				}
@@ -121,7 +129,11 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 						"tdItem": "Long Method",
 						"debts": debts,
 						"metrics": (debts.length > 0) ? data[i].abstract_types[0].metrics : [],
-						"occurredBy": commit.author.name,
+						"occurredBy": {
+							"name": committer.name,
+							"email": committer.email,
+							"avatar": committer.avatar
+						},
 						"location": data[i].file,
 						"isTdItem": false,
 						"principal": "",
@@ -134,7 +146,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 			}
 		});
 	}
-
 	
 	thisCtrl.getDebts = function(list) {
 		var debts = [];

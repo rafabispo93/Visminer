@@ -101,7 +101,7 @@
                   <th>Identification date</th>
                   <th>Type</th>
                   <th>TD Item</th>
-                  <th>Inccurred by</th>
+                  <th>Occurred by</th>
                   <th>Location</th>
                   <th>TD item?</th>
                   <th>Principal</th>
@@ -115,7 +115,7 @@
                   <td>{{tdItemFormatDate(item.identificationDate)}}</td>
                   <td><span ng-repeat="debt in item.debts" class="label" style="background-color:#1B93A7!important; margin-right:3px;">{{debt.type}}</span></td>
                   <td><span ng-repeat="debt in item.debts" class="label label-default">{{debt.name}}</span></td>
-                  <td>{{item.occurredBy}}</td>
+                  <td><img ng-src="{{item.occurredBy.avatar}}" class="avatar-small" alt="{{item.occurredBy.name}}"> {{item.occurredBy.name}}</td>
                   <td>{{tdItemFormatLocation(item.location)}}</td>
                   <td>{{(item.isTdItem) ? "Yes" : "No"}}</td>
                   <td>{{item.principal}}<span ng-show="item.principal!=''">h</span></td>

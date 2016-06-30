@@ -74,11 +74,24 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 				var index = $.inArray(data[i].committer, $scope.committers);
   			if (index == -1) {
   				$scope.committers.push(data[i].committer);
-  				sidebarService.addCommitter(data[i].committer);
+  				thisCtrl.commitsLoadAvatars(data[i].committer);
 		  	}
 			}
 		});
   }
+
+  // Try to catch avatar at github
+  var commitsLoadAvatarsEmails = [];
+	thisCtrl.commitsLoadAvatars = function(committer) {
+		if (commitsLoadAvatarsEmails.indexOf(committer.email) == -1) {
+			commitsLoadAvatarsEmails.push(committer.email);
+			$http.get('https://api.github.com/search/users?q='+committer.email)
+			.success(function(result) {
+				committer.avatar = (result.total_count == 1) ? result.items[0].avatar_url : null;
+				sidebarService.addCommitter(committer);
+			});
+		}
+	}
 
   thisCtrl.selectDebt = function(debt) {
   	var index = $.inArray(debt, $scope.filtered.debts);

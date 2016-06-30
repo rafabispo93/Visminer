@@ -235,3 +235,19 @@
     margin: 7px 14px 7px 7px; 
     font-weight: bold;
 }
+
+.avatar-small {
+    float: left; 
+    width: 25px; 
+    height: 25px; 
+    border-radius: 50%; 
+    margin-right: 5px;
+}
+
+.avatar-normal {
+    float: left; 
+    width: 75px; 
+    height: 75px; 
+    border-radius: 50%; 
+    margin-right: 5px;
+}
