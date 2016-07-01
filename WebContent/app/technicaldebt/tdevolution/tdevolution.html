@@ -15,13 +15,89 @@
   <!-- Main content -->
   <section class="content" style="padding-top: 10px">
 
-      <div ng-include="'app/technicaldebt/tdevolution/small-boxes.html'"></div>  
+      <!-- <div ng-include="'app/technicaldebt/tdevolution/small-boxes.html'"></div>   -->
 
       <div>
-        <nvd3 options="options" data="data"></nvd3>
+        <nvd3 options="graphGlobalOptions" data="graphGlobalData"></nvd3>
       </div>
 
   </section><!-- /.content -->
+
+  <div class="row">
+    <section class="content" style="padding-top: 10px">
+      <div class="col-md-12">
+        <!-- Box Comment -->
+        <div class="box box-widget">
+          <div class="box-header with-border">
+            <div class="user-block">
+              <img class="img-circle" src="../dist/img/user1-128x128.jpg" alt="User Image">
+              <span class="username"><a href="#">Jonathan Burke Jr.</a></span>
+              <span class="description">Shared publicly - 7:30 PM Today</span>
+            </div>
+            <!-- /.user-block -->
+            <div class="box-tools">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+              </button>
+            </div>
+            <!-- /.box-tools -->
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <div class="col-md-8">
+              <nvd3 options="optionsx" data="datax" class="with-3d-shadow with-transitions"></nvd3>
+            </div>
+
+            <div class="col-md-4">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <th>Type</th>
+                    <th>Added</th>
+                    <th style="width: 40px">Label</th>
+                  </tr>
+                  <tr>
+                    <td>Files</td>
+                    <td>
+                      <div class="progress progress-xs">
+                        <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                      </div>
+                    </td>
+                    <td><span class="badge bg-red">55%</span></td>
+                  </tr>
+                  <tr>
+                    <td>Lines</td>
+                    <td>
+                      <div class="progress progress-xs">
+                        <div class="progress-bar progress-bar-yellow" style="width: 70%"></div>
+                      </div>
+                    </td>
+                    <td><span class="badge bg-yellow">70%</span></td>
+                  </tr>
+                  <tr>
+                    <td>Principal</td>
+                    <td>
+                      <div class="progress progress-xs">
+                        <div class="progress-bar progress-bar-primary" style="width: 30%"></div>
+                      </div>
+                    </td>
+                    <td><span class="badge bg-light-blue">30%</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            <div>
+          </div>
+          <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+      </div>
+      <!-- /.col -->
+    </section>
+
+  </div>
+
+  <div ng-repeat="graphCommitter in graphCommitterData">
+    <nvd3 options="graphCommitterOptions" data="data"></nvd3>
+  </div>
 
 
 </div>
