@@ -6,7 +6,7 @@ homeApp.service('sidebarService', function($rootScope){
 	this.data.commits = [];
 	this.data.committers = [];
 	this.data.debts = ["CODE", "DESIGN"];
-
+	this.data.tdItems = [];
 
 	this.setCurrentPage = function(page) {
 		this.data.currentPage = page;
@@ -55,6 +55,14 @@ homeApp.service('sidebarService', function($rootScope){
 
 	this.getCommitters = function() {
 		return this.data.committers;
+	}
+
+	this.setTdItems = function(tdItems) {
+		this.data.tdItems.push(tdItems);
+	}
+
+	this.getTdItems = function() {
+		return this.data.tdItems;
 	}
 
 	this.addDebt = function(debt) {
