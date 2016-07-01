@@ -11,16 +11,12 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	$scope.filtered.committers = sidebarService.getCommitters();
 	$scope.filtered.debts = sidebarService.getDebts();
 	$scope.selectedTag = $scope.filtered.tags[0];
+	$scope.tdItems = sidebarService.getTdItems();
+	$scope.tdItemFiltered = $scope.tdItems;
 	$scope.types = [];
 	$scope.typesAnalized = 0;
 	$scope.currentDesignDebt = null;
 	$scope.currentCodeDebt = null;
-
-	$scope.test = [];
-
-	$scope.data = [];
-
-	$scope.tdItemFiltered = $scope.data;
 
 	$scope.filter = {
 		type: ['Code debt', 'Design debt'],
@@ -31,8 +27,8 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	// Apply filter parameters
 	$scope.filterApply = function() {
 		var tdItemFiltered = [];
-		for (i in $scope.data) {
-			var obj = $scope.data[i];
+		for (i in $scope.tdItems) {
+			var obj = $scope.tdItems[i];
 			console.log('obj', obj)
 			var accept = 0;
 			var foundType = false;
@@ -121,7 +117,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 				}
 				var debts = thisCtrl.getDebts(data[i]);
 				if (debts.length > 0) {
-					$scope.data.push({
+					$scope.tdItems.push({
 						"repository": data[i].repository,
 						"commit": commit._id,
 						"identificationDate": new Date(data[i].commit_date.$date),
