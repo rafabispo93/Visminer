@@ -82,23 +82,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		.success(function(data) {
 			console.log('found', data.length, 'types');
 			console.log('data', data);
-// for (z in data) {
-// 	if(data[z].abstract_types.length > 0) {
-// 		var codesmells = data[z].abstract_types[0].codesmells;
-// 			for (x in codesmells) {
-// 				if (codesmells[x].name == 'Long Method') { 
-// 					// console.log("codesmells", codesmells[x])
-// 					for (j in codesmells[x].methods) {
-// 						console.log('codesmells[x].methods[j].value', codesmells[x].methods[j].value)
-// 						if (codesmells[x].methods[j].value == true) {
-// 							console.log("codesmells.methods[j]", codesmells[x].methods[j])
-// 							throw new Error("achei")
-// 						}
-// 					}
-// 				}
-// 			}
-// 	}
-// }
 			for (var i = 0; i < data.length; i++) {
 				$scope.types.push(data[i]);
 				var commit = null;
@@ -116,21 +99,21 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 					}
 				}
 				var debts = thisCtrl.getDebts(data[i]);
-				if (debts.length > 0) {
+				for (x in debts) {
+					console.log('debts[x]', debts[x])
 					$scope.tdItems.push({
 						"repository": data[i].repository,
 						"commit": commit._id,
 						"identificationDate": new Date(data[i].commit_date.$date),
-						"type": "Code",
-						"tdItem": "Long Method",
-						"debts": debts,
+						"type": debts[x].type,
+						"tdItem": debts[x].name,
 						"metrics": (debts.length > 0) ? data[i].abstract_types[0].metrics : [],
 						"occurredBy": {
 							"name": committer.name,
 							"email": committer.email,
 							"avatar": committer.avatar
 						},
-						"location": data[i].file,
+						"location": debts[x].method,
 						"isTdItem": false,
 						"principal": "",
 						"interestAmount": "",
@@ -140,6 +123,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 				}
 				$scope.typesAnalized++;
 			}
+			console.log('$scope.tdItems', $scope.tdItems)
 		});
 	}
 	
