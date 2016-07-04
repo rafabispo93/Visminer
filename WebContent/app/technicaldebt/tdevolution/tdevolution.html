@@ -25,7 +25,7 @@
 
   <div class="row">
     <section class="content" style="padding-top: 10px">
-      <div class="col-md-12">
+      <div ng-repeat="data in graphCommitterData" class="col-md-12">
         <!-- Box Comment -->
         <div class="box box-widget">
           <div class="box-header with-border">
@@ -44,7 +44,7 @@
           <!-- /.box-header -->
           <div class="box-body">
             <div class="col-md-8">
-              <nvd3 options="optionsx" data="datax" class="with-3d-shadow with-transitions"></nvd3>
+              <nvd3 options="graphCommitterOptions" data="data.graph"></nvd3>
             </div>
 
             <div class="col-md-4">
@@ -84,7 +84,7 @@
                   </tr>
                 </tbody>
               </table>
-            <div>
+            </div>
           </div>
           <!-- /.box-body -->
         </div>
@@ -93,10 +93,6 @@
       <!-- /.col -->
     </section>
 
-  </div>
-
-  <div ng-repeat="graphCommitter in graphCommitterData">
-    <nvd3 options="graphCommitterOptions" data="data"></nvd3>
   </div>
 
 </div>

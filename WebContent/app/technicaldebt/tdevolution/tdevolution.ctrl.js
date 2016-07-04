@@ -70,6 +70,12 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 	  		data[i].values.push([dates[z], total]);
 	  	}
 	  }
+	  data.map(function(series) {
+		  series.values = series.values.map(function(d) { 
+		  	return {x: d[0], y: d[1] } 
+		  });
+		  return series;
+		});
 		return data;
   }
 
@@ -151,67 +157,30 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
   }
 
 	$scope.graphGlobalData = $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'));
-	$scope.graphGlobalData.map(function(series) {
-	  series.values = series.values.map(function(d) { 
-	  	return {x: d[0], y: d[1] } 
-	  });
-	  return series;
-	});
 
 
 
-	$scope.graphCommitterOptions = {
-    chart: {
-      type: 'lineWithFocusChart',
-      height: 300,
-      margin : {
-        top: 20,
-        right: 20,
-        bottom: 60,
-        left: 40
-      },
-      duration: 300,
-      xAxis: {
-        axisLabel: 'Date',
-        tickFormat: function(d) {
-          return d3.time.format('%b-%y')(new Date(d))
-        },
-        showMaxMin: false
-      },
-      x2Axis: {
-        tickFormat: function(d) {
-          return d3.time.format('%b-%y')(new Date(d))
-        },
-        showMaxMin: false
-      },
-      yAxis: {
-       	axisLabel: 'Y1 Axis',
-        tickFormat: function(d){
-            return d3.format(',f')(d);
-        },
-        axisLabelDistance: 12
-      },
-      y2Axis: {
-				axisLabel: 'Y2 Axis',
-        tickFormat: function(d) {
-          return '$' + d3.format(',.2f')(d)
-        }
-    	}
-    }
-  };
+	
+	$scope.graphCommitterData = [
+		{
+	    graph: $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'))
+		},
+		{
+	    graph: $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'))
+		},
+		{
+	    graph: $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'))
+		},
+		{
+	    graph: $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'))
+	  }
+  ]
 
 
-
-	$scope.graphCommitterData = {
-    data1: [],
-    data2: [],
-    data3: [],
-    data4: [],
-  }
 
   console.log('$scope.graphCommitterData', $scope.graphCommitterData)
 
-  $scope.optionsx = {
+  $scope.graphCommitterOptions = {
     chart: {
       type: 'lineChart',
       height: 200,
@@ -245,44 +214,13 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
     },
   };
 
-  $scope.datax = $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'));
-  $scope.datax.map(function(series) {
-	  series.values = series.values.map(function(d) {
-	   return {x: d[0], y: d[1] } 
-	 	});
-	  return series;
-	});
+  
 
 
-  	$scope.graphCommitterData.data1.push(generateObj('Duplicated Code', 50, 1, 30));
-  	$scope.graphCommitterData.data2.push(generateObj('Duplicated Code', 50, 1, 30));
-  	$scope.graphCommitterData.data3.push(generateObj('Duplicated Code', 50, 1, 30));
-  	$scope.graphCommitterData.data4.push(generateObj('Duplicated Code', 50, 1, 30));
 
 
-  	function generateObj(name, length, min, max) {
-  		var obj = {
-  	  	'key': name,
-  	  	'values': []
-  	  }
-  	  var dateStart = 1326005200000;
-  	  for (var i = 0; i < length; i++) {
-  	  	dateStart += 1678400000;
-  	  	obj.values.push(
-  	  		[dateStart, getRandomIntFromInterval(min, max)]
-  	  	);
-  	  }
-  	  return obj;
-  	}
-
-  	function getRandomIntFromInterval(min, max) {
-  	  return Math.floor(Math.random()*(max-min+1)+min);
-  	}
 
 
-  	$scope.$on('changeState.directive', function(angularEvent, event){
-  		console.log('aqui')
-  	});
     // nvd3 END -----------------------------------------
 
 
@@ -413,7 +351,6 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 		}	
 		return total;
 	}
-
 
 	// thisCtrl.loadEvolutionInformation($scope.filtered.repository); 
 
