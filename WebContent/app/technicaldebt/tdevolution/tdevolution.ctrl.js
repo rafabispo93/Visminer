@@ -19,6 +19,7 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 
 	
   $scope.getGraphData = function(committersEmails, dateIni, dateEnd) {
+  	console.log('$scope.getGraphData', committersEmails, dateIni, dateEnd)
 	  var data = [],
 	  		dates = [];
 	  // Get data & dates
@@ -115,6 +116,10 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
         left: 40
       },
       duration: 300,
+      title: {
+        enable: true,
+        text: 'Technical Debt Total'
+      },
       xAxis: {
         axisLabel: 'Date',
         tickFormat: function(d) {
@@ -149,37 +154,9 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
     }
   };
 
-  function graphCommitterUpdateTimeout(dateIni, dateEnd) {
-  	clearTimeout(graphCommitterUpdate);
-    graphCommitterUpdate = setTimeout(function(){ 
-    	console.log('dateIni', dateIni, 'dateEnd', dateEnd)
-    }, 500);
-  }
-
 	$scope.graphGlobalData = $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'));
-
-
-
+	$scope.graphCommitterData = [];
 	
-	$scope.graphCommitterData = [
-		{
-	    graph: $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'))
-		},
-		{
-	    graph: $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'))
-		},
-		{
-	    graph: $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'))
-		},
-		{
-	    graph: $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'))
-	  }
-  ]
-
-
-
-  console.log('$scope.graphCommitterData', $scope.graphCommitterData)
-
   $scope.graphCommitterOptions = {
     chart: {
       type: 'lineChart',
@@ -213,15 +190,49 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
       }
     },
   };
+  $scope.getGraphCommitterData = function(dateIni, dateEnd) {
+  	var committers = [];
+  	for (i in $scope.tdItems) {
+			var committersExists = false;
+			var tdItem = $scope.tdItems[i];
+  		for (x in committers) {
+  			if (committers[x].email == tdItem.occurredBy.email) {
+  				committersExists = true;
+  				break;
+  			}
+  		}
+  		if (committersExists == false) {
+  			committers.push(tdItem.occurredBy);
+  		}
+  	}
 
-  
+  	console.log('committers', committers)
 
+  	var data = [];
+  	for (i in committers) {
+  		data.push({
+  			occurredBy: committers[i],
+  			graph: $scope.getGraphData([], new Date(dateIni), new Date(dateEnd))
+  		})
+  	}
+  	console.log('data', data)
+  	return data;
+  }
 
+  function graphCommitterUpdateTimeout(dateIni, dateEnd) {
+  	clearTimeout(graphCommitterUpdate);
+    graphCommitterUpdate = setTimeout(function(){ 
+    	console.log('dateIni', dateIni, 'dateEnd', dateEnd)
+  		$scope.graphCommitterData = $scope.getGraphCommitterData(dateIni, dateEnd);
+      $scope.$apply();
+    }, 500);
+  }
 
-
-
-
-    // nvd3 END -----------------------------------------
+  if ($scope.currentPage == 'tdevolution') {
+  	console.log('is tdevolution the currentPage')
+  	$scope.graphCommitterData = $scope.getGraphCommitterData(new Date('2016-06-03'), new Date('2016-07-03 23:59:59'));
+  }
+  // nvd3 END -----------------------------------------
 
 
 	thisCtrl.loadEvolutionInformation = function(repository) {
