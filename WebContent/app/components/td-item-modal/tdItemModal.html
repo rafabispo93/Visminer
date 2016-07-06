@@ -4,7 +4,7 @@
 	    <div class="modal-header modal-header-info">
 	      <button type="button" class="close" data-dismiss="modal">&times;</button>
 	      <h3 class="modal-title">
-	      	TD Item
+	      	{{tdItemModalObj.location}}
 	      </h3>
 	    </div>
 
@@ -30,86 +30,86 @@
 
     	        		<div class="col-sm-6">
 
-						  <div class="form-group">
-						    <label for="inputName" class="col-sm-3 control-label">Identification date</label>
-						    <div class="col-sm-8">
-						      <input type="text" class="form-control" id="inputName" ng-model="tdItemModalObj.identificationDate" readonly="readonly">
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="inputDescription" class="col-sm-3 control-label">Type</label>
-						    <div class="col-sm-8">
-						      <select  class="form-control" id="inputCvs" ng-model="tdItemModalObj.type">
-						    		<option>Code debt</option>
-						    		<option>Design debt</option>
-						    	</select>
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="inputPath" class="col-sm-3 control-label">TD Item</label>
-						    <div class="col-sm-8">
-						      <select  class="form-control" ng-model="tdItemModalObj.tdItem">
-						    		<option value="Duplicated code">Duplicated code</option>
-						    		<option value="Long method">Long method</option>
-						    	</select>
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="inputPath" class="col-sm-3 control-label">Occurred by</label>
-						    <div class="col-sm-8">
-                                <img ng-show="tdItemModalObj.occurredBy.avatar != null" ng-src="{{tdItemModalObj.occurredBy.avatar}}" class="avatar-normal" alt="{{tdItemModalObj.occurredBy.name}}">
-						    	{{tdItemModalObj.occurredBy.name}}
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="inputPath" class="col-sm-3 control-label">Location</label>
-						    <div class="col-sm-8">
-						      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: /Users/John/Project/name.java" ng-model="tdItemModalObj.location" readonly="readonly">
-						    </div>
-						  </div>
-						  <div class="form-group">
-						    <label for="inputPath" class="col-sm-3 control-label">Notes</label>
-						    <div class="col-sm-8">
-						      <textarea class="form-control" ng-model="tdItemModalObj.notes"></textarea>
-						    </div>
-						  </div>
-						  
-				  	</div>
-				  	<div class="col-sm-6">
-				  		<div class="form-group">
-				  		  <label for="inputPath" class="col-sm-3 control-label">TD item?</label>
-				  		  <div class="col-sm-8">
-				  		    <input type="checkbox" class="minimal" ng-checked="tdItemModalObj.isTdItem == true">
-				  		  </div>
-				  		</div>
-				  		<div class="form-group">
-				  		  <label for="inputPath" class="col-sm-3 control-label">Principal</label>
-				  		  <div class="col-sm-8">
-				  		    <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.principal">
-				  		  </div>
-				  		</div>
-				  		<div class="form-group">
-				  		  <label for="inputPath" class="col-sm-3 control-label">Interest amount</label>
-				  		  <div class="col-sm-8">
-				  		    <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.interestAmount">
-				  		  </div>
-				  		</div>
-				  		<div class="form-group">
-				  		  <label for="inputPath" class="col-sm-3 control-label">New interest probability</label>
-				  		  <div class="col-sm-8">
-				  		    <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.newInterestProbability">
-				  		  </div>
-				  		</div>
-				  	</div>
+									  <div class="form-group">
+									    <label for="inputName" class="col-sm-3 control-label">Identification date</label>
+									    <div class="col-sm-8">
+									      <input type="text" class="form-control" id="inputName" ng-model="tdItemModalObj.identificationDate" readonly="readonly">
+									    </div>
+									  </div>
+									  <div class="form-group">
+									    <label for="inputDescription" class="col-sm-3 control-label">Type</label>
+									    <div class="col-sm-8">
+									      <select  class="form-control" id="inputCvs" ng-model="tdItemModalObj.type">
+									    		<option ng-selected="tdItemModalObj.type=='Code Debt'">Code Debt</option>
+									    		<option ng-selected="tdItemModalObj.type=='Design Debt'">Design Debt</option>
+									    	</select>
+									    </div>
+									  </div>
+									  <div class="form-group">
+									    <label for="inputPath" class="col-sm-3 control-label">TD Item</label>
+									    <div class="col-sm-8">
+									      <select  class="form-control" ng-model="tdItemModalObj.tdItem">
+									    		<option ng-selected="tdItemModalObj.tdItem=='Duplicated Code'">Duplicated code</option>
+									    		<option ng-selected="tdItemModalObj.tdItem=='Long Method'">Long method</option>
+									    	</select>
+									    </div>
+									  </div>
+									  <div class="form-group">
+									    <label for="inputPath" class="col-sm-3 control-label">Occurred by</label>
+									    <div class="col-sm-8">
+			                    <img ng-show="tdItemModalObj.occurredBy.avatar != null" ng-src="{{tdItemModalObj.occurredBy.avatar}}" class="avatar-normal" alt="{{tdItemModalObj.occurredBy.name}}">
+									    		{{tdItemModalObj.occurredBy.name}}
+									    </div>
+									  </div>
+									  <div class="form-group">
+									    <label for="inputPath" class="col-sm-3 control-label">Location</label>
+									    <div class="col-sm-8">
+									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: /Users/John/Project/name.java" ng-model="tdItemModalObj.location" readonly="readonly">
+									    </div>
+									  </div>
+									  <div class="form-group">
+									    <label for="inputPath" class="col-sm-3 control-label">Notes</label>
+									    <div class="col-sm-8">
+									      <textarea class="form-control" ng-model="tdItemModalObj.notes"></textarea>
+									    </div>
+									  </div>
+									  
+							  	</div>
+							  	<div class="col-sm-6">
+							  		<div class="form-group">
+							  		  <label for="inputPath" class="col-sm-3 control-label">TD item?</label>
+							  		  <div class="col-sm-8">
+							  		    <input type="checkbox" class="minimal" ng-model="tdItemModalObj.isTdItem" ng-checked="tdItemModalObj.isTdItem == true">
+							  		  </div>
+							  		</div>
+							  		<div class="form-group">
+							  		  <label for="inputPath" class="col-sm-3 control-label">Principal</label>
+							  		  <div class="col-sm-8">
+							  		    <input type="number" class="form-control" id="inputPath" ng-model="tdItemModalObj.principal">
+							  		  </div>
+							  		</div>
+							  		<div class="form-group">
+							  		  <label for="inputPath" class="col-sm-3 control-label">Interest amount</label>
+							  		  <div class="col-sm-8">
+							  		    <input type="number" class="form-control" id="inputPath" ng-model="tdItemModalObj.interestAmount">
+							  		  </div>
+							  		</div>
+							  		<div class="form-group">
+							  		  <label for="inputPath" class="col-sm-3 control-label">New interest probability</label>
+							  		  <div class="col-sm-8">
+							  		    <input type="number" min="0" max="100" class="form-control" id="inputPath" ng-model="tdItemModalObj.newInterestProbability">
+							  		  </div>
+							  		</div>
+							  	</div>
 
-				  	<div class="form-group">
-					    <div class="col-sm-offset-3 col-sm-9">
-					      <button ng-click="mineRepository()" class="btn btn-danger">Cancel</button>
-					      <button ng-click="mineRepository()" class="btn btn-success">Save</button>
-					    </div>
-					  </div>
+							  	<div class="form-group">
+								    <div class="col-sm-offset-3 col-sm-9" style="text-align:right;padding-right:65px;">
+								      <button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+								      <button ng-click="save()" class="btn btn-success">Save</button>
+								    </div>
+								  </div>
 
-					</form>
+								</form>
 
 	    		    </div>
 

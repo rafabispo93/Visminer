@@ -29,7 +29,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		var tdItemFiltered = [];
 		for (i in $scope.tdItems) {
 			var obj = $scope.tdItems[i];
-			console.log('obj', obj)
 			var accept = 0;
 			var foundType = false;
 			var foundTdItem = false;
@@ -81,7 +80,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		$http.get('TypeServlet', {params:{"action": "getAllByTree", "treeId": tagId}})
 		.success(function(data) {
 			console.log('found', data.length, 'types');
-			console.log('data', data);
 			for (var i = 0; i < data.length; i++) {
 				$scope.types.push(data[i]);
 				var commit = null;
@@ -100,7 +98,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 				}
 				var debts = thisCtrl.getDebts(data[i]);
 				for (x in debts) {
-					console.log('debts[x]', debts[x])
 					$scope.tdItems.push({
 						"repository": data[i].repository,
 						"commit": commit._id,
@@ -123,7 +120,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 				}
 				$scope.typesAnalized++;
 			}
-			console.log('$scope.tdItems', $scope.tdItems)
 		});
 	}
 	
@@ -168,25 +164,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		return debts;
 	}
 
-	thisCtrl.hasLongMethod = function(list) {
-		// var hasDebt = false;
-		// if (debtsList.length > 0) {
-		// 	for (var j = 0; j < debtsList.length; j++) {
-		// 		if (debtsList[j].name == 'Code Debt' && $.inArray('CODE', $scope.filtered.debts) > -1 && debtsList[j].value) {
-		// 			hasDebt = true;
-		// 		}
-		// 		if (debtsList[j].name == 'Design Debt'  && $.inArray('DESIGN', $scope.filtered.debts) > -1 && debtsList[j].value) {
-		// 			hasDebt = true;
-		// 		}
-		// 		if (debtsList[j])
-		// 		console.log(debtsList[j])
-		// 	}			
-		// }
-		// return hasDebt;
-	}
-
-	// thisCtrl.loadTypes($scope.selectedTag._id);
-
 	$scope.loadCurrentDebts = function(type) {
 		var tdList = type.abstract_types[0].technicaldebts;
 		for (var i = 0; i < tdList.length; i++) {
@@ -197,40 +174,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 				$scope.currentDesignDebt = tdList[i];
 			}
 		}
-	}
-
-	$scope.confirmSingleDebt = function(commitId, fileId, debt) {
-		$http.get('TypeServlet', {params:{"action": "confirmSingleDebt",
-		 "commitId": commitId, "fileId": fileId, "debt": debt}})
-		.success(function() {
-			console.log('Debt Confirmed: ', debt); 			
-		});
-	}
-
-	$scope.removeSingleDebt = function(commitId, fileId, debt) {
-		$http.get('TypeServlet', {params:{"action": "removeSingleDebt",
-		 "commitId": commitId, "fileId": fileId, "debt": debt}})
-		.success(function() {
-			console.log('Debt Confirmed: ', debt); 			
-		});
-	}
-
-	$scope.confirmAllDebtsByTag = function(treeId) {
-		$http.get('TypeServlet', {params:{"action": "confirmAllDebtsByTag", "treeId": treeId}})
-		.success(function() {
-			$route.reload();			
-			$scope.showSuccessModal();
-			console.log('All debts from tree ', treeId,' have been Confirmed.'); 			
-		});
-	}
-
-	$scope.confirmAllDebtsByRepository = function(repositoryId) {
-		$http.get('TypeServlet', {params:{"action": "confirmAllDebtsByRepository", "repositoryId": repositoryId}})
-		.success(function() {
-			$route.reload();
-			$scope.showSuccessModal();
-			console.log('All debts from repository ', repositoryId,' have been Confirmed.'); 			
-		});
 	}
 
 	$scope.showSuccessModal = function() {
