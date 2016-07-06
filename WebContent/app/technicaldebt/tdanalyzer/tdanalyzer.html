@@ -9,17 +9,13 @@
   <section class="content-header">
     <h1>
       TD Analyzer
-      <small>Identify which classes have Technical Debt</small>
+      <small>Identify which classes have Technical Debt {{typesAnalized}}/{{types.length}}</small>
     </h1>
     <ol class="breadcrumb">
       <li><a href="tdevolution" ng-click="TDAnalyzerCtrl.selectView('tdevolution')"><i class="fa fa-line-chart"></i> TD Evolution</a></li>
       <li class="active">TD Analyzer</li>
     </ol>
   </section>
-
-  <div>
-      {{typesAnalized}}/{{types.length}}
-  </div>
 
   <!-- Main content -->
   <section class="content">
