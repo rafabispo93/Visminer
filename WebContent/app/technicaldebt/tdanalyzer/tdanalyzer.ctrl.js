@@ -19,7 +19,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	$scope.currentCodeDebt = null;
 
 	$scope.filter = {
-		type: ['Code debt', 'Design debt'],
+		type: ['Code Debt', 'Design Debt'],
 		tdItem: ['Duplicated Code', 'Long Method'],
 		isTdItem: ['true', 'false']
 	}
@@ -27,24 +27,35 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	// Apply filter parameters
 	$scope.filterApply = function() {
 		var tdItemFiltered = [];
+		if ($scope.filter.identificationDate != "") {
+			var dates = $scope.filter.identificationDate.split(' - ');
+			var identificationDateIni = new Date(dates[0]);
+			var identificationDateEnd = new Date(dates[1]);
+		}
 		for (i in $scope.tdItems) {
 			var obj = $scope.tdItems[i];
 			var accept = 0;
+			var foundDate = false;
 			var foundType = false;
 			var foundTdItem = false;
 			var foundIsTdItem = false;
-			for (x in obj.debts) {
-				if ($scope.filter.type.indexOf(obj.debts[x].type) > -1) {
-					foundType = true;
+			if (identificationDateIni) {
+				if (identificationDateIni <= obj.identificationDate && obj.identificationDate <= identificationDateEnd) {
+					foundDate = true;
 				}
-				if ($scope.filter.tdItem.indexOf(obj.debts[x].name) > -1) {
-					foundTdItem = true;
-				}
+			} else {
+				foundDate = true;
+			}
+			if ($scope.filter.type.indexOf(obj.type) > -1) {
+				foundType = true;
+			}
+			if ($scope.filter.tdItem.indexOf(obj.tdItem) > -1) {
+				foundTdItem = true;
 			}
 			if ($scope.filter.isTdItem.indexOf(String(obj.isTdItem)) > -1) {
 				foundIsTdItem = true;
 			}
-			if (foundType && foundTdItem && foundIsTdItem) {
+			if (foundDate && foundType && foundTdItem && foundIsTdItem) {
 				tdItemFiltered.push(obj);
 			}
 		}
