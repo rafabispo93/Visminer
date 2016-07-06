@@ -210,9 +210,10 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 
   	var data = [];
   	for (i in committers) {
+  		console.log('committers[i].email', committers[i].email)
   		data.push({
   			occurredBy: committers[i],
-  			graph: $scope.getGraphData([], new Date(dateIni), new Date(dateEnd))
+  			graph: $scope.getGraphData([committers[i].email], new Date(dateIni), new Date(dateEnd))
   		})
   	}
   	console.log('data', data)
