@@ -1,10 +1,10 @@
 <div id="tdItemModal" class="modal fade bs-example-modal-sm" role="dialog">
-  <div class="modal-dialog" style="width: 800px;">
+  <div class="modal-dialog" style="width: 1000px;">
 	  <div class="modal-content">
 	    <div class="modal-header modal-header-info">
 	      <button type="button" class="close" data-dismiss="modal">&times;</button>
 	      <h3 class="modal-title">
-	      	{{tdItemModalObj.location}}
+	      	{{tdItemModalObj.method}}
 	      </h3>
 	    </div>
 
@@ -17,9 +17,6 @@
 	    	    </li>
 	    	    <li ng-class="{'active': tabMetrics}">
 	    	    	<a href="#" ng-click="activeTab('metrics')">Metrics</a>
-	    	    </li>
-	    	    <li ng-class="{'active': tabGraphs}">
-	    	    	<a href="#" ng-click="activeTab('graphs')">Graphs</a>
 	    	    </li>
 	    	  </ul>
 	    	  <div class="tab-content">
@@ -62,15 +59,15 @@
 									    </div>
 									  </div>
 									  <div class="form-group">
-									    <label for="inputPath" class="col-sm-3 control-label">Location</label>
+									    <label for="inputPath" class="col-sm-3 control-label">Method</label>
 									    <div class="col-sm-8">
-									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: /Users/John/Project/name.java" ng-model="tdItemModalObj.location" readonly="readonly">
+									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: Method()" ng-model="tdItemModalObj.method" readonly="readonly">
 									    </div>
 									  </div>
 									  <div class="form-group">
-									    <label for="inputPath" class="col-sm-3 control-label">Notes</label>
+									    <label for="inputPath" class="col-sm-3 control-label">File</label>
 									    <div class="col-sm-8">
-									      <textarea class="form-control" ng-model="tdItemModalObj.notes"></textarea>
+									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: name.java" ng-model="tdItemModalObj.file" readonly="readonly">
 									    </div>
 									  </div>
 									  
@@ -100,6 +97,12 @@
 							  		    <input type="number" min="0" max="100" class="form-control" id="inputPath" ng-model="tdItemModalObj.newInterestProbability">
 							  		  </div>
 							  		</div>
+							  		<div class="form-group">
+									    <label for="inputPath" class="col-sm-3 control-label">Notes</label>
+									    <div class="col-sm-8">
+									      <textarea class="form-control" ng-model="tdItemModalObj.notes"></textarea>
+									    </div>
+									  </div>
 							  	</div>
 
 							  	<div class="form-group">
@@ -130,25 +133,6 @@
                   <td><div ng-repeat="method in metrics.methods">{{method.value}}</div></td>
                 </tr>
               </table>
-	    	    </div>
-	    	    <!-- /.tab-pane -->
-	    	    <div class="tab-pane" ng-class="{'active': tabGraphs}" ng-show="tabGraphs">
-	    	      <div class="box box-solid">
-                <div class="box-header">
-                  <h3 class="box-title text-blue">TD Evolution</h3>
-
-                  <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-                  </div>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body text-center">
-                  <div class="sparkline" data-type="line" data-spot-Radius="3" data-highlight-Spot-Color="#f39c12" data-highlight-Line-Color="#222" data-min-Spot-Color="#f56954" data-max-Spot-Color="#00a65a" data-spot-Color="#39CCCC" data-offset="90" data-width="100%" data-height="100px" data-line-Width="2" data-line-Color="#39CCCC" data-fill-Color="rgba(57, 204, 204, 0.08)">
-                    6,4,7,8,4,3,2,2,5,6,7,4,1,5,7,9,9,8,7,6
-                  </div>
-                </div>
-                <!-- /.box-body -->
-              </div>
 	    	    </div>
 	    	    <!-- /.tab-pane -->
 	    	  </div>

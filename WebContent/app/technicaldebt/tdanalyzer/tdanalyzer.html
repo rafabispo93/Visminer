@@ -98,7 +98,7 @@
                   <th>Type</th>
                   <th>TD Item</th>
                   <th>Occurred by</th>
-                  <th>Location</th>
+                  <th>Method</th>
                   <th>TD item?</th>
                   <th>Principal</th>
                   <th>Interest amount</th>
@@ -112,7 +112,7 @@
                   <td><span class="label" style="background-color:#1B93A7!important; margin-right:3px;">{{item.type}}</span></td>
                   <td><span class="label label-default">{{item.tdItem}}</span></td>
                   <td><img ng-src="{{item.occurredBy.avatar}}" class="avatar-small" alt="{{item.occurredBy.name}}"> {{item.occurredBy.name}}</td>
-                  <td>{{tdItemFormatLocation(item.location)}}</td>
+                  <td>{{item.method}}</td>
                   <td>{{(item.isTdItem) ? "Yes" : "No"}}</td>
                   <td>{{item.principal}}<span ng-show="item.principal!=''">h</span></td>
                   <td>{{item.interestAmount}}<span ng-show="item.interestAmount!=''">h</span></td>
@@ -121,7 +121,6 @@
                 </tr>
               </tbody>
             </table>
-
           </div><!-- /.box-body -->
         </div><!-- /.box -->
       </div><!-- /.col -->

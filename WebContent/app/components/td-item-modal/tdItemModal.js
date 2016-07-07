@@ -2,7 +2,6 @@ angular.module('homeApp').component('tdItemModal', {
   controller: function ($scope, tdItemModalService) {
 		$scope.tabTd = true;
 		$scope.tabMetrics = false;
-		$scope.tabGraphs = false;
 		var tdItem;
 		$(".modal").on('show.bs.modal', function(e) {
 		  centerModals($(this));
@@ -12,22 +11,15 @@ angular.module('homeApp').component('tdItemModal', {
   		tdItem = obj;
   		$scope.tdItemModalObj = JSON.parse(JSON.stringify(obj)); // clone the object
   		$scope.tdItemModalObj.identificationDate = moment($scope.tdItemModalObj.identificationDate).format('l');
+      $scope.tdItemModalObj.file = $scope.getFileName($scope.tdItemModalObj.file);
   	});
 
   	$scope.activeTab = function(tabId) {
   		$scope.tabTd = false;
 			$scope.tabMetrics = false;
-			$scope.tabGraphs = false;
   		switch(tabId) {
   			case 'metrics':
 					$scope.tabMetrics = true;
-  				break;
-				case 'graphs':
-					$scope.tabGraphs = true;
-					$(".sparkline").each(function () {
-					  var $this = $(this);
-					  $this.sparkline('html', $this.data());
-					});
   				break;
 				default:
 					$scope.tabTd = true;
@@ -45,6 +37,11 @@ angular.module('homeApp').component('tdItemModal', {
   		tdItem.newInterestProbability = $scope.tdItemModalObj.newInterestProbability;
   		$('#tdItemModal').modal('hide');
   	}
+
+    $scope.getFileName = function(location) { console.log('location', location)
+      var loc = location.split('/');
+      return loc[loc.length-1];
+    }
 
   },
   templateUrl: 'app/components/td-item-modal/tdItemModal.html',

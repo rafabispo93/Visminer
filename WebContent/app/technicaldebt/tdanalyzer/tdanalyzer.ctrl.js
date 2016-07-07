@@ -67,7 +67,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	}
 
 	// Return the file name
-	$scope.tdItemFormatLocation = function(location) {
+	$scope.tdItemFormatFile = function(location) {
 		var loc = location.split('/');
 	  return loc[loc.length-1];
 	}
@@ -95,6 +95,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 				$scope.types.push(data[i]);
 				var commit = null;
 				var committer = null;
+				var diffs = [];
 				for (x in $scope.filtered.commits) {
 					if ($scope.filtered.commits[x]._id == data[i].commit) {
 						commit = $scope.filtered.commits[x];
@@ -121,7 +122,9 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 							"email": committer.email,
 							"avatar": committer.avatar
 						},
-						"location": debts[x].method,
+						"diffs": $scope.getDiffs(data[i]),
+						"method": debts[x].method,
+						"file": data[i].file,
 						"isTdItem": false,
 						"principal": "",
 						"interestAmount": "",
@@ -155,7 +158,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 					}
 				}
 			}
-			 // && list.abstract_types[0].technicaldebts != 'undefined'
+			// && list.abstract_types[0].technicaldebts != 'undefined'
 			debtsList = list.abstract_types[0].technicaldebts;
 			if (debtsList.length > 0) {
 				for (var j = 0; j < debtsList.length; j++) {
@@ -184,6 +187,29 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 			if (tdList[i].name == 'Design Debt') {
 				$scope.currentDesignDebt = tdList[i];
 			}
+		}
+	}
+
+	$scope.getDiffs = function(commitRef) {
+		var added = 0,
+				removed = 0;
+		for (i in $scope.filtered.commits) {
+			if ($scope.filtered.commits[i]._id == commitRef.commit) {
+				var commit = $scope.filtered.commits[i];
+				for (x in commit.diffs) {
+					var diffs = commit.diffs[x];
+					if (diffs.path == commitRef.file) {
+						added += commit.diffs[x].lines_added;
+						removed += commit.diffs[x].lines_removed;
+						break;
+					}
+				}
+				break;
+			}
+		}
+		return {
+			"added": added,
+			"removed": removed
 		}
 	}
 

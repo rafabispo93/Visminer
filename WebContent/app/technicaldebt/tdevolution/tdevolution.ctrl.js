@@ -9,17 +9,12 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 
 	$scope.sliderTags = [];
 
-	$scope.chartCodeDebtSeries = [];
-  $scope.chartDesignDebtSeries = [];
-	
 	$scope.filtered.repository = sidebarService.getRepository();
 	$scope.filtered.tags = sidebarService.getTags();
 	$scope.filtered.debts = sidebarService.getDebts();
 	$scope.tdItems = sidebarService.getTdItems();
 
-	
   $scope.getGraphData = function(committersEmails, dateIni, dateEnd) {
-  	console.log('$scope.getGraphData', committersEmails, dateIni, dateEnd)
 	  var data = [],
 	  		dates = [];
 	  // Get data & dates
@@ -99,11 +94,6 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 	}
 
 
-
-
-
-
-	// nvd3 START -----------------------------------------
 	var graphCommitterUpdate;
 	$scope.graphGlobalOptions = {
     chart: {
@@ -195,46 +185,47 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
   	for (i in $scope.tdItems) {
 			var committersExists = false;
 			var tdItem = $scope.tdItems[i];
-  		for (x in committers) {
-  			if (committers[x].email == tdItem.occurredBy.email) {
-  				committersExists = true;
-  				break;
-  			}
-  		}
-  		if (committersExists == false) {
-  			committers.push(tdItem.occurredBy);
-  		}
+			if (dateIni <= tdItem.identificationDate && tdItem.identificationDate <= dateEnd) {
+	  		for (x in committers) {
+	  			if (committers[x].email == tdItem.occurredBy.email) {
+	  				committersExists = true;
+	  				committers[x].lines.added += tdItem.diffs.added;
+	  				committers[x].lines.removed += tdItem.diffs.removed;
+	  				committers[x].principal += tdItem.principal;
+	  				break;
+	  			}
+	  		}
+	  		if (committersExists == false) {
+	  			tdItem.occurredBy.principal = tdItem.principal;
+	  			tdItem.occurredBy.lines = {
+	  				added: tdItem.diffs.added,
+	  				removed: tdItem.diffs.removed
+	  			}
+	  			committers.push(tdItem.occurredBy);
+	  		}
+			}
   	}
-
-  	console.log('committers', committers)
-
   	var data = [];
   	for (i in committers) {
-  		console.log('committers[i].email', committers[i].email)
   		data.push({
   			occurredBy: committers[i],
   			graph: $scope.getGraphData([committers[i].email], new Date(dateIni), new Date(dateEnd))
   		})
   	}
-  	console.log('data', data)
   	return data;
   }
 
   function graphCommitterUpdateTimeout(dateIni, dateEnd) {
   	clearTimeout(graphCommitterUpdate);
     graphCommitterUpdate = setTimeout(function(){ 
-    	console.log('dateIni', dateIni, 'dateEnd', dateEnd)
   		$scope.graphCommitterData = $scope.getGraphCommitterData(dateIni, dateEnd);
       $scope.$apply();
     }, 500);
   }
 
   if ($scope.currentPage == 'tdevolution') {
-  	console.log('is tdevolution the currentPage')
   	$scope.graphCommitterData = $scope.getGraphCommitterData(new Date('2016-06-03'), new Date('2016-07-03 23:59:59'));
   }
-  // nvd3 END -----------------------------------------
-
 
 	thisCtrl.loadEvolutionInformation = function(repository) {
 		if (repository) {
@@ -245,125 +236,10 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 	// Load all tags (versions)
 	thisCtrl.tagsLoad = function(repositoryId) { 
 		console.log('tagsLoad=', repositoryId);
-
 		 $http.get('TreeServlet', {params:{"action": "getAllTagsAndMaster", "repositoryId": repositoryId}})
 		.success(function(data) {
 			console.log('found', data.length, 'tags');
 			$scope.tags = data;
-			// thisCtrl.loadSlider();
 		});
 	}
-
-	thisCtrl.loadSlider = function() {
-		$scope.slider = {
-        minValue: 1,
-        maxValue: $scope.tags.length,
-        options: {
-            ceil: $scope.tags.length,
-            floor: 1,
-            showTicksValues: true,
-            draggableRange: true,
-            onEnd: function () {
-            		thisCtrl.loadSliderTags();
-            },
-            translate: function (value) {
-                return $scope.tags[value-1].name;
-            }
-        }
-  	};
-  	thisCtrl.loadSliderTags();
-	}
-
-	thisCtrl.loadSliderTags = function() {
-		var listTypesByTags = [];
-		var request = thisCtrl.getListOfTypesByListOfTags(listTypesByTags);
-
-		$q.all([request]).then(function() {
-			$scope.tagsNames = [];
-			$scope.sliderTags = [];
-			$scope.chartCodeDebtSeries = [];
-			$scope.chartDesignDebtSeries = []; 
-			var j = 0;
-
-			for (var i = $scope.slider.minValue-1; i < $scope.slider.maxValue; i++) {
-					$scope.tagsNames.push($scope.tags[i].name);
-
-					var tag = {
-						tag: null,
-						types: [],
-						totalSmells: 0,
-						totalDebts: 0
-					};
-					tag.tag = $scope.tags[i];
-					tag.types = listTypesByTags[j];
-					j++;
-
-					var totalCodeDebt = thisCtrl.getTotalOfCodeDebts(tag.types);
-					var totalDesignDebt = thisCtrl.getTotalOfDesignDebts(tag.types)
-					$scope.chartCodeDebtSeries.push(totalCodeDebt);
-					$scope.chartDesignDebtSeries.push(totalDesignDebt);
-
-					tag.totalDebts = totalCodeDebt + totalDesignDebt;
-					thisCtrl.getTotalOfCodeSmells(tag, tag.types);
-					$scope.sliderTags.push(tag);
-			}
-			thisCtrl.loadColumnChart();
-		});
-	}
-
-	thisCtrl.getListOfTypesByListOfTags = function(list) {
-		var ids = [];
-		for (var i = $scope.slider.minValue-1; i < $scope.slider.maxValue; i++) {
-			ids.push($scope.tags[i]._id);
-		}
-		return $http.get('TypeServlet', {params:{"action": "getListOfTypesByListOfTags", "ids": JSON.stringify(ids)}})
-		.success(function(data) {
-			for (var j = 0; j < data.length; j++) 
-				list.push(data[j]);
-		});
-	}
-
-	thisCtrl.getTotalOfCodeSmells = function(tag, types) {
-		var total = 0;
-		for (var i = 0; i < types.length; i++) {
-			if (types[i].abstract_types[0]) {
-				var smells = types[i].abstract_types[0].codesmells;
-				for (var j = 0; j < smells.length; j++) {
-					if (smells[j].value) {
-						total++;
-					}
-				}
-			}	
-		}	
-		tag.totalSmells = total;
-	}
-
-	thisCtrl.getTotalOfDesignDebts = function(types) {
-		var total = 0;
-		for (var i = 0; i < types.length; i++) {
-			if (types[i].abstract_types[0]) {
-				var debt = types[i].abstract_types[0].technicaldebts[0];
-				if (debt.value && debt.status == 1) {
-					total++;
-				}
-			}	
-		}	
-		return total;
-	}
-
-	thisCtrl.getTotalOfCodeDebts = function(types) {
-		var total = 0;
-		for (var i = 0; i < types.length; i++) {
-			if (types[i].abstract_types[0]) {
-				var debt = types[i].abstract_types[0].technicaldebts[1];
-				if (debt.value && debt.status == 1) {
-					total++;
-				}
-			}	
-		}	
-		return total;
-	}
-
-	// thisCtrl.loadEvolutionInformation($scope.filtered.repository); 
-
 });
