@@ -63,7 +63,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	}
 	
 	$scope.tdItemFormatDate = function(date) {
-	  return moment(date).format('l');
+	  return moment(date).format('l')+" "+moment(date).format('LT');
 	}
 
 	// Return the file name
