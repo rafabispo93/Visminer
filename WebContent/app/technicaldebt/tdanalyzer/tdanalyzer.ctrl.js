@@ -137,6 +137,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 				}
 				$scope.typesAnalized++;
 			}
+			sidebarService.setTdItems($scope.tdItems);
 		});
 	}
 	
@@ -232,7 +233,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	}
 
 	if ($scope.currentPage == 'tdanalyzer') {
-		thisCtrl.loadTypes($scope.selectedTag._id)
+		thisCtrl.loadTypes($scope.selectedTag._id);
 		$('.sidebar-toggle').click();
 		$('#filter-identificationdate').daterangepicker();
 		// $("#tditem-datatable").DataTable({

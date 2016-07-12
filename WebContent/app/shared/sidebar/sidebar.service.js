@@ -58,7 +58,7 @@ homeApp.service('sidebarService', function($rootScope){
 	}
 
 	this.setTdItems = function(tdItems) {
-		this.data.tdItems.push(tdItems);
+		this.data.tdItems = tdItems;
 	}
 
 	this.getTdItems = function() {

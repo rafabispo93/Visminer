@@ -12,19 +12,31 @@
     </ol>
   </section>
 
-  <!-- Main content -->
-  <section class="content" style="padding-top: 10px">
-
-      <!-- <div ng-include="'app/technicaldebt/tdevolution/small-boxes.html'"></div>   -->
-
-      <div>
-        <nvd3 options="graphGlobalOptions" data="graphGlobalData"></nvd3>
-      </div>
-
-  </section><!-- /.content -->
 
   <div class="row">
     <section class="content" style="padding-top: 10px">
+        <!-- <div ng-include="'app/technicaldebt/tdevolution/small-boxes.html'"></div>   -->
+        <div>
+          <nvd3 options="graphGlobalOptions" data="graphGlobalData"></nvd3>
+        </div>
+    </section><!-- /.content -->
+  </div>
+  <!-- Main content -->
+
+  <div class="row">
+    <section class="content" style="padding-top: 10px">
+
+      <div class="box-body no-padding">
+        <ul class="users-list clearfix">
+          <li ng-repeat="tdItem in graphCommitterData">
+            <img ng-src="{{tdItem.occurredBy.avatar}}" alt="User Image">
+            <a class="users-list-name" href="#">{{tdItem.occurredBy.name}}</a>
+            <span class="users-list-date">Today</span>
+          </li>
+        </ul>
+        <!-- /.users-list -->
+      </div>
+
       <div ng-repeat="tdItem in graphCommitterData" class="col-md-12">
         <!-- Box Comment -->
         <div class="box box-widget">

@@ -224,7 +224,9 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
   }
 
   if ($scope.currentPage == 'tdevolution') {
-  	$scope.graphCommitterData = $scope.getGraphCommitterData(new Date('2016-06-03'), new Date('2016-07-03 23:59:59'));
+  	$scope.tdItems = sidebarService.getTdItems();
+  	console.log('$scope.tdItems', $scope.tdItems)
+  	$scope.graphCommitterData = $scope.getGraphCommitterData(new Date('2010-06-03'), new Date('2020-07-03 23:59:59'));
   }
 
 	thisCtrl.loadEvolutionInformation = function(repository) {
