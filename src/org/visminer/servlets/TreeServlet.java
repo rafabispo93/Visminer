@@ -58,7 +58,7 @@ public class TreeServlet extends HttpServlet {
 	
 	private void getAllByRepository(String repositoryId) {
 		List<String> treesList = new ArrayList<>();
-		treeHandler.getAllByRepository(repositoryId)
+		treeHandler.getByRepository(repositoryId)
 			.forEach(tree->treesList.add(tree.toJson()));		
 		
 		out.println(treesList.toString());		

@@ -71,7 +71,7 @@ public class TypeServlet extends HttpServlet {
 
 	private void getAllByTree(String treeId) {
 		List<String> typeList = new ArrayList<>();
-		typeHandler.getAllByTree(treeId)
+		typeHandler.getAllByReference(treeId)
 			.forEach(type->typeList.add(type.toJson()));
 		out.println(typeList);
 	}
@@ -81,7 +81,7 @@ public class TypeServlet extends HttpServlet {
 		List<ArrayList<String>> typeLists = new ArrayList<>();
 		for (Object id : array) {
 			ArrayList<String> typeList = new ArrayList<String>();
-			typeHandler.getAllByTree(id.toString())
+			typeHandler.getAllByReference(id.toString())
 				.forEach(type->typeList.add(type.toJson()));
 			typeLists.add(typeList);
 		}	

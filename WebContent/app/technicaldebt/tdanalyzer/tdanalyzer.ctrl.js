@@ -87,10 +87,12 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	}
 
 	thisCtrl.loadTypes = function(tagId) {
-		console.log('loadTypes')
-		$http.get('TypeServlet', {params:{"action": "getAllByTree", "treeId": tagId}})
+		console.log('loadTypes', tagId)
+		$http.get('TypeServlet', {params:{"action": "getListOfTypesByListOfTags", "ids": '['+tagId+']'}})
 		.success(function(data) {
 			console.log('found', data.length, 'types');
+			data = data[0];
+
 			for (var i = 0; i < data.length; i++) {
 				$scope.types.push(data[i]);
 				var commit = null;
@@ -125,6 +127,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 						"diffs": $scope.getDiffs(data[i]),
 						"method": debts[x].method,
 						"file": data[i].file,
+						"package": data[i].package,
 						"isTdItem": false,
 						"principal": "",
 						"interestAmount": "",
@@ -196,11 +199,11 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		for (i in $scope.filtered.commits) {
 			if ($scope.filtered.commits[i]._id == commitRef.commit) {
 				var commit = $scope.filtered.commits[i];
-				for (x in commit.diffs) {
-					var diffs = commit.diffs[x];
+				for (y in commit.diffs) {
+					var diffs = commit.diffs[y];
 					if (diffs.path == commitRef.file) {
-						added += commit.diffs[x].lines_added;
-						removed += commit.diffs[x].lines_removed;
+						added += commit.diffs[y].lines_added;
+						removed += commit.diffs[y].lines_removed;
 						break;
 					}
 				}
