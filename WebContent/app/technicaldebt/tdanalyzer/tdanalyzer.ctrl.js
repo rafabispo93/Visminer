@@ -11,6 +11,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	$scope.filtered.committers = sidebarService.getCommitters();
 	$scope.filtered.debts = sidebarService.getDebts();
 	$scope.selectedTag = $scope.filtered.tags[0];
+	sidebarService.setTdItems([]);
 	$scope.tdItems = sidebarService.getTdItems();
 	$scope.tdItemFiltered = $scope.tdItems;
 	$scope.types = [];
