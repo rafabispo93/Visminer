@@ -26,15 +26,29 @@
   <div class="row">
     <section class="content" style="padding-top: 10px">
 
-      <div class="box-body no-padding">
-        <ul class="users-list clearfix">
-          <li ng-repeat="tdItem in graphCommitterData">
-            <img ng-src="{{tdItem.occurredBy.avatar}}" alt="User Image">
-            <a class="users-list-name" href="#">{{tdItem.occurredBy.name}}</a>
-            <span class="users-list-date">Today</span>
-          </li>
-        </ul>
-        <!-- /.users-list -->
+      <div class="col-md-12">
+        <div class="box box-default">
+          <div class="box-header with-border">
+            <h3 class="box-title">{{graphCommitterData.length}} Contributors</h3>
+
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body no-padding">
+            <ul class="users-list clearfix">
+              <li ng-repeat="tdItem in graphCommitterData | orderBy:'occurredBy.name'" style="width: 150px;">
+                <img ng-src="{{tdItem.occurredBy.avatar}}" alt="User Image" >
+                <a class="users-list-name" href="#">{{tdItem.occurredBy.name}}</a>
+              </li>
+            </ul>
+            <!-- /.users-list -->
+          </div>
+          <!-- /.box-body -->
+        </div>
       </div>
 
       <div ng-repeat="tdItem in graphCommitterData" class="col-md-12">
@@ -74,12 +88,12 @@
                   </tr>
                   <tr>
                     <td>Commits</td>
-                    <td>123</td>
+                    <td>{{tdItem.occurredBy.lines.added}}</td>
                     <td><span class="badge bg-red">55%</span></td>
                   </tr>
                   <tr>
                     <td>Files</td>
-                    <td>234</td>
+                    <td>{{tdItem.occurredBy.lines.added}}</td>
                     <td><span class="badge bg-red">55%</span></td>
                   </tr>
                   <tr>

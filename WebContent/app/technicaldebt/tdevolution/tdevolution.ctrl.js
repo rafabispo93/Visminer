@@ -15,6 +15,7 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 	$scope.tdItems = sidebarService.getTdItems();
 
   $scope.getGraphData = function(committersEmails, dateIni, dateEnd) {
+  	console.log('getGraphData', committersEmails, dateIni, dateEnd)
 	  var data = [],
 	  		dates = [];
 	  // Get data & dates
@@ -72,6 +73,7 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 		  });
 		  return series;
 		});
+    console.log('getGraphData returned data', data)
 		return data;
   }
 
@@ -144,7 +146,7 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
     }
   };
 
-	$scope.graphGlobalData = $scope.getGraphData([], new Date('2016-06-03'), new Date('2016-07-03 23:59:59'));
+	$scope.graphGlobalData = $scope.getGraphData([], new Date('2000-06-03'), new Date('2017-07-03 23:59:59'));
 	$scope.graphCommitterData = [];
 	
   $scope.graphCommitterOptions = {
@@ -158,16 +160,17 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
         left: 55
       },
       useInteractiveGuideline: true,
-      dispatch: {
-        stateChange: function(e){ console.log("stateChange"); },
-        changeState: function(e){ console.log("changeState"); },
-        tooltipShow: function(e){ console.log("tooltipShow"); },
-        tooltipHide: function(e){ console.log("tooltipHide"); }
-      },
+      // dispatch: {
+      //   stateChange: function(e){ console.log("stateChange"); },
+      //   changeState: function(e){ console.log("changeState"); },
+      //   tooltipShow: function(e){ console.log("tooltipShow"); },
+      //   tooltipHide: function(e){ console.log("tooltipHide"); }
+      // },
       xAxis: {
         axisLabel: 'Date',
         tickFormat: function(d) {
-          return d3.time.format('%b-%y')(new Date(d))
+          console.log('tickFormat', d)
+          return d3.time.format('%d-%b-%y')(new Date(d))
         },
         showMaxMin: false
       },
@@ -181,6 +184,7 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
     },
   };
   $scope.getGraphCommitterData = function(dateIni, dateEnd) {
+  	console.log('getGraphCommitterData', dateIni, dateEnd)
   	var committers = [];
   	for (i in $scope.tdItems) {
 			var committersExists = false;
@@ -212,6 +216,7 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
   			graph: $scope.getGraphData([committers[i].email], new Date(dateIni), new Date(dateEnd))
   		})
   	}
+    console.log('getGraphCommitterData returned data', data)
   	return data;
   }
 
@@ -223,25 +228,17 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
     }, 500);
   }
 
+  $scope.selectView = function(view) {
+  	console.log('selectView', view)
+		$scope.currentPage = view;
+		sidebarService.setCurrentPage(view);
+	}
+
   if ($scope.currentPage == 'tdevolution') {
+  	console.log("$scope.currentPage == 'tdevolution'")
   	$scope.tdItems = sidebarService.getTdItems();
   	console.log('$scope.tdItems', $scope.tdItems)
   	$scope.graphCommitterData = $scope.getGraphCommitterData(new Date('2010-06-03'), new Date('2020-07-03 23:59:59'));
   }
 
-	thisCtrl.loadEvolutionInformation = function(repository) {
-		if (repository) {
-			thisCtrl.tagsLoad(repository._id);
-		}	
-	}
-
-	// Load all tags (versions)
-	thisCtrl.tagsLoad = function(repositoryId) { 
-		console.log('tagsLoad=', repositoryId);
-		 $http.get('TreeServlet', {params:{"action": "getAllTagsAndMaster", "repositoryId": repositoryId}})
-		.success(function(data) {
-			console.log('found', data.length, 'tags');
-			$scope.tags = data;
-		});
-	}
 });
