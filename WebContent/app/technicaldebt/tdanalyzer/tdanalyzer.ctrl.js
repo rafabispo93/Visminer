@@ -90,67 +90,118 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	thisCtrl.loadTypes = function(tagId) {
 		console.log('loadTypes', tagId)
 		$http.get('TypeServlet', {params:{"action": "getListOfTypesByListOfTags", "ids": '['+tagId+']'}})
-		.success(function(data) {
-			console.log('found', data.length, 'types');
-			data = data[0];
+		.success(function(typeData) {
+			typeData = typeData[0];
+			console.log('found', typeData.length, 'types');
+			$scope.getDuplicatedCodeDebts($scope.selectedTag.name, function(duplicatedCodeData) {
+				// duplicatedCodeData = duplicatedCodeData[0];
+				for (var i = 0; i < typeData.length; i++) {
+					$scope.types.push(typeData[i]);
+					var commit = null;
+					var committer = null;
+					var diffs = [];
+					for (x in $scope.filtered.commits) {
+						if ($scope.filtered.commits[x]._id == typeData[i].commit) {
+							commit = $scope.filtered.commits[x];
+							for (y in $scope.filtered.committers) {
+								if (commit.committer.email == $scope.filtered.committers[y].email) {
+									committer = $scope.filtered.committers[y];
+									break;
+								}
+							}
+							break;
+						}
+					}
+					var debts = thisCtrl.getDebts(typeData[i]);
+					for (x in debts) {
+						$scope.tdItems.push({
+							"repository": typeData[i].repository,
+							"commit": commit._id,
+							"identificationDate": new Date(typeData[i].commit_date.$date),
+							"type": debts[x].type,
+							"tdItem": debts[x].name,
+							"metrics": (debts.length > 0) ? typeData[i].abstract_types[0].metrics : [],
+							"occurredBy": {
+								"name": committer.name,
+								"email": committer.email,
+								"avatar": committer.avatar
+							},
+							"diffs": $scope.getDiffs(typeData[i]),
+							"method": debts[x].method,
+							"file": typeData[i].file,
+							"package": typeData[i].package,
+							"isTdItem": false,
+							"principal": "",
+							"interestAmount": "",
+							"newInterestProbability": "",
+							"notes": ""
+						});
+					}
+					$scope.typesAnalized++;
+				}
 
-			for (var i = 0; i < data.length; i++) {
-				$scope.types.push(data[i]);
-				var commit = null;
-				var committer = null;
-				var diffs = [];
-				for (x in $scope.filtered.commits) {
-					if ($scope.filtered.commits[x]._id == data[i].commit) {
-						commit = $scope.filtered.commits[x];
-						for (y in $scope.filtered.committers) {
-							if (commit.committer.email == $scope.filtered.committers[y].email) {
-								committer = $scope.filtered.committers[y];
+
+				for (i in duplicatedCodeData) {
+					// console.log('duplicatedCodeData[i]', duplicatedCodeData[i])
+					if (duplicatedCodeData[i].code_smells.length > 0 && duplicatedCodeData[i].code_smells[0].occurrences.length > 0) {
+						var committer = null;
+						for (x in $scope.filtered.commits) {
+							if ($scope.filtered.commits[x]._id == duplicatedCodeData[i].commit) {
+								commit = $scope.filtered.commits[x];
+								for (y in $scope.filtered.committers) {
+									if (commit.committer.email == $scope.filtered.committers[y].email) {
+										committer = $scope.filtered.committers[y];
+										break;
+									}
+								}
 								break;
 							}
 						}
-						break;
+						console.log('committer', committer)
+						$scope.tdItems.push({
+							"repository": duplicatedCodeData[i].repository,
+							"commit": duplicatedCodeData[i].commit,
+							"identificationDate": new Date(duplicatedCodeData[i].commit_date.$date),
+							"type": 'Code Debt',
+							"tdItem": 'Duplicated Code',
+							"metrics": [],
+							"occurredBy": {
+								"name": committer.name,
+								"email": committer.email,
+								"avatar": committer.avatar
+							},
+							"diffs": [],
+							"method": '',
+							"file": 'typeData[i].file',
+							"package": 'typeData[i].package',
+							"isTdItem": false,
+							"principal": "",
+							"interestAmount": "",
+							"newInterestProbability": "",
+							"notes": ""
+						});
 					}
 				}
-				var debts = thisCtrl.getDebts(data[i]);
-				for (x in debts) {
-					$scope.tdItems.push({
-						"repository": data[i].repository,
-						"commit": commit._id,
-						"identificationDate": new Date(data[i].commit_date.$date),
-						"type": debts[x].type,
-						"tdItem": debts[x].name,
-						"metrics": (debts.length > 0) ? data[i].abstract_types[0].metrics : [],
-						"occurredBy": {
-							"name": committer.name,
-							"email": committer.email,
-							"avatar": committer.avatar
-						},
-						"diffs": $scope.getDiffs(data[i]),
-						"method": debts[x].method,
-						"file": data[i].file,
-						"package": data[i].package,
-						"isTdItem": false,
-						"principal": "",
-						"interestAmount": "",
-						"newInterestProbability": "",
-						"notes": ""
-					});
-				}
-				$scope.typesAnalized++;
-			}
-			sidebarService.setTdItems($scope.tdItems);
+				sidebarService.setTdItems($scope.tdItems);
+			})
 		});
+	}
+
+	$scope.getDuplicatedCodeDebts = function(tagName, callback) {
+		$http.get('TagAnalysisServlet', {params:{"action": "getAllByTag", "tagName": tagName}})
+		.success(function(data) {
+			callback(data);
+		})
 	}
 	
 	thisCtrl.getDebts = function(list) {
 		var debts = [];
-
 		if (typeof list.abstract_types != 'undefined' && list.abstract_types.length > 0) {
 			// looking for long methods
 			if (list.abstract_types[0].codesmells) {
-					for (i in list.abstract_types[0].codesmells) {
+				for (i in list.abstract_types[0].codesmells) {
 					var codesmells = list.abstract_types[0].codesmells[i];
-					if (codesmells.name == 'Long Method' || codesmells.name == 'Duplicated Code') { 
+					if (codesmells.name == 'Long Method') { 
 						for (j in codesmells.methods) {
 							if (codesmells.methods[j].value == true) {
 								debts.push({
@@ -163,7 +214,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 					}
 				}
 			}
-			// && list.abstract_types[0].technicaldebts != 'undefined'
 			debtsList = list.abstract_types[0].technicaldebts;
 			if (debtsList.length > 0) {
 				for (var j = 0; j < debtsList.length; j++) {
