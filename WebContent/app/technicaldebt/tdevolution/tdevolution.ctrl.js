@@ -1,244 +1,233 @@
 homeApp = angular.module('homeApp');
 
 homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService){
-	var thisCtrl = this;
+  var thisCtrl = this;
 
-	$scope.currentPage = sidebarService.getCurrentPage();
-	$scope.tags = [];
-	$scope.tagsNames = [];
+  $scope.currentPage = sidebarService.getCurrentPage();
+  $scope.tags = [];
+  $scope.tagsNames = [];
 
-	$scope.sliderTags = [];
+  $scope.sliderTags = [];
 
-	$scope.filtered.repository = sidebarService.getRepository();
-	$scope.filtered.tags = sidebarService.getTags();
-	$scope.filtered.debts = sidebarService.getDebts();
-	$scope.tdItems = sidebarService.getTdItems();
+  $scope.chartCodeDebtSeries = [];
+  $scope.chartDesignDebtSeries = [];
+  
+  $scope.filtered.repository = sidebarService.getRepository();
+  $scope.filtered.tags = sidebarService.getTags();
+  $scope.filtered.debts = sidebarService.getDebts();
 
-  $scope.getGraphData = function(committersEmails, dateIni, dateEnd) {
-  	console.log('getGraphData', committersEmails, dateIni, dateEnd)
-	  var data = [],
-	  		dates = [];
-	  // Get data & dates
-	  for (i in $scope.tdItems) {
-	  	var dataExists = false;
-	  	for (x in data) {
-	  		if (data[x].key == $scope.tdItems[i].tdItem) {
-	  			dataExists = true;
-	  		}
-	  	}
-	  	if (dataExists == false) {
-	  		data.push({
-	  			"key": $scope.tdItems[i].tdItem,
-	  			"values": []
-	  		})
-	  	}
-	  	if (dates.indexOf($scope.tdItems[i].identificationDate.getTime()) === -1) {
-	  		if (committersEmails.length > 0) {
-	  			if (committersEmails.indexOf($scope.tdItems[i].occurredBy.email) > -1) {
-			  		var date = getGraphDataDate($scope.tdItems[i], committersEmails, dateIni, dateEnd);
-			  		if (date != null) {
-			  			dates.push(date);
-			  		}
-	  			}
-	  		} else {
-		  		var date = getGraphDataDate($scope.tdItems[i], committersEmails, dateIni, dateEnd);
-		  		if (date != null) {
-		  			dates.push(date);
-		  		}
-	  		}
-	  	}
-	  }
-	  dates.sort();
-	  // Get values
-	  for (i in data) {
-	  	for (z in dates) {
-	  		var total = 0;
-	  		for (x in $scope.tdItems) {
-	  			if ($scope.tdItems[x].tdItem == data[i].key && $scope.tdItems[x].identificationDate.getTime() == dates[z]) {
-	  				if (committersEmails.length > 0) {
-	  					if (committersEmails.indexOf($scope.tdItems[x].occurredBy.email) > -1) {
-	  						total++;
-	  					}
-	  				} else {
-	  					total++;
-	  				}
-	  			}
-	  		}
-	  		data[i].values.push([dates[z], total]);
-	  	}
-	  }
-	  data.map(function(series) {
-		  series.values = series.values.map(function(d) { 
-		  	return {x: d[0], y: d[1] } 
-		  });
-		  return series;
-		});
-    console.log('getGraphData returned data', data)
-		return data;
+  thisCtrl.loadEvolutionInformation = function(repository) {
+    if (repository) {
+      thisCtrl.tagsLoad(repository._id);
+    } 
   }
 
-  function getGraphDataDate(tdItems, committersEmails, dateIni, dateEnd) {
-  	var date = null;
-		if (dateIni instanceof Date || dateEnd instanceof Date) {
-			if (dateIni instanceof Date && dateEnd instanceof Date) { 
-				if (tdItems.identificationDate.getTime() >= dateIni.getTime() && dateIni instanceof Date && tdItems.identificationDate.getTime() <= dateEnd.getTime()) {
-					date = tdItems.identificationDate.getTime();
-				}
-			} else if (dateIni instanceof Date && tdItems.identificationDate.getTime() >= dateIni.getTime()) {
-				date = tdItems.identificationDate.getTime();
-			} else if (dateEnd instanceof Date && tdItems.identificationDate.getTime() <= dateEnd.getTime()) {
-				date = tdItems.identificationDate.getTime();
-			}
-		} else {
-  		date = tdItems.identificationDate.getTime();
-		}
-		return date;
-	}
+  // Load all tags (versions)
+  thisCtrl.tagsLoad = function(repositoryId) { 
+    console.log('tagsLoad=', repositoryId);
 
+     $http.get('TreeServlet', {params:{"action": "getAllTagsAndMaster", "repositoryId": repositoryId}})
+    .success(function(data) {
+      console.log('found', data.length, 'tags');
+      $scope.tags = data.sort(function(tag1, tag2) {
+                      return tag1.commits.length - tag2.commits.length;
+                    });
+      thisCtrl.loadSlider();
+    });
+  }
 
-	var graphCommitterUpdate;
-	$scope.graphGlobalOptions = {
-    chart: {
-      type: 'lineWithFocusChart',
-      height: 300,
-      margin : {
-        top: 20,
-        right: 20,
-        bottom: 60,
-        left: 40
-      },
-      duration: 300,
-      title: {
-        enable: true,
-        text: 'Technical Debt Total'
-      },
-      xAxis: {
-        axisLabel: 'Date',
-        tickFormat: function(d) {
-          return d3.time.format('%b-%y')(new Date(d))
-        },
-        showMaxMin: false
-      },
-      x2Axis: {
-        tickFormat: function(d) {
-          return d3.time.format('%b-%y')(new Date(d))
-        },
-        showMaxMin: false
-      },
-      yAxis: {
-       axisLabel: 'Y1 Axis',
-        tickFormat: function(d){
-            return d3.format(',f')(d);
-        },
-        axisLabelDistance: 12
-      },
-      y2Axis: {
-				axisLabel: 'Y2 Axis',
-        tickFormat: function(d) {
-          return '$' + d3.format(',.2f')(d)
+  thisCtrl.loadSlider = function() {
+    $scope.slider = {
+        minValue: 1,
+        maxValue: $scope.tags.length,
+        options: {
+            ceil: $scope.tags.length,
+            floor: 1,
+            showTicksValues: true,
+            draggableRange: true,
+            onEnd: function () {
+                thisCtrl.loadSliderTags();
+            },
+            translate: function (value) {
+                var name = $scope.tags[value-1].name;
+                if (name.length > 7)
+                  name = name.substring(0, 7);
+                return name;
+            }
         }
-    	},
-      callback: function(chart){
-        chart.dispatch.on('brush', function (brushExtent) {
-        	graphCommitterUpdateTimeout(Math.floor(brushExtent.extent[0]), Math.floor(brushExtent.extent[1]))
-				});
-      }
-    }
-  };
+    };
+    thisCtrl.loadSliderTags();
+  }
 
-	$scope.graphGlobalData = $scope.getGraphData([], new Date('2000-06-03'), new Date('2017-07-03 23:59:59'));
-	$scope.graphCommitterData = [];
-	
-  $scope.graphCommitterOptions = {
-    chart: {
-      type: 'lineChart',
-      height: 200,
-      margin : {
-        top: 20,
-        right: 20,
-        bottom: 40,
-        left: 55
+  thisCtrl.loadSliderTags = function() {
+    var listTypesByTags = [];
+    var request = thisCtrl.getListOfTypesByListOfTags(listTypesByTags);
+
+    $q.all([request]).then(function() {
+      $scope.tagsNames = [];
+      $scope.sliderTags = [];
+      $scope.chartCodeDebtSeries = [];
+      $scope.chartDesignDebtSeries = []; 
+      var j = 0;
+
+      for (var i = $scope.slider.minValue-1; i < $scope.slider.maxValue; i++) {
+          $scope.tagsNames.push($scope.tags[i].name);
+
+          var tag = {
+            tag: null,
+            types: [],
+            totalSmells: 0,
+            totalDebts: 0
+          };
+          tag.tag = $scope.tags[i];
+          tag.types = listTypesByTags[j];
+          j++;
+
+          var totalCodeDebt = thisCtrl.getTotalOfCodeDebts(tag.types);
+          var totalDesignDebt = thisCtrl.getTotalOfDesignDebts(tag.types)
+          $scope.chartCodeDebtSeries.push(totalCodeDebt);
+          $scope.chartDesignDebtSeries.push(totalDesignDebt);
+
+          tag.totalDebts = totalCodeDebt + totalDesignDebt;
+          thisCtrl.getTotalOfCodeSmells(tag, tag.types);
+          $scope.sliderTags.push(tag);
+      }
+      thisCtrl.loadColumnChart();
+    });
+  }
+
+  thisCtrl.getListOfTypesByListOfTags = function(list) {
+    var ids = [];
+    for (var i = $scope.slider.minValue-1; i < $scope.slider.maxValue; i++) {
+      ids.push($scope.tags[i]._id);
+    }
+    return $http.get('TypeServlet', {params:{"action": "getListOfTypesByListOfTags", "ids": JSON.stringify(ids)}})
+    .success(function(data) {
+      console.log("success getListOfTypesByListOfTags");
+      for (var j = 0; j < data.length; j++) 
+        list.push(data[j]);
+    });
+  }
+
+  thisCtrl.getTotalOfCodeSmells = function(tag, types) {
+    var total = 0;
+    for (var i = 0; i < types.length; i++) {
+      if (types[i].abstract_types[0]) {
+        var smells = types[i].abstract_types[0].codesmells;
+        for (var j = 0; j < smells.length; j++) {
+          if (smells[j].value) {
+            total++;
+          }
+        }
+      } 
+    } 
+    tag.totalSmells = total;
+  }
+
+  thisCtrl.getTotalOfDesignDebts = function(types) {
+    var total = 0;
+    for (var i = 0; i < types.length; i++) {
+      if (types[i].abstract_types[0]) {
+        var debt = types[i].abstract_types[0].technicaldebts[0];
+        if (debt.value && debt.status == 1) {
+          total++;
+        }
+      } 
+    } 
+    return total;
+  }
+
+  thisCtrl.getTotalOfCodeDebts = function(types) {
+    var total = 0;
+    for (var i = 0; i < types.length; i++) {
+      if (types[i].abstract_types[0]) {
+        var debt = types[i].abstract_types[0].technicaldebts[1];
+        if (debt.value && debt.status == 1) {
+          total++;
+        }
+      } 
+    } 
+    return total;
+  }
+
+  thisCtrl.loadColumnChart = function() {
+    var seriesArray = [];
+    if ($.inArray('CODE', $scope.filtered.debts) > -1) {
+      seriesArray.push({
+        color: '#1B93A7',
+        name: 'Code Debt',
+        data: $scope.chartCodeDebtSeries });
+    }
+    if ($.inArray('DESIGN', $scope.filtered.debts) > -1) {
+      seriesArray.push({
+        color: '#91A28B',
+        name: 'Design Debt',
+        data: $scope.chartDesignDebtSeries });
+    }
+    $scope.chartConfig = {
+      title: {
+          text: 'Technical Debt X Versions'
       },
-      useInteractiveGuideline: true,
-      // dispatch: {
-      //   stateChange: function(e){ console.log("stateChange"); },
-      //   changeState: function(e){ console.log("changeState"); },
-      //   tooltipShow: function(e){ console.log("tooltipShow"); },
-      //   tooltipHide: function(e){ console.log("tooltipHide"); }
-      // },
       xAxis: {
-        axisLabel: 'Date',
-        tickFormat: function(d) {
-          console.log('tickFormat', d)
-          return d3.time.format('%d-%b-%y')(new Date(d))
-        },
-        showMaxMin: false
+          categories: $scope.tagsNames
       },
       yAxis: {
-        axisLabel: 'Y1 Axis',
-        tickFormat: function(d){
-          return d3.format(',f')(d);
-        },
-        axisLabelDistance: 12
+          min: 0,
+          allowDecimals: false,
+          title: {
+              text: 'Total of classes having Technical Debt'
+          },
+          stackLabels: {
+              enabled: true,
+              style: {
+                  fontWeight: 'bold',
+                  color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+              }
+          }
+      },
+      options: {
+        chart: {
+          type: 'column'
+      },
+        legend: {
+          align: 'right',
+          x: -70,
+          verticalAlign: 'top',
+          y: 20,
+          floating: true,
+          backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+          borderColor: '#CCC',
+          borderWidth: 1,
+          shadow: false
+      },
+      tooltip: {
+          formatter: function() {
+              return '<b>'+ this.x +'</b><br/>'+
+                  this.series.name +': '+ this.y +'<br/>'+
+                  'Total: '+ this.point.stackTotal;
+          }
+      },
+      plotOptions: {
+          column: {
+              stacking: 'normal',
+              dataLabels: {
+                  enabled: true,
+                  color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                  style: {
+                      textShadow: '0 0 3px black, 0 0 3px black'
+                  }
+              }
+          }
+      }},
+      series: seriesArray,
+      size: {
+         height: 350
       }
-    },
-  };
-  $scope.getGraphCommitterData = function(dateIni, dateEnd) {
-  	console.log('getGraphCommitterData', dateIni, dateEnd)
-  	var committers = [];
-  	for (i in $scope.tdItems) {
-			var committersExists = false;
-			var tdItem = $scope.tdItems[i];
-			if (dateIni <= tdItem.identificationDate && tdItem.identificationDate <= dateEnd) {
-	  		for (x in committers) {
-	  			if (committers[x].email == tdItem.occurredBy.email) {
-	  				committersExists = true;
-	  				committers[x].lines.added += tdItem.diffs.added;
-	  				committers[x].lines.removed += tdItem.diffs.removed;
-	  				committers[x].principal += tdItem.principal;
-	  				break;
-	  			}
-	  		}
-	  		if (committersExists == false) {
-	  			tdItem.occurredBy.principal = tdItem.principal;
-	  			tdItem.occurredBy.lines = {
-	  				added: tdItem.diffs.added,
-	  				removed: tdItem.diffs.removed
-	  			}
-	  			committers.push(tdItem.occurredBy);
-	  		}
-			}
-  	}
-  	var data = [];
-  	for (i in committers) {
-  		data.push({
-  			occurredBy: committers[i],
-  			graph: $scope.getGraphData([committers[i].email], new Date(dateIni), new Date(dateEnd))
-  		})
-  	}
-    console.log('getGraphCommitterData returned data', data)
-  	return data;
+    };
   }
-
-  function graphCommitterUpdateTimeout(dateIni, dateEnd) {
-  	clearTimeout(graphCommitterUpdate);
-    graphCommitterUpdate = setTimeout(function(){ 
-  		$scope.graphCommitterData = $scope.getGraphCommitterData(dateIni, dateEnd);
-      $scope.$apply();
-    }, 500);
-  }
-
-  $scope.selectView = function(view) {
-  	console.log('selectView', view)
-		$scope.currentPage = view;
-		sidebarService.setCurrentPage(view);
-	}
 
   if ($scope.currentPage == 'tdevolution') {
-  	console.log("$scope.currentPage == 'tdevolution'")
-  	$scope.tdItems = sidebarService.getTdItems();
-  	console.log('$scope.tdItems', $scope.tdItems)
-  	$scope.graphCommitterData = $scope.getGraphCommitterData(new Date('2010-06-03'), new Date('2020-07-03 23:59:59'));
+    thisCtrl.loadColumnChart();
+    thisCtrl.loadEvolutionInformation($scope.filtered.repository); 
   }
-
 });
