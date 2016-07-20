@@ -11,8 +11,8 @@ angular.module('homeApp').component('tdItemModal', {
       $scope.activeTab('td');
   		tdItem = obj;
   		$scope.tdItemModalObj = JSON.parse(JSON.stringify(obj)); // clone the object
-  		$scope.tdItemModalObj.identificationDate = moment($scope.tdItemModalObj.identificationDate).format('l');
-      $scope.tdItemModalObj.file = $scope.getFileName($scope.tdItemModalObj.file);
+  		$scope.tdItemModalObj.commit.date = moment($scope.tdItemModalObj.commit.date).format('l');
+      // $scope.tdItemModalObj.file = $scope.getFileName($scope.tdItemModalObj.file);
   	});
 
   	$scope.activeTab = function(tabId) {
@@ -30,12 +30,12 @@ angular.module('homeApp').component('tdItemModal', {
 
   	$scope.save = function() {
   		tdItem.type = $scope.tdItemModalObj.type;
-  		tdItem.tdItem = $scope.tdItemModalObj.tdItem;
+  		tdItem.tdIndicator = $scope.tdItemModalObj.tdIndicator;
   		tdItem.notes = $scope.tdItemModalObj.notes;
   		tdItem.isTdItem = $scope.tdItemModalObj.isTdItem;
   		tdItem.principal = $scope.tdItemModalObj.principal;
   		tdItem.interestAmount = $scope.tdItemModalObj.interestAmount;
-  		tdItem.newInterestProbability = $scope.tdItemModalObj.newInterestProbability;
+  		tdItem.interestProbability = $scope.tdItemModalObj.interestProbability;
   		$('#tdItemModal').modal('hide');
   	}
 

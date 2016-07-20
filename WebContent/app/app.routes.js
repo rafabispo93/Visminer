@@ -21,6 +21,6 @@ homeApp.config(['$routeProvider', '$locationProvider',
 		    templateUrl: 'app/technicaldebt/tdcommitters/tdcommitters.html',
 		    controller: 'TDCommittersCtrl'
 		      }).
-			otherwise({ redirectTo: '/tdevolution' });
+			otherwise({ redirectTo: '/tdanalyzer' });
 			$locationProvider.html5Mode(true);
  }]);

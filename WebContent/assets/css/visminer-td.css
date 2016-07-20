@@ -251,3 +251,10 @@
     border-radius: 50%; 
     margin-right: 5px;
 }
+
+.truncate {
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

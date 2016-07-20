@@ -2,13 +2,14 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
  $sessionStorage, $location, $route, sidebarService, alertModalService) {
   // This controller instance
   var thisCtrl = this;
+
   // Data collections
   $scope.commits = [];
   $scope.committers = [];
   $scope.repositories = [];
   $scope.tags = [];
   $scope.committerEvolution = [];
-  $scope.currentPage = "tdevolution";
+  $scope.currentPage = "tdanalyzer";
   $scope.durationProgress = 1000;
 
   $scope.filtered = {
@@ -109,8 +110,8 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		  alertModalService.setMessage("Please Select a Repository!");
 		  analyze = false;
 		} 
-		else if ($scope.filtered.tags.length == 0) {
-		  alertModalService.setMessage("Please Select What Versions Will be Analyzed!");
+		else if ($scope.filtered.tags == null) {
+		  alertModalService.setMessage("Please Select What Version Will be Analyzed!");
       analyze = false;
 		} 
 		else if ($scope.filtered.debts.length == 0) {
@@ -119,7 +120,6 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		}
 
 		if (analyze) {
-			
 			$('#progressBarModal').modal('show');
 			$('#progressBarModal').on('hidden.bs.modal', function(e) {
 				thisCtrl.selectView('tdanalyzer');
@@ -132,3 +132,53 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 	}
 
 });
+
+homeApp.factory('TDItem', function(Commit, Committer) {
+	var TDItem = function (repository, commit, committer, type, tdIndicator, isTdItem, principal, interestAmount, interestProbability, notes) {
+		if (typeof repository != 'undefined') {
+			if (!(commit instanceof Commit)) {
+				throw new Error('commit need to be a instance of Commit class');
+			}
+			if (!(committer instanceof Committer)) {
+				throw new Error('committer need to be a instance of Committer class');
+			}
+		}
+	  this.repository = repository;
+	  this.commit = commit;
+	  this.committer = committer;
+	  this.type = type;
+	  this.tdIndicator = tdIndicator;
+	  this.isTdItem = isTdItem;
+	  this.principal = principal;
+	  this.interestAmount = interestAmount;
+	  this.interestProbability = interestProbability;
+	  this.notes = notes;
+	};
+	return TDItem;
+})
+
+homeApp.factory('Commit', function() {
+	var Commit = function (id, date) {
+	  this.id = id;
+	  this.date = date;
+	};
+	return Commit;
+})
+
+homeApp.factory('Committer', function() {
+	var Committer = function (name, email, avatar) {
+	  this.name = name;
+	  this.email = email;
+	  this.avatar = avatar;
+	};
+	return Committer;
+})
+
+homeApp.factory('DuplicatedCode', function() {
+  var DuplicatedCode = function(files) {
+  	this.name = 'Duplicated Code';
+  	this.location = 'File';
+  	this.files = files;
+  };
+  return DuplicatedCode;
+})

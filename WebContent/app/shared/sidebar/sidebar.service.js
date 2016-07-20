@@ -1,6 +1,6 @@
 homeApp.service('sidebarService', function($rootScope){
 
-	this.data = {currentPage : "tdevolution"};
+	this.data = {currentPage : "tdanalyzer"};
 	this.data.repository = null;
 	this.data.tags = [];
 	this.data.commits = [];

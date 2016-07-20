@@ -1,6 +1,7 @@
 homeApp = angular.module('homeApp');
 
 homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
+ TDItem, Commit, Committer, DuplicatedCode, // Models
  sidebarService, alertModalService, tdItemModalService, typeSmellsDetailsService){
 	var thisCtrl = this;
 	
@@ -112,30 +113,33 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 							break;
 						}
 					}
+					console.log('committer', committer)
 					var debts = thisCtrl.getDebts(typeData[i]);
 					for (x in debts) {
-						$scope.tdItems.push({
-							"repository": typeData[i].repository,
-							"commit": commit._id,
-							"identificationDate": new Date(typeData[i].commit_date.$date),
-							"type": debts[x].type,
-							"tdItem": debts[x].name,
-							"metrics": (debts.length > 0) ? typeData[i].abstract_types[0].metrics : [],
-							"occurredBy": {
-								"name": committer.name,
-								"email": committer.email,
-								"avatar": committer.avatar
-							},
-							"diffs": $scope.getDiffs(typeData[i]),
-							"method": debts[x].method,
-							"file": typeData[i].file,
-							"package": typeData[i].package,
-							"isTdItem": false,
-							"principal": "",
-							"interestAmount": "",
-							"newInterestProbability": "",
-							"notes": ""
-						});
+						// $scope.tdItems.push({
+						// 	"repository": typeData[i].repository,
+						// 	"commit": commit._id,
+						// 	"identificationDate": new Date(typeData[i].commit_date.$date),
+						// 	"type": debts[x].type,
+						// 	"tdIndicator": debts[x].name,
+						// 	"metrics": (debts.length > 0) ? typeData[i].abstract_types[0].metrics : [],
+						// 	"incurredBy": {
+						// 		"name": committer.name,
+						// 		"email": committer.email,
+						// 		"avatar": committer.avatar
+						// 	},
+						// 	"diffs": $scope.getDiffs(typeData[i]),
+						// 	"location": debts[x].method,
+						// 	"locationType": "method",
+						// 	"method": typeData[i].method,
+						// 	"file": typeData[i].file,
+						// 	"package": typeData[i].package,
+						// 	"isTdItem": false,
+						// 	"principal": "",
+						// 	"interestAmount": "",
+						// 	"interestProbability": "",
+						// 	"notes": ""
+						// });
 					}
 					$scope.typesAnalized++;
 				}
@@ -157,33 +161,99 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 								break;
 							}
 						}
+						var files = [];
+						for (z in duplicatedCodeData[i].code_smells[0].occurrences) {
+							files.push({
+					  		one: {
+					  			name: duplicatedCodeData[i].code_smells[0].occurrences[z].files[0].file_name,
+					  			line: duplicatedCodeData[i].code_smells[0].occurrences[z].files[0].begin_line+' ~ '+duplicatedCodeData[i].code_smells[0].occurrences[z].files[0].end_line,
+					  		},
+					  		two: {
+					  			name: duplicatedCodeData[i].code_smells[0].occurrences[z].files[1].file_name,
+					  			line: duplicatedCodeData[i].code_smells[0].occurrences[z].files[1].begin_line+' ~ '+duplicatedCodeData[i].code_smells[0].occurrences[z].files[1].end_line,
+					  		},
+					  		code: duplicatedCodeData[i].code_smells[0].occurrences[z].source_code_slice
+							})
+						}
 						console.log('committer', committer)
-						$scope.tdItems.push({
-							"repository": duplicatedCodeData[i].repository,
-							"commit": duplicatedCodeData[i].commit,
-							"identificationDate": new Date(duplicatedCodeData[i].commit_date.$date),
-							"type": 'Code Debt',
-							"tdItem": 'Duplicated Code',
-							"metrics": [],
-							"occurredBy": {
-								"name": committer.name,
-								"email": committer.email,
-								"avatar": committer.avatar
-							},
-							"diffs": [],
-							"method": '',
-							"file": 'typeData[i].file',
-							"package": 'typeData[i].package',
-							"isTdItem": false,
-							"principal": "",
-							"interestAmount": "",
-							"newInterestProbability": "",
-							"notes": ""
-						});
+						$scope.tdItems.push(
+							new TDItem(
+								duplicatedCodeData[i].repository, 
+								new Commit(duplicatedCodeData[i].commit, new Date(duplicatedCodeData[i].commit_date.$date)), 
+								(typeof committer != 'undefined') ? new Committer(committer.name, committer.email, committer.avatar) : new Committer(),
+								'Code Debt',
+								new DuplicatedCode(files),
+								// [],
+								// [],
+								// 'file',
+								// 'file',
+								// 'null',
+								false,
+								null,
+								null,
+								null,
+								null
+							)
+						);
+						// $scope.tdItems.push({
+						// 	"repository": duplicatedCodeData[i].repository,
+						// 	"commit": duplicatedCodeData[i].commit,
+						// 	"identificationDate": new Date(duplicatedCodeData[i].commit_date.$date),
+						// 	"type": 'Code Debt',
+						// 	"tdIndicator": 'Duplicated Code',
+						// 	"metrics": [],
+						// 	"incurredBy": {
+						// 		"name": committer.name,
+						// 		"email": committer.email,
+						// 		"avatar": committer.avatar
+						// 	},
+						// 	"diffs": [],
+						// 	"location": "file",
+						// 	"locationType": "file",
+						// 	"method": null,
+						// 	"file": files.join(';'),
+						// 	"package": null,
+						// 	"details": sourceCodeSlice.join("\n\n--------------------\n\n"),
+						// 	"isTdItem": false,
+						// 	"principal": "",
+						// 	"interestAmount": "",
+						// 	"interestProbability": "",
+						// 	"notes": ""
+						// });
 					}
 				}
+				console.log('$scope.tdItems', $scope.tdItems)
 				sidebarService.setTdItems($scope.tdItems);
 			})
+		});
+	}
+
+	$scope.addTdItem = function(repository, commit, identificationDate, type, tdIndicator, metrics, incurredBy, diffs, 
+		location, locationType, method, file, package, details, isTdItem, principal, interestAmount, interestProbability, notes) {
+		$scope.tdItems.push({
+			"repository": repository,
+			"commit": commit,
+			"identificationDate": identificationDate,
+			"type": type,
+			"tdIndicator": tdIndicator,
+			"metrics": metrics,
+			"incurredBy": {
+				"name": incurredBy.name,
+				"email": incurredBy.email,
+				"avatar": incurredBy.avatar
+			},
+			"diffs": diffs,
+			"location": location,
+			"locationType": locationType,
+			"method": method,
+			"file": file,
+			"package": package,
+			"details": details,
+			"isTdItem": isTdItem,
+			"principal": principal,
+			"interestAmount": interestAmount,
+			"interestProbability": interestProbability,
+			"notes": notes
 		});
 	}
 
