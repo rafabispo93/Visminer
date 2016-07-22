@@ -1,5 +1,5 @@
 homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
- $sessionStorage, $location, $route, sidebarService, alertModalService) {
+ $sessionStorage, $location, $route, Repository, Committer, sidebarService, alertModalService) {
   // This controller instance
   var thisCtrl = this;
 
@@ -26,7 +26,13 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		$http.get('RepositoryServlet', {params:{"action": "getAll"}})
 		.success(function(data) {
 			console.log('found', data.length, 'repositories');
-			$scope.repositories = data;
+			var contributors = [];
+			for (i in data) {
+				for (x in data[i].contributors) {
+					contributors.push(new Committer(data[i].contributors[x].name, data[i].contributors[x].email, null));
+				}
+				$scope.repositories.push(new Repository(data[i]._id, data[i].name, data[i].description, data[i].path, contributors));
+			}
 		});
 	}
 
@@ -41,13 +47,12 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		$scope.filtered.repository = repository;
 		sidebarService.setRepository(repository);
 		$route.reload();
-		thisCtrl.tagsLoad(repository._id);
+		thisCtrl.tagsLoad(repository.id);
 	}
 
 	// Load all tags (versions)
 	thisCtrl.tagsLoad = function(repositoryId) { 
 		console.log('tagsLoad=', repositoryId);
-
 		$http.get('TreeServlet', {params:{"action": "getAllTagsAndMaster", "repositoryId": repositoryId}})
 		.success(function(data) {
 			console.log('found', data.length, 'tags');
@@ -130,31 +135,17 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 			$('#alertModal').modal('show');
 		}
 	}
-
 });
-
-homeApp.factory('TDItem', function(Commit, Committer) {
-	var TDItem = function (repository, commit, committer, type, tdIndicator, isTdItem, principal, interestAmount, interestProbability, notes) {
-		if (typeof repository != 'undefined') {
-			if (!(commit instanceof Commit)) {
-				throw new Error('commit need to be a instance of Commit class');
-			}
-			if (!(committer instanceof Committer)) {
-				throw new Error('committer need to be a instance of Committer class');
-			}
-		}
-	  this.repository = repository;
-	  this.commit = commit;
-	  this.committer = committer;
-	  this.type = type;
-	  this.tdIndicator = tdIndicator;
-	  this.isTdItem = isTdItem;
-	  this.principal = principal;
-	  this.interestAmount = interestAmount;
-	  this.interestProbability = interestProbability;
-	  this.notes = notes;
+// Models
+homeApp.factory('Repository', function() {
+	var Repository = function (id, name, description, path, contributors) {
+	  this.id = id;
+	  this.name = name;
+	  this.description = description;
+	  this.path = path;
+	  this.contributors = contributors;
 	};
-	return TDItem;
+	return Repository;
 })
 
 homeApp.factory('Commit', function() {
@@ -181,4 +172,28 @@ homeApp.factory('DuplicatedCode', function() {
   	this.files = files;
   };
   return DuplicatedCode;
+})
+
+homeApp.factory('TDItem', function(Commit, Committer) {
+	var TDItem = function (repository, commit, committer, type, tdIndicator, isTdItem, principal, interestAmount, interestProbability, notes) {
+		if (typeof repository != 'undefined') {
+			if (!(commit instanceof Commit)) {
+				throw new Error('commit need to be a instance of Commit class');
+			}
+			if (!(committer instanceof Committer)) {
+				throw new Error('committer need to be a instance of Committer class');
+			}
+		}
+	  this.repository = repository;
+	  this.commit = commit;
+	  this.committer = committer;
+	  this.type = type;
+	  this.tdIndicator = tdIndicator;
+	  this.isTdItem = isTdItem;
+	  this.principal = principal;
+	  this.interestAmount = interestAmount;
+	  this.interestProbability = interestProbability;
+	  this.notes = notes;
+	};
+	return TDItem;
 })

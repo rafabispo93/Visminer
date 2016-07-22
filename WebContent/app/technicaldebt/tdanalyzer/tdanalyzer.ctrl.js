@@ -265,11 +265,13 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	}
 	
 	thisCtrl.getDebts = function(list) {
+		console.log('getDebts', list)
 		var debts = [];
 		if (typeof list.abstract_types != 'undefined' && list.abstract_types.length > 0) {
 			// looking for long methods
 			if (list.abstract_types[0].codesmells) {
 				for (i in list.abstract_types[0].codesmells) {
+					console.log('list.abstract_types[0].codesmells', list.abstract_types[0].codesmells)
 					var codesmells = list.abstract_types[0].codesmells[i];
 					if (codesmells.name == 'Long Method') { 
 						for (j in codesmells.methods) {

@@ -29,9 +29,9 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
 	  			"values": []
 	  		})
 	  	}
-	  	if (dates.indexOf($scope.tdItems[i].identificationDate.getTime()) === -1) {
+	  	if (dates.indexOf($scope.tdItems[i].commit.date.getTime()) === -1) {
 	  		if (committersEmails.length > 0) {
-	  			if (committersEmails.indexOf($scope.tdItems[i].incurredBy.email) > -1) {
+	  			if (committersEmails.indexOf($scope.tdItems[i].committer.email) > -1) {
 			  		var date = getGraphDataDate($scope.tdItems[i], committersEmails, dateIni, dateEnd);
 			  		if (date != null) {
 			  			dates.push(date);
@@ -51,9 +51,9 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
 	  	for (z in dates) {
 	  		var total = 0;
 	  		for (x in $scope.tdItems) {
-	  			if ($scope.tdItems[x].tdIndicator == data[i].key && $scope.tdItems[x].identificationDate.getTime() == dates[z]) {
+	  			if ($scope.tdItems[x].tdIndicator == data[i].key && $scope.tdItems[x].commit.date.getTime() == dates[z]) {
 	  				if (committersEmails.length > 0) {
-	  					if (committersEmails.indexOf($scope.tdItems[x].incurredBy.email) > -1) {
+	  					if (committersEmails.indexOf($scope.tdItems[x].committer.email) > -1) {
 	  						total++;
 	  					}
 	  				} else {
@@ -78,16 +78,16 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
   	var date = null;
 		if (dateIni instanceof Date || dateEnd instanceof Date) {
 			if (dateIni instanceof Date && dateEnd instanceof Date) { 
-				if (tdItems.identificationDate.getTime() >= dateIni.getTime() && dateIni instanceof Date && tdItems.identificationDate.getTime() <= dateEnd.getTime()) {
-					date = tdItems.identificationDate.getTime();
+				if (tdItems.commit.date.getTime() >= dateIni.getTime() && dateIni instanceof Date && tdItems.commit.date.getTime() <= dateEnd.getTime()) {
+					date = tdItems.commit.date.getTime();
 				}
-			} else if (dateIni instanceof Date && tdItems.identificationDate.getTime() >= dateIni.getTime()) {
-				date = tdItems.identificationDate.getTime();
-			} else if (dateEnd instanceof Date && tdItems.identificationDate.getTime() <= dateEnd.getTime()) {
-				date = tdItems.identificationDate.getTime();
+			} else if (dateIni instanceof Date && tdItems.commit.date.getTime() >= dateIni.getTime()) {
+				date = tdItems.commit.date.getTime();
+			} else if (dateEnd instanceof Date && tdItems.commit.date.getTime() <= dateEnd.getTime()) {
+				date = tdItems.commit.date.getTime();
 			}
 		} else {
-  		date = tdItems.identificationDate.getTime();
+  		date = tdItems.commit.date.getTime();
 		}
 		return date;
 	}
