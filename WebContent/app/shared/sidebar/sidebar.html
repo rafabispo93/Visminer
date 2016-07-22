@@ -53,7 +53,17 @@
           <small class="label pull-right bg-green" ng-hide="tags.length==0">{{filtered.tags.length}}/{{tags.length}}</small>
           <small class="label pull-right bg-green" ng-show="tags.length==0">{{tags.length}}</small>
         </a>
+
+
+        
+
+
         <ul class="treeview-menu">
+          <select  class="form-control">
+            <option>Trimester</option>
+            <option>Semester</option>
+            <option>Year</option>
+          </select>
           <li ng-repeat="tag in tags">
             <label class="control-sidebar-subheading filter-version-sub-item">
               <input type="checkbox" checklist-model="filtered.tags" checklist-value="tag">{{tag.name}}

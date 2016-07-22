@@ -27,21 +27,21 @@
 
     	        		<div class="col-sm-6">
     	        			<div class="form-group">
-									    <label for="inputPath" class="col-sm-3 control-label">Incurred by</label>
-									    <div class="col-sm-8">
+									    <label for="inputPath" class="col-sm-4 control-label">Incurred by</label>
+									    <div class="col-sm-7">
 			                    <img ng-show="tdItemModalObj.committer.avatar != null" ng-src="{{tdItemModalObj.committer.avatar}}" class="avatar-normal" alt="{{tdItemModalObj.committer.name}}">
 									    		{{tdItemModalObj.committer.name}}
 									    </div>
 									  </div>
 									  <div class="form-group">
-									    <label for="inputName" class="col-sm-3 control-label">Identification date</label>
-									    <div class="col-sm-8">
+									    <label for="inputName" class="col-sm-4 control-label">Identification date</label>
+									    <div class="col-sm-7">
 									      <input type="text" class="form-control" id="inputName" ng-model="tdItemModalObj.commit.date" readonly="readonly">
 									    </div>
 									  </div>
 									  <div class="form-group">
-									    <label for="inputDescription" class="col-sm-3 control-label">Type</label>
-									    <div class="col-sm-8">
+									    <label for="inputDescription" class="col-sm-4 control-label">Type</label>
+									    <div class="col-sm-7">
 									      <select  class="form-control" id="inputCvs" ng-model="tdItemModalObj.type">
 									    		<option ng-selected="tdItemModalObj.type=='Code Debt'">Code Debt</option>
 									    		<option ng-selected="tdItemModalObj.type=='Design Debt'">Design Debt</option>
@@ -49,8 +49,8 @@
 									    </div>
 									  </div>
 									  <div class="form-group">
-									    <label for="inputPath" class="col-sm-3 control-label">TD Indicator</label>
-									    <div class="col-sm-8">
+									    <label for="inputPath" class="col-sm-4 control-label">TD Indicator</label>
+									    <div class="col-sm-7">
 									      <select  class="form-control" ng-model="tdItemModalObj.tdIndicator.name">
 									    		<option ng-selected="tdItemModalObj.tdIndicator.name=='Duplicated Code'">Duplicated code</option>
 									    		<option ng-selected="tdItemModalObj.tdIndicator.name=='Long Method'">Long method</option>
@@ -58,64 +58,64 @@
 									    </div>
 									  </div>
 									  <div class="form-group" ng-show="tdItemModalObj.tdIndicator.location">
-									    <label for="inputPath" class="col-sm-3 control-label">Location</label>
-									    <div class="col-sm-8">
+									    <label for="inputPath" class="col-sm-4 control-label">Location</label>
+									    <div class="col-sm-7">
 									      <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.tdIndicator.location" readonly="readonly">
 									    </div>
 									  </div>
 									  <div class="form-group" ng-show="tdItemModalObj.method">
-									    <label for="inputPath" class="col-sm-3 control-label">Method</label>
-									    <div class="col-sm-8">
+									    <label for="inputPath" class="col-sm-4 control-label">Method</label>
+									    <div class="col-sm-7">
 									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: Method()" ng-model="tdItemModalObj.method" readonly="readonly">
 									    </div>
 									  </div>
 									  <div class="form-group">
-									    <label for="inputPath" class="col-sm-3 control-label">File</label>
-									    <div class="col-sm-8">
+									    <label for="inputPath" class="col-sm-4 control-label">File</label>
+									    <div class="col-sm-7">
 									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: name.java" ng-model="tdItemModalObj.file" readonly="readonly">
 									    </div>
 									  </div>
 									  <div class="form-group" ng-show="tdItemModalObj.package">
-									    <label for="inputPath" class="col-sm-3 control-label">Package</label>
-									    <div class="col-sm-8">
+									    <label for="inputPath" class="col-sm-4 control-label">Package</label>
+									    <div class="col-sm-7">
 									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: org.domain" ng-model="tdItemModalObj.package" readonly="readonly">
 									    </div>
 									  </div>
 									  <div class="form-group">
-									    <label for="inputPath" class="col-sm-3 control-label">Commit</label>
-									    <div class="col-sm-8">
+									    <label for="inputPath" class="col-sm-4 control-label">Commit</label>
+									    <div class="col-sm-7">
 									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: 1af1e7250f75423328a8b73a1ae1657b421726db" ng-model="tdItemModalObj.commit.id" readonly="readonly">
 									    </div>
 									  </div>									  
 							  	</div>
 							  	<div class="col-sm-6">
 							  		<div class="form-group">
-							  		  <label for="inputPath" class="col-sm-3 control-label">TD item?</label>
-							  		  <div class="col-sm-8">
+							  		  <label for="inputPath" class="col-sm-4 control-label">TD item?</label>
+							  		  <div class="col-sm-7">
 							  		    <input type="checkbox" class="minimal" ng-model="tdItemModalObj.isTdItem" ng-checked="tdItemModalObj.isTdItem == true">
 							  		  </div>
 							  		</div>
 							  		<div class="form-group">
-							  		  <label for="inputPath" class="col-sm-3 control-label">Principal (h)</label>
-							  		  <div class="col-sm-8">
+							  		  <label for="inputPath" class="col-sm-4 control-label">Principal (h)</label>
+							  		  <div class="col-sm-7">
 							  		    <input type="number" class="form-control" id="inputPath" ng-model="tdItemModalObj.principal">
 							  		  </div>
 							  		</div>
 							  		<div class="form-group">
-							  		  <label for="inputPath" class="col-sm-3 control-label">Interest amount (h)</label>
-							  		  <div class="col-sm-8">
+							  		  <label for="inputPath" class="col-sm-4 control-label">Interest amount (h)</label>
+							  		  <div class="col-sm-7">
 							  		    <input type="number" class="form-control" id="inputPath" ng-model="tdItemModalObj.interestAmount">
 							  		  </div>
 							  		</div>
 							  		<div class="form-group">
-							  		  <label for="inputPath" class="col-sm-3 control-label">Interest probability (%)</label>
-							  		  <div class="col-sm-8">
+							  		  <label for="inputPath" class="col-sm-4 control-label" style="padding-left: 0px;">Interest probability (%)</label>
+							  		  <div class="col-sm-7">
 							  		    <input type="number" min="0" max="100" class="form-control" id="inputPath" ng-model="tdItemModalObj.interestProbability">
 							  		  </div>
 							  		</div>
 							  		<div class="form-group">
-									    <label for="inputPath" class="col-sm-3 control-label">Notes</label>
-									    <div class="col-sm-8">
+									    <label for="inputPath" class="col-sm-4 control-label">Notes</label>
+									    <div class="col-sm-7">
 									      <textarea class="form-control" ng-model="tdItemModalObj.notes" style="height: 215px;"></textarea>
 									    </div>
 									  </div>
@@ -135,18 +135,20 @@
 	    	    </div>
 	    	    <!-- /.tab-pane -->
 	    	    <div class="tab-pane" ng-class="{'active': tabMetrics}" ng-show="tabMetrics">
-	    	      <table class="table table-bordered">
-                <tr>
-                  <th>Name</th>
-                  <th style="width: 40px">Value</th>
-                </tr>
-                <tr ng-repeat="metrics in tdItemModalObj.metrics | thisMethodAndHasValue:this" ng-show="metrics.methods.length > 0">
-                  <td>{{metrics.name}}</td>
-                  <td><div ng-repeat="method in metrics.methods">{{method.value}}</div></td>
-                </tr>
-              </table>
+	    	      <div class="row" ng-show="tdItemModalObj.tdIndicator.name == 'Long Method'">
+		    	      <table class="table table-bordered">
+	                <tr>
+	                  <th>Name</th>
+	                  <th style="width: 40px">Value</th>
+	                </tr>
+	                <tr ng-repeat="metrics in tdItemModalObj.metrics | thisMethodAndHasValue:this" ng-show="metrics.methods.length > 0">
+	                  <td>{{metrics.name}}</td>
+	                  <td><div ng-repeat="method in metrics.methods">{{method.value}}</div></td>
+	                </tr>
+	              </table>
+	            </div>
 
-              <div class="row">
+              <div class="row" ng-show="tdItemModalObj.tdIndicator.name == 'Duplicated Code'">
 	          		<form class="form-horizontal">
 		          		<div ng-repeat="file in tdItemModalObj.tdIndicator.files">
 		          			<div class="col-sm-6">
@@ -174,7 +176,7 @@
 	  		          		<div class="form-group">
 	  		        		    <div class="col-sm-12">
 	  		        		    	Code:
-	  		        		      <textarea class="form-control" ng-model="file.code" readonly="readonly"></textarea>
+	  		        		      <textarea class="form-control" ng-model="file.code" readonly="readonly" style="height: 150px;font-size: 12px;"></textarea>
 	  		        		    </div>
 	  		        		  </div>
 	  	        		  </div>
