@@ -7,13 +7,14 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	
 	$scope.currentPage = sidebarService.getCurrentPage();
 	$scope.filtered.repository = sidebarService.getRepository();
-	$scope.filtered.tags = sidebarService.getTags();
+	// $scope.filtered.tags = sidebarService.getTags();
 	$scope.filtered.commits = sidebarService.getCommits();
 	$scope.filtered.committers = sidebarService.getCommitters();
 	$scope.filtered.debts = sidebarService.getDebts();
-	$scope.selectedTag = $scope.filtered.tags[0];
 	sidebarService.setTdItems([]);
-	$scope.tdItems = sidebarService.getTdItems();
+	$scope.tagTypesSelect = sidebarService.getTagTypesSelect();
+  $scope.tagTypeSelect = sidebarService.getTagTypeSelect();
+  $scope.tdItems = sidebarService.getTdItems();
 	$scope.tdItemFiltered = $scope.tdItems;
 	$scope.types = [];
 	$scope.typesAnalized = 0;
@@ -88,32 +89,23 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		sidebarService.setCurrentPage(view);
 	}
 
-	thisCtrl.loadTypes = function(tagId) {
-		console.log('loadTypes', tagId)
-		$http.get('TypeServlet', {params:{"action": "getListOfTypesByListOfTags", "ids": '['+tagId+']'}})
+	thisCtrl.loadTypes = function() {
+		var tagsIds = [];
+		for (i in $scope.filtered.tags) {
+			tagsIds.push($scope.filtered.tags[i].id);
+		}
+		$http.get('TypeServlet', {params:{"action": "getListOfTypesByListOfTags", "ids": '['+tagsIds.join(',')+']'}})
 		.success(function(typeData) {
 			typeData = typeData[0];
 			console.log('found', typeData.length, 'types');
-			$scope.getDuplicatedCodeDebts($scope.selectedTag.name, function(duplicatedCodeData) {
+			$scope.getDuplicatedCodeDebts(function(duplicatedCodeData) {
 				// duplicatedCodeData = duplicatedCodeData[0];
 				for (var i = 0; i < typeData.length; i++) {
 					$scope.types.push(typeData[i]);
-					var commit = null;
-					var committer = null;
 					var diffs = [];
-					for (x in $scope.filtered.commits) {
-						if ($scope.filtered.commits[x]._id == typeData[i].commit) {
-							commit = $scope.filtered.commits[x];
-							for (y in $scope.filtered.committers) {
-								if (commit.committer.email == $scope.filtered.committers[y].email) {
-									committer = $scope.filtered.committers[y];
-									break;
-								}
-							}
-							break;
-						}
-					}
-					console.log('committer', committer)
+					var info = $scope.getCommitAndCommitter(typeData[i].commit);
+					var commit = info.commit;
+					var committer = info.committer;
 					var debts = thisCtrl.getDebts(typeData[i]);
 					for (x in debts) {
 						// $scope.tdItems.push({
@@ -140,27 +132,35 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 						// 	"interestProbability": "",
 						// 	"notes": ""
 						// });
+						
+						// $scope.tdItems.push(
+						// 	new TDItem(
+						// 		duplicatedCodeData[i].repository, 
+						// 		new Commit(duplicatedCodeData[i].commit, new Date(duplicatedCodeData[i].commit_date.$date)), 
+						// 		(typeof committer != 'undefined') ? new Committer(committer.name, committer.email, committer.avatar) : new Committer(),
+						// 		'Code Debt',
+						// 		new DuplicatedCode(files),
+						// 		// [],
+						// 		// [],
+						// 		// 'file',
+						// 		// 'file',
+						// 		// 'null',
+						// 		false,
+						// 		null,
+						// 		null,
+						// 		null,
+						// 		null
+						// 	)
+						// );
+
 					}
 					$scope.typesAnalized++;
 				}
-
-
 				for (i in duplicatedCodeData) {
-					// console.log('duplicatedCodeData[i]', duplicatedCodeData[i])
 					if (duplicatedCodeData[i].code_smells.length > 0 && duplicatedCodeData[i].code_smells[0].occurrences.length > 0) {
-						var committer = null;
-						for (x in $scope.filtered.commits) {
-							if ($scope.filtered.commits[x]._id == duplicatedCodeData[i].commit) {
-								commit = $scope.filtered.commits[x];
-								for (y in $scope.filtered.committers) {
-									if (commit.committer.email == $scope.filtered.committers[y].email) {
-										committer = $scope.filtered.committers[y];
-										break;
-									}
-								}
-								break;
-							}
-						}
+						var info = $scope.getCommitAndCommitter(duplicatedCodeData[i].commit);
+						var commit = info.commit;
+						var committer = info.committer;
 						var files = [];
 						for (z in duplicatedCodeData[i].code_smells[0].occurrences) {
 							files.push({
@@ -175,11 +175,10 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 					  		code: duplicatedCodeData[i].code_smells[0].occurrences[z].source_code_slice
 							})
 						}
-						console.log('committer', committer)
 						$scope.tdItems.push(
 							new TDItem(
 								duplicatedCodeData[i].repository, 
-								new Commit(duplicatedCodeData[i].commit, new Date(duplicatedCodeData[i].commit_date.$date)), 
+								new Commit(commit._id, new Date(commit.commit_date.$date), {linesAdded: commit.diffs[0].lines_added, linesRemoved: commit.diffs[0].lines_removed, type: ''}), 
 								(typeof committer != 'undefined') ? new Committer(committer.name, committer.email, committer.avatar) : new Committer(),
 								'Code Debt',
 								new DuplicatedCode(files),
@@ -222,7 +221,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 						// });
 					}
 				}
-				console.log('$scope.tdItems', $scope.tdItems)
 				sidebarService.setTdItems($scope.tdItems);
 			})
 		});
@@ -257,8 +255,12 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		});
 	}
 
-	$scope.getDuplicatedCodeDebts = function(tagName, callback) {
-		$http.get('TagAnalysisServlet', {params:{"action": "getAllByTag", "tagName": tagName}})
+	$scope.getDuplicatedCodeDebts = function(callback) {
+		var tagsNames = [];
+		for (i in $scope.filtered.tags) {
+			tagsNames.push($scope.filtered.tags[i].name);
+		}
+		$http.get('TagAnalysisServlet', {params:{"action": "getAllByTagsName", "tagsName": '['+tagsNames.join(',')+']'}})
 		.success(function(data) {
 			callback(data);
 		})
@@ -271,7 +273,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 			// looking for long methods
 			if (list.abstract_types[0].codesmells) {
 				for (i in list.abstract_types[0].codesmells) {
-					console.log('list.abstract_types[0].codesmells', list.abstract_types[0].codesmells)
 					var codesmells = list.abstract_types[0].codesmells[i];
 					if (codesmells.name == 'Long Method') { 
 						for (j in codesmells.methods) {
@@ -340,6 +341,24 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		}
 	}
 
+	$scope.getCommitAndCommitter = function(commitId) {
+		var commit = null;
+		var committer = null;
+		for (x in $scope.filtered.commits) {
+			if ($scope.filtered.commits[x]._id == commitId) {
+				commit = $scope.filtered.commits[x];
+				for (y in $scope.filtered.committers) {
+					if (commit.committer.email == $scope.filtered.committers[y].email) {
+						committer = $scope.filtered.committers[y];
+						break;
+					}
+				}
+				break;
+			}
+		}
+		return {commit: commit, committer: committer}
+	}
+
 	$scope.showSuccessModal = function() {
 		alertModalService.setMessage("All the Debts Were Confirmed Sucessfully!");
 		$('#alertModal').modal('show');
@@ -347,7 +366,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 
 	$scope.updateViewByTag = function() {
 		$scope.types = [];
-		thisCtrl.loadTypes($scope.selectedTag._id);
+		thisCtrl.loadTypes();
 	}
 
 	$scope.showTypeSmellsDetails = function(type) {
@@ -356,7 +375,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	}
 
 	if ($scope.currentPage == 'tdanalyzer') {
-		thisCtrl.loadTypes($scope.selectedTag._id);
+		thisCtrl.loadTypes();
 		$('.sidebar-toggle').click();
 		$('#filter-identificationdate').daterangepicker();
 		// $("#tditem-datatable").DataTable({

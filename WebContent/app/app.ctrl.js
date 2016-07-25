@@ -1,5 +1,5 @@
 homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
- $sessionStorage, $location, $route, Repository, Committer, sidebarService, alertModalService) {
+ $sessionStorage, $location, $route, Repository, TagTime, Committer, sidebarService, alertModalService) {
   // This controller instance
   var thisCtrl = this;
 
@@ -8,6 +8,8 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
   $scope.committers = [];
   $scope.repositories = [];
   $scope.tags = [];
+  $scope.tagTypesSelect = sidebarService.getTagTypesSelect();
+  $scope.tagTypeSelect = sidebarService.getTagTypeSelect();
   $scope.committerEvolution = [];
   $scope.currentPage = "tdanalyzer";
   $scope.durationProgress = 1000;
@@ -47,24 +49,52 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		$scope.filtered.repository = repository;
 		sidebarService.setRepository(repository);
 		$route.reload();
-		thisCtrl.tagsLoad(repository.id);
+		thisCtrl.tagsLoad(repository);
 	}
 
 	// Load all tags (versions)
-	thisCtrl.tagsLoad = function(repositoryId) { 
-		console.log('tagsLoad=', repositoryId);
-		$http.get('TreeServlet', {params:{"action": "getAllTagsAndMaster", "repositoryId": repositoryId}})
+	thisCtrl.tagsLoad = function(repository) { 
+		console.log('tagsLoad=', repository.id);
+		$http.get('ReferenceServlet', {params:{"action": "getCustomTagsByRepository", "repositoryId": repository.id}})
 		.success(function(data) {
 			console.log('found', data.length, 'tags');
-			$scope.tags = data;
-			thisCtrl.commitsLoad(repositoryId);
+			var tags = [];
+			for(i in data) {
+				var alias, type;
+				var order = data[i].full_name.split('-');
+				if (data[i].full_name.indexOf('MONTH') > -1) {
+					alias = order[1]+'-'+(order[order.length-1].length == 1 ? '0'+order[order.length-1] : order[order.length-1]);
+					order = order[1]+(order[order.length-1].length == 1 ? '0'+order[order.length-1] : order[order.length-1]);
+					type = 'month';
+				} else if (data[i].full_name.indexOf('TRIMESTER') > -1) {
+					alias = order[1]+'-'+order[order.length-1];
+					order = order[0]+order[order.length-1];
+					type = 'trimester';
+				} else if (data[i].full_name.indexOf('SEMESTER') > -1) {
+					alias = order[1]+'-'+order[order.length-1];
+					order = order[0]+order[order.length-1];
+					type = 'semester';
+				} else {
+					alias = order[1];
+					order = order[0];
+					type = 'year';
+				}
+				tags.push(new TagTime(data[i]._id, data[i].name, alias, order, type, repository, data[i].commits));
+			}
+			$scope.tags = tags;
+			sidebarService.setTags(tags);
+			thisCtrl.commitsLoad(repository.id);
 		});
+	}
+
+	thisCtrl.filterTagTypes = function(tagTypeSelect) {
+		$scope.filtered.tags = [];
+		$scope.tagTypeSelect = tagTypeSelect;
 	}
 
 	// Load all commits from all trees
 	thisCtrl.commitsLoad = function(repositoryId) { 
 		console.log('commitsLoad');
-
 		$http.get('CommitServlet', {params:{"action": "getAllByRepository", "repositoryId": repositoryId}})
 		.success(function(data) {
 			console.log('found', data.length, 'commits');
@@ -109,6 +139,10 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
   	$route.reload();
   }
 
+  thisCtrl.hasTagTypeSelected = function(tag){
+    return ($scope.tagTypeSelect.toLowerCase() == tag.type);
+	};
+
 	thisCtrl.analyzeDebts = function() {
 		var analyze = true;
 		if ($scope.filtered.repository == null) {
@@ -123,7 +157,6 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		  alertModalService.setMessage("Please Select What Technical Debts Will be Analyzed!");
 		  analyze = false;
 		}
-
 		if (analyze) {
 			$('#progressBarModal').modal('show');
 			$('#progressBarModal').on('hidden.bs.modal', function(e) {
@@ -148,10 +181,24 @@ homeApp.factory('Repository', function() {
 	return Repository;
 })
 
+homeApp.factory('TagTime', function() {
+	var TagTime = function (id, name, alias, order, type, repository, commits) {
+	  this.id = id;
+	  this.name = name;
+	  this.alias = alias;
+	  this.order = order;
+	  this.type = type;
+	  this.commits = commits;
+	  this.repository = repository;
+	};
+	return TagTime;
+})
+
 homeApp.factory('Commit', function() {
-	var Commit = function (id, date) {
+	var Commit = function (id, date, diffs) {
 	  this.id = id;
 	  this.date = date;
+	  this.diffs = diffs;
 	};
 	return Commit;
 })

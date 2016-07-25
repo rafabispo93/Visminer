@@ -55,18 +55,14 @@
         </a>
 
 
-        
-
 
         <ul class="treeview-menu">
-          <select  class="form-control">
-            <option>Trimester</option>
-            <option>Semester</option>
-            <option>Year</option>
+          <select ng-model="tagTypeSelect" ng-change="ctrl.filterTagTypes(tagTypeSelect)" class="form-control">
+            <option ng-repeat="tagType in tagTypesSelect" ng-selected="{{tagType==tagTypeSelect}}" value="{{tagType}}">{{tagType}}</option>
           </select>
-          <li ng-repeat="tag in tags">
+          <li ng-repeat="tag in tags | filter:ctrl.hasTagTypeSelected | orderBy:'order'">
             <label class="control-sidebar-subheading filter-version-sub-item">
-              <input type="checkbox" checklist-model="filtered.tags" checklist-value="tag">{{tag.name}}
+              <input type="checkbox" checklist-model="filtered.tags" checklist-value="tag">{{tag.alias}}
             </label>
           </li>
         </ul>

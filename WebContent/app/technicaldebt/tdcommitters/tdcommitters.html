@@ -40,9 +40,9 @@
           </div>
           <div class="box-body no-padding">
             <ul class="users-list clearfix">
-              <li ng-repeat="tdItem in graphCommitterData | orderBy:'incurredBy.name'" style="width: 150px;">
-                <img ng-src="{{tdItem.incurredBy.avatar}}" alt="User Image" >
-                <a class="users-list-name" href="#">{{tdItem.incurredBy.name}}</a>
+              <li ng-repeat="tdItem in graphCommitterData | orderBy:'committer.name'" style="width: 150px;">
+                <img ng-src="{{tdItem.committer.avatar}}" alt="User Image" >
+                <a class="users-list-name" href="#">{{tdItem.committer.name}}</a>
               </li>
             </ul>
             <!-- /.users-list -->
@@ -60,9 +60,9 @@
                 <span># {{$index+1}}</span>
               </div>
               <div class="col-md-4" style="padding-left: 0px;">
-                <img class="img-circle" ng-src="{{tdItem.incurredBy.avatar}}" alt="{{tdItem.incurredBy.name}}">
-                <span class="username"><a href="#">{{tdItem.incurredBy.name}}</a></span>
-                <span class="description">{{tdItem.incurredBy.email}}</span>
+                <img class="img-circle" ng-src="{{tdItem.committer.avatar}}" alt="{{tdItem.committer.name}}">
+                <span class="username"><a href="#">{{tdItem.committer.name}}</a></span>
+                <span class="description">{{tdItem.committer.email}}</span>
               </div>
             </div>
             <!-- /.user-block -->
@@ -88,22 +88,22 @@
                   </tr>
                   <tr>
                     <td>Commits</td>
-                    <td>{{tdItem.incurredBy.lines.added}}</td>
+                    <td>{{tdItem.committer.lines.added}}</td>
                     <td><span class="badge bg-red">55%</span></td>
                   </tr>
                   <tr>
                     <td>Files</td>
-                    <td>{{tdItem.incurredBy.lines.added}}</td>
+                    <td>{{tdItem.committer.lines.added}}</td>
                     <td><span class="badge bg-red">55%</span></td>
                   </tr>
                   <tr>
                     <td>Lines</td>
-                    <td>{{tdItem.incurredBy.lines.added}}</td>
+                    <td>{{tdItem.committer.lines.added}}</td>
                     <td><span class="badge bg-yellow">70%</span></td>
                   </tr>
                   <tr>
                     <td>Principal</td>
-                    <td>{{tdItem.incurredBy.principal}}</td>
+                    <td>{{tdItem.principal}}</td>
                     <td><span class="badge bg-light-blue">30%</span></td>
                   </tr>
                 </tbody>
