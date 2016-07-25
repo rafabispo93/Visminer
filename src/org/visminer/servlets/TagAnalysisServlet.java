@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.repositoryminer.persistence.handler.TagAnalysisDocumentHandler;
 
 /**
@@ -39,6 +40,9 @@ public class TagAnalysisServlet extends HttpServlet {
 			case "getAllByTag":
 				getAllByTag(request.getParameter("tagName"));	
 				break;
+			case "getAllByTagsName":
+				getAllByTagsName(request.getParameter("tagsName"));	
+				break;
 			default:
 				break;
 		}
@@ -48,6 +52,16 @@ public class TagAnalysisServlet extends HttpServlet {
 		List<String> tagAnalysisList = new ArrayList<>();
 		tagAnalysisHandler.getAllByTag(tagName)
 			.forEach(type->tagAnalysisList.add(type.toJson()));
+		out.println(tagAnalysisList);
+	}
+	
+	private void getAllByTagsName(String tagsName) {
+		JSONArray array = new JSONArray(tagsName);
+		List<String> tagAnalysisList = new ArrayList<>();
+		for (Object tagName : array) {	
+			tagAnalysisHandler.getAllByTag(tagName.toString())
+				.forEach(type->tagAnalysisList.add(type.toJson()));
+		}
 		out.println(tagAnalysisList);
 	}
 
