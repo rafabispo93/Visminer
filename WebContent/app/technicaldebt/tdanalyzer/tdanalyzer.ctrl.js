@@ -23,14 +23,14 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 
 	$scope.filter = {
 		type: ['Code Debt', 'Design Debt'],
-		tdItem: ['Duplicated Code', 'Long Method'],
+		tdIndicator: ['Duplicated Code', 'Long Method'],
 		isTdItem: ['true', 'false']
 	}
 
 	// Apply filter parameters
 	$scope.filterApply = function() {
 		var tdItemFiltered = [];
-		if ($scope.filter.identificationDate != "") {
+		if (typeof $scope.filter.identificationDate != 'undefined' && $scope.filter.identificationDate != "") {
 			var dates = $scope.filter.identificationDate.split(' - ');
 			var identificationDateIni = new Date(dates[0]);
 			var identificationDateEnd = new Date(dates[1]);
@@ -40,10 +40,10 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 			var accept = 0;
 			var foundDate = false;
 			var foundType = false;
-			var foundTdItem = false;
+			var foundTdIndicator = false;
 			var foundIsTdItem = false;
-			if (identificationDateIni) {
-				if (identificationDateIni <= obj.identificationDate && obj.identificationDate <= identificationDateEnd) {
+			if (typeof $scope.filter.identificationDate != 'undefined' && identificationDateIni) {
+				if (identificationDateIni <= obj.commit.date && obj.commit.date <= identificationDateEnd) {
 					foundDate = true;
 				}
 			} else {
@@ -52,13 +52,13 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 			if ($scope.filter.type.indexOf(obj.type) > -1) {
 				foundType = true;
 			}
-			if ($scope.filter.tdItem.indexOf(obj.tdItem) > -1) {
-				foundTdItem = true;
+			if ($scope.filter.tdIndicator.indexOf(obj.tdIndicator.name) > -1) {
+				foundTdIndicator = true;
 			}
 			if ($scope.filter.isTdItem.indexOf(String(obj.isTdItem)) > -1) {
 				foundIsTdItem = true;
 			}
-			if (foundDate && foundType && foundTdItem && foundIsTdItem) {
+			if (foundDate && foundType && foundTdIndicator && foundIsTdItem) {
 				tdItemFiltered.push(obj);
 			}
 		}
@@ -267,7 +267,6 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	}
 	
 	thisCtrl.getDebts = function(list) {
-		console.log('getDebts', list)
 		var debts = [];
 		if (typeof list.abstract_types != 'undefined' && list.abstract_types.length > 0) {
 			// looking for long methods

@@ -59,7 +59,7 @@
             <div class="col-sm-3">
               <div class="form-group">
                 <label>TD Indicator:</label>
-                <select class="form-control select2" multiple="multiple" style="width: 100%;" ng-model="filter.tdItem" ng-change="filterApply()">
+                <select class="form-control select2" multiple="multiple" style="width: 100%;" ng-model="filter.tdIndicator" ng-change="filterApply()">
                   <option value="Cyclomatic Complexity">Cyclomatic Complexity</option>
                   <option value="Duplicated Code" ng-selected="string" selected="selected">Duplicated Code</option>
                   <option value="Long Method" selected="selected">Long Method</option>
@@ -107,7 +107,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="item in tdItemFiltered" ng-click="tdItemEdit(item)" style="cursor: pointer;">
+                <tr ng-repeat="item in tdItemFiltered | orderBy: '-item.commit.date'" ng-click="tdItemEdit(item)" style="cursor: pointer;">
                   <td>{{tdItemFormatDate(item.commit.date)}}</td>
                   <td><span class="label" style="background-color:#1B93A7!important; margin-right:3px;">{{item.type}}</span></td>
                   <td><span class="label label-default">{{item.tdIndicator.name}}</span></td>
