@@ -221,6 +221,17 @@ homeApp.factory('DuplicatedCode', function() {
   return DuplicatedCode;
 })
 
+homeApp.factory('LongMethod', function() {
+  var LongMethod = function(method, file, package) {
+  	this.name = 'Long Method';
+  	this.location = 'Method';
+  	this.method = method;
+  	this.file = file;
+  	this.package = package;
+  };
+  return LongMethod;
+})
+
 homeApp.factory('TDItem', function(Commit, Committer) {
 	var TDItem = function (repository, commit, committer, type, tdIndicator, isTdItem, principal, interestAmount, interestProbability, notes) {
 		if (typeof repository != 'undefined') {

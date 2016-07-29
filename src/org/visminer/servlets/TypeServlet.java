@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.bson.Document;
 import org.json.JSONArray;
 import org.repositoryminer.persistence.handler.CommitAnalysisDocumentHandler;
+import org.repositoryminer.persistence.handler.DocumentHandler;
+import org.repositoryminer.persistence.handler.ReferenceDocumentHandler;
 
 @WebServlet("/TypeServlet")
 public class TypeServlet extends HttpServlet {
@@ -53,6 +55,9 @@ public class TypeServlet extends HttpServlet {
 			case "getListOfTypesByListOfTags":
 				getListOfTypesByListOfTags(request.getParameter("ids"));
 				break;
+			case "getDebtsByListOfTags":
+				getDebtsByListOfTags(request.getParameter("ids"));
+				break;
 			case "updateDebtStatus":
 				String status = request.getParameter("status");
 				if (status != null) {
@@ -74,6 +79,24 @@ public class TypeServlet extends HttpServlet {
 		typeHandler.getAllByReference(treeId)
 			.forEach(type->typeList.add(type.toJson()));
 		out.println(typeList);
+	}
+	
+	private void getDebtsByListOfTags(String tagsId) {
+		JSONArray array = new JSONArray(tagsId);
+		List<String> typeLists = new ArrayList<String>();
+		ReferenceDocumentHandler referenceHandler = new ReferenceDocumentHandler();
+		
+		for (Object id : array) {
+			Document reference = referenceHandler.findById(id.toString());
+			Object commits = reference.get("commits");
+			@SuppressWarnings("unchecked")
+			ArrayList<String> commitIdsList = ((ArrayList<String>) commits);
+			for (Object commitId : commitIdsList) {
+				typeHandler.getLongMethodDebts((String) commitId)
+					.forEach(type->typeLists.add(type.toJson()));
+			}
+		}	
+		out.println(typeLists);
 	}
 	
 	private void getListOfTypesByListOfTags(String tagsId) {
