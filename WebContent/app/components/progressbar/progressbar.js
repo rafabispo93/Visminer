@@ -17,23 +17,23 @@ angular.module('homeApp').component('progressBar', {
 });
 
 function loadBar(){
-    var $bar = $('.progress-bar');
-    $bar.width(0);
-    var progress = setInterval(function() {
-    if ($bar.width()>=600) {
-        $bar.width(0);
-        $('.progress').removeClass('active');
-        $(progressBarModal).modal("hide");
+  var $bar = $('.progress-bar');
+  $bar.width(0);
+  var widthMax = 600;
+  var widthPerc = 0;
+  var widthPercIncrement = 0.75;
+  var progress = setInterval(function() {
+    if ($bar.width()>=widthMax) {
+      $bar.width(0);
+      $('.progress').removeClass('active');
+      $(progressBarModal).modal("hide");
     } else {
-        $bar.width($bar.width()+300);
+      widthPerc += (widthMax * widthPercIncrement / 100);
+      if (widthPerc < 100) {
+        $bar.width(widthMax*widthPerc/100);
+        $bar.text(parseInt(widthPerc) + "%");
+      }
+      widthPercIncrement -= (widthPercIncrement/21);
     }
-    if($bar.width()/6>=100){
-        $bar.width(0);
-        $('.progress').removeClass('active');
-        $bar.text("100 %");
-    }else {
-        $bar.text((($bar.width()/6)+10).toPrecision(2) + "%");
-    }
-  }, 600);
-
-  }
+  }, 500);
+}
