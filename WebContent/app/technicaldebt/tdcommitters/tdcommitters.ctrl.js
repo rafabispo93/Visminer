@@ -7,13 +7,16 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
 	$scope.currentPage = sidebarService.getCurrentPage();
 
 	$scope.filtered.repository = sidebarService.getRepository();
-  $scope.filtered.tags = sidebarService.getTags();
 	$scope.filtered.debts = sidebarService.getDebts();
 	$scope.tdItems = sidebarService.getTdItems();
+  $scope.committersTotal = {
+    commits: [],
+    files: [],
+    lines: 0,
+    principal: 0
+  };
 
   $scope.getGraphData = function(committersEmails, dateIni, dateEnd) {
-    console.log('getGraphData', committersEmails, dateIni, dateEnd)
-  	console.log('$scope.tdItems', $scope.tdItems)
 	  var data = [],
 	  		dates = [];
 	  // Get data & dates
@@ -35,6 +38,15 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
 	  			if (committersEmails.indexOf($scope.tdItems[i].committer.email) > -1) {
 			  		var date = getGraphDataDate($scope.tdItems[i], committersEmails, dateIni, dateEnd);
 			  		if (date != null) {
+              if ($scope.committersTotal.commits.indexOf($scope.tdItems[i].commit.id) == -1) {
+                $scope.committersTotal.commits.push($scope.tdItems[i].commit.id);
+              }
+              if (typeof $scope.tdItems[i].tdIndicator.file != 'undefined' && $scope.committersTotal.files.indexOf($scope.tdItems[i].tdIndicator.file) == -1) {
+                $scope.committersTotal.files.push($scope.tdItems[i].tdIndicator.file);
+              }
+              if (isInt($scope.tdItems[i].principal)) {
+                $scope.committersTotal.principal += $scope.tdItems[i].principal;
+              }
 			  			dates.push(date);
 			  		}
 	  			}
@@ -113,7 +125,7 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
       xAxis: {
         axisLabel: 'Date',
         tickFormat: function(d) {
-          return d3.time.format('%b-%y')(new Date(d))
+          return d3.time.format('%d-%b-%y')(new Date(d))
         },
         showMaxMin: false
       },
@@ -167,7 +179,6 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
       xAxis: {
         axisLabel: 'Date',
         tickFormat: function(d) {
-          console.log('tickFormat', d)
           return d3.time.format('%d-%b-%y')(new Date(d))
         },
         showMaxMin: false
@@ -187,11 +198,16 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
   	for (i in $scope.tdItems) {
 			var committersExists = false;
 			var tdItem = $scope.tdItems[i];
-      console.log('--- tdItem.commit', tdItem.commit)
 			if (dateIni <= tdItem.commit.date && tdItem.commit.date <= dateEnd) {
 	  		for (x in committers) {
 	  			if (committers[x].email == tdItem.committer.email) {
 	  				committersExists = true;
+            if (committers[x].commits.indexOf(tdItem.commit.id) == -1) {
+              committers[x].commits.push(tdItem.commit.id);
+            }
+            if (typeof tdItem.tdIndicator.file != 'undefined' && committers[x].files.indexOf(tdItem.tdIndicator.file) == -1) {
+              committers[x].files.push(tdItem.tdIndicator.file);
+            }
 	  				committers[x].lines.added += tdItem.commit.diffs.linesAdded;
 	  				committers[x].lines.removed += tdItem.commit.diffs.linesRemoved;
 	  				committers[x].principal += tdItem.principal;
@@ -199,11 +215,16 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
 	  			}
 	  		}
 	  		if (committersExists == false) {
-	  			tdItem.committer.principal = tdItem.principal;
+          tdItem.committer.commits = [tdItem.commit.id];
+          tdItem.committer.files = [];
+          if (typeof tdItem.tdIndicator.file != 'undefined') {
+            tdItem.committer.files.push(tdItem.tdIndicator.file);
+          }
 	  			tdItem.committer.lines = {
 	  				added: tdItem.commit.diffs.linesAdded,
 	  				removed: tdItem.commit.diffs.linesRemoved
 	  			}
+          tdItem.committer.principal = tdItem.principal;
 	  			committers.push(tdItem.committer);
 	  		}
 			}
@@ -232,6 +253,25 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
 		$scope.currentPage = view;
 		sidebarService.setCurrentPage(view);
 	}
+
+  $scope.getGraphPercent = function(location, committer) {
+    console.log('location', location)
+    console.log('$scope.committersTotal', $scope.committersTotal)
+    console.log('committer', committer)
+    if (location == 'commits') {
+      return parseInt(committer.commits.length/$scope.committersTotal.commits.length*100);
+    } else if (location == 'files') {
+      return parseInt(committer.files.length/$scope.committersTotal.files.length*100);
+    } else if (location == 'principal') {
+      return (committer.principal == 0) ? 0 : parseInt(committer.principal/$scope.committersTotal.principal*100);
+    } else {
+      return 0;
+    }
+  }
+
+  function isInt(n){
+    return Number(n) === n && n % 1 === 0;
+  }
 
   if ($scope.currentPage == 'tdcommiters') {
   	console.log("$scope.currentPage == 'tdcommiters'")
