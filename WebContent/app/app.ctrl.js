@@ -1,5 +1,5 @@
 homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
- $sessionStorage, $location, $route, Repository, TagTime, Committer, sidebarService, alertModalService) {
+ $sessionStorage, $location, $route, Repository, TagTime, Committer, tdAnalyzerService, sidebarService, alertModalService) {
   // This controller instance
   var thisCtrl = this;
 
@@ -159,11 +159,12 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		}
 		if (analyze) {
 			$('#progressBarModal').modal('show');
-			$('#progressBarModal').on('hidden.bs.modal', function(e) {
+			tdAnalyzerService.loadData($scope.filtered.tags, function() {
+				$('#progressBarModal').modal('hide');
 				thisCtrl.selectView('tdanalyzer');
   	   	$location.path("/tdanalyzer");
         $route.reload();
-  		});
+			})
 		} else {
 			$('#alertModal').modal('show');
 		}
@@ -222,10 +223,11 @@ homeApp.factory('DuplicatedCode', function() {
 })
 
 homeApp.factory('LongMethod', function() {
-  var LongMethod = function(method, file, package) {
+  var LongMethod = function(method, metrics, file, package) {
   	this.name = 'Long Method';
   	this.location = 'Method';
   	this.method = method;
+  	this.metrics = metrics;
   	this.file = file;
   	this.package = package;
   };
