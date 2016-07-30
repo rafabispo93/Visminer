@@ -8,7 +8,7 @@
     </div>
 
     <ol class="breadcrumb">
-      <li class="active"><i class="fa fa-line-chart"></i> TD Evolution</li>
+      <li class="active"><i class="fa fa-line-chart"></i> TD Committer</li>
     </ol>
   </section>
 
@@ -88,23 +88,23 @@
                   </tr>
                   <tr>
                     <td>Commits</td>
-                    <td>{{tdItem.committer.lines.added}}</td>
-                    <td><span class="badge bg-red">55%</span></td>
+                    <td>{{tdItem.committer.commits.length}}</td>
+                    <td><span class="badge bg-default">{{getGraphPercent('commits', tdItem.committer)}}%</span></td>
                   </tr>
                   <tr>
                     <td>Files</td>
-                    <td>{{tdItem.committer.lines.added}}</td>
-                    <td><span class="badge bg-red">55%</span></td>
+                    <td>{{tdItem.committer.files.length}}</td>
+                    <td><span class="badge bg-default">{{getGraphPercent('files', tdItem.committer)}}%</span></td>
                   </tr>
                   <tr>
                     <td>Lines</td>
                     <td>{{tdItem.committer.lines.added}}</td>
-                    <td><span class="badge bg-yellow">70%</span></td>
+                    <td></td>
                   </tr>
                   <tr>
                     <td>Principal</td>
-                    <td>{{tdItem.principal}}</td>
-                    <td><span class="badge bg-light-blue">30%</span></td>
+                    <td>{{tdItem.committer.principal}}</td>
+                    <td><span class="badge bg-default">{{getGraphPercent('principal', tdItem.committer)}}%</span></td>
                   </tr>
                 </tbody>
               </table>
