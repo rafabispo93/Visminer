@@ -69,10 +69,10 @@
 									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: Method()" ng-model="tdItemModalObj.method" readonly="readonly">
 									    </div>
 									  </div>
-									  <div class="form-group">
+									  <div ng-show="tdItemModalObj.tdIndicator.file" class="form-group">
 									    <label for="inputPath" class="col-sm-4 control-label">File</label>
 									    <div class="col-sm-7">
-									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: name.java" ng-model="tdItemModalObj.file" readonly="readonly">
+									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: name.java" ng-model="tdItemModalObj.tdIndicator.file" readonly="readonly">
 									    </div>
 									  </div>
 									  <div class="form-group" ng-show="tdItemModalObj.package">
@@ -135,13 +135,13 @@
 	    	    </div>
 	    	    <!-- /.tab-pane -->
 	    	    <div class="tab-pane" ng-class="{'active': tabMetrics}" ng-show="tabMetrics">
-	    	      <div class="row" ng-show="tdItemModalObj.tdIndicator.name == 'Long Method'">
+	    	      <div ng-show="tdItemModalObj.tdIndicator.name == 'Long Method'">
 		    	      <table class="table table-bordered">
 	                <tr>
 	                  <th>Name</th>
 	                  <th style="width: 40px">Value</th>
 	                </tr>
-	                <tr ng-repeat="metrics in tdItemModalObj.metrics | thisMethodAndHasValue:this" ng-show="metrics.methods.length > 0">
+	                <tr ng-repeat="metrics in tdItemModalObj.tdIndicator.metrics | thisMethodAndHasValue:this" ng-show="metrics.methods.length > 0">
 	                  <td>{{metrics.name}}</td>
 	                  <td><div ng-repeat="method in metrics.methods">{{method.value}}</div></td>
 	                </tr>
