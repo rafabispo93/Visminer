@@ -39,6 +39,14 @@ angular.module('homeApp').component('tdItemModal', {
   		$('#tdItemModal').modal('hide');
   	}
 
+    $scope.checkIsTdItemValues = function() {
+      if ($scope.tdItemModalObj.isTdItem == false) {
+        $scope.tdItemModalObj.principal = null;
+        $scope.tdItemModalObj.interestAmount = null;
+        $scope.tdItemModalObj.interestProbability = null;
+      }
+    }
+
     $scope.getFileName = function(location) {
       var loc = location.split('/');
       return loc[loc.length-1];
