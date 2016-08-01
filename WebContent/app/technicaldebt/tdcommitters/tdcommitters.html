@@ -92,14 +92,14 @@
                     <td><span class="badge bg-default">{{getGraphPercent('commits', tdItem.committer)}}%</span></td>
                   </tr>
                   <tr>
-                    <td>Files</td>
+                    <td>Files added</td>
                     <td>{{tdItem.committer.files.length}}</td>
                     <td><span class="badge bg-default">{{getGraphPercent('files', tdItem.committer)}}%</span></td>
                   </tr>
                   <tr>
-                    <td>Lines</td>
+                    <td>Lines added</td>
                     <td>{{tdItem.committer.lines.added}}</td>
-                    <td></td>
+                    <td><span class="badge bg-default">{{getGraphPercent('lines', tdItem.committer)}}%</span></td>
                   </tr>
                   <tr>
                     <td>Principal</td>
@@ -116,7 +116,7 @@
       </div>
       <!-- /.col -->
     </section>
-
+    
   </div>
 
 </div>
