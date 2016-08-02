@@ -121,7 +121,9 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 	thisCtrl.commitsLoadAvatars = function(committer) {
 		if (commitsLoadAvatarsEmails.indexOf(committer.email) == -1) {
 			commitsLoadAvatarsEmails.push(committer.email);
-			$http.get('https://api.github.com/search/users?q='+committer.email)
+			$http.get('https://api.github.com/search/users?q='+committer.email, {
+				// headers: {'username': '025f0b75918bad0724eac4fb4e7472593ec4b103'}
+			})
 			.success(function(result) {
 				committer.avatar = (result.total_count == 1) ? result.items[0].avatar_url : null;
 				sidebarService.addCommitter(committer);
