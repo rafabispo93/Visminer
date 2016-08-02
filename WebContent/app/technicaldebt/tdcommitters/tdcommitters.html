@@ -6,16 +6,13 @@
       <i class="fa fa-database" style="font-size: 20px"></i>
       {{filtered.repository.name}}
     </div>
-
     <ol class="breadcrumb">
       <li class="active"><i class="fa fa-line-chart"></i> TD Committer</li>
     </ol>
   </section>
 
-
   <div class="row">
     <section class="content" style="padding-top: 10px">
-        <!-- <div ng-include="'app/technicaldebt/tdevolution/small-boxes.html'"></div>   -->
         <div>
           <nvd3 options="graphGlobalOptions" data="graphGlobalData"></nvd3>
         </div>
@@ -24,10 +21,15 @@
   <!-- Main content -->
 
   <div class="row">
+    <section style="padding: 15px">
+      <div class="col-md-12">
+        <div ng-include="'app/technicaldebt/tdcommitters/small-boxes.html'"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="row">
     <section class="content" style="padding-top: 10px">
-
-    
-
       <div class="col-md-12">
         <div class="box box-default">
           <div class="box-header with-border">

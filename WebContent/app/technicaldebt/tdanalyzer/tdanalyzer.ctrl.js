@@ -105,7 +105,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 						(typeof committer != 'undefined') ? new Committer(committer.name, committer.email, committer.avatar) : new Committer(),
 						'Code Debt',
 						new LongMethod(debts[x].method, typeData[i].abstract_types[0].metrics, typeData[i].filename, typeData[i].package),
-						false,
+						true,
 						null,
 						null,
 						null,
@@ -134,6 +134,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 			  		code: duplicatedCodeData[i].code_smells[0].occurrences[z].source_code_slice
 					})
 				}
+				console.log('committer', committer)
 				$scope.tdItems.push(
 					new TDItem(
 						duplicatedCodeData[i].repository, 
@@ -141,7 +142,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 						(typeof committer != 'undefined') ? new Committer(committer.name, committer.email, committer.avatar) : new Committer(),
 						'Code Debt',
 						new DuplicatedCode(files),
-						false,
+						true,
 						null,
 						null,
 						null,

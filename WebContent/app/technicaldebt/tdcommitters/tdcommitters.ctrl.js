@@ -8,6 +8,12 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
 	$scope.filtered.debts = sidebarService.getDebts();
 	$scope.tdItems = sidebarService.getTdItems();
   $scope.tdIndicators = [];
+  $scope.committersByDate = {
+    commits: [],
+    files: [],
+    linesAdded: 0,
+    principal: 0
+  };
   $scope.committersTotal = {
     commits: [],
     files: [],
@@ -70,13 +76,6 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
 	  		data[i].values.push([dates[z], total]);
 	  	}
 	  }
-    
-	  data.map(function(series) {
-		  series.values = series.values.map(function(d) { 
-		  	return {x: d[0], y: d[1] } 
-		  });
-		  return series;
-		});
 		return data;
   }
 
@@ -149,7 +148,14 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
     }
   };
 
-	$scope.graphGlobalData = $scope.getGraphData([], new Date('2000-06-03'), new Date('2017-07-03 23:59:59'));
+  var graphData = $scope.getGraphData([], new Date('2000-01-01'), new Date('2100-01-01 00:00:00'));
+  console.log('graphData', graphData)
+	$scope.graphGlobalData = graphData.map(function(series) {
+    series.values = series.values.map(function(d) { 
+      return {x: d[0], y: d[1] } 
+    });
+    return series;
+  });
 	$scope.graphCommitterData = [];
 	
   $scope.graphCommitterOptions = {
@@ -162,6 +168,7 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
         bottom: 40,
         left: 55
       },
+      yDomain1: [0, 100],
       useInteractiveGuideline: true,
       // dispatch: {
       //   stateChange: function(e){ console.log("stateChange"); },
@@ -177,11 +184,11 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
         showMaxMin: false
       },
       yAxis: {
-        axisLabel: 'Y1 Axis',
+        axisLabel: 'Y Axis',
         tickFormat: function(d){
           return d3.format(',f')(d);
         },
-        axisLabelDistance: 12
+        // axisLabelDistance: 12
       }
     },
   };
@@ -217,14 +224,14 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
               added: tdItem.commit.diffs.linesAdded,
               removed: tdItem.commit.diffs.linesRemoved
             }
-            tdItem.committer.principal = tdItem.principal;
+            tdItem.committer.principal = (tdItem.principal == null) ? 0 : tdItem.principal;
             committers.push(tdItem.committer);
           }
         }
       }
   	}
   	var data = [];
-    $scope.committersTotal = {
+    $scope.committersByDate = {
       commits: [],
       files: [],
       linesAdded: 0,
@@ -233,7 +240,12 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
   	for (i in committers) {
   		data.push({
   			committer: committers[i],
-  			graph: $scope.getGraphData([committers[i].email], new Date(dateIni), new Date(dateEnd))
+  			graph: $scope.getGraphData([committers[i].email], new Date(dateIni), new Date(dateEnd)).map(function(series) {
+          series.values = series.values.map(function(d) { 
+            return {x: d[0], y: d[1] } 
+          });
+          return series;
+        })
   		})
   	}
     updateTdIndicators(data);
@@ -256,28 +268,28 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
 
   $scope.getGraphPercent = function(location, committer) {
     if (location == 'commits') {
-      return parseInt(committer.commits.length/$scope.committersTotal.commits.length*100);
+      return parseInt(committer.commits.length/$scope.committersByDate.commits.length*100);
     } else if (location == 'files') {
-      return parseInt(committer.files.length/$scope.committersTotal.files.length*100);
+      return (committer.files.length == 0 || $scope.committersByDate.files.length == 0) ? 0 : parseInt(committer.files.length/$scope.committersByDate.files.length*100);
     } else if (location == 'lines') {
-      return parseInt(committer.lines.added/$scope.committersTotal.linesAdded*100);
+      return parseInt(committer.lines.added/$scope.committersByDate.linesAdded*100);
     } else if (location == 'principal') {
-      return (committer.principal == 0) ? 0 : parseInt(committer.principal/$scope.committersTotal.principal*100);
+      return (committer.principal == 0 || $scope.committersByDate.principal == 0) ? 0 : parseInt(committer.principal/$scope.committersByDate.principal*100);
     } else {
       return 0;
     }
   }
 
   function addToTotal(tdItem){
-    if ($scope.committersTotal.commits.indexOf(tdItem.commit.id) == -1) {
-      $scope.committersTotal.commits.push(tdItem.commit.id);
+    if ($scope.committersByDate.commits.indexOf(tdItem.commit.id) == -1) {
+      $scope.committersByDate.commits.push(tdItem.commit.id);
     }
-    if (typeof tdItem.tdIndicator.file != 'undefined' && $scope.committersTotal.files.indexOf(tdItem.tdIndicator.file) == -1) {
-      $scope.committersTotal.files.push(tdItem.tdIndicator.file);
+    if (typeof tdItem.tdIndicator.file != 'undefined' && $scope.committersByDate.files.indexOf(tdItem.tdIndicator.file) == -1) {
+      $scope.committersByDate.files.push(tdItem.tdIndicator.file);
     }
-    $scope.committersTotal.linesAdded += tdItem.commit.diffs.linesAdded;
+    $scope.committersByDate.linesAdded += tdItem.commit.diffs.linesAdded;
     if (tdItem.principal != null) {
-      $scope.committersTotal.principal += tdItem.principal;
+      $scope.committersByDate.principal += tdItem.principal;
     }
   }
 
