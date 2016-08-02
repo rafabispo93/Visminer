@@ -26,6 +26,27 @@
   <div class="row">
     <section class="content" style="padding-top: 10px">
 
+    
+
+      <div class="col-md-12">
+        <div class="box box-default">
+          <div class="box-header with-border">
+            <h3 class="box-title">TD Indicators</h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body no-padding">
+            <div class="col-md-2" ng-repeat="tdIndicator in tdIndicators">
+              <input type="text" class="knob" value="{{tdIndicator.qtty}}" data-min="0" data-max="{{tdIndicator.qttyMax}}" data-width="70" data-height="70" data-fgColor="#3c8dbc"  data-readonly="true">
+              <div class="knob-label" style="text-align: left;">{{tdIndicator.name}}</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
       <div class="col-md-12">
         <div class="box box-default">
           <div class="box-header with-border">
@@ -33,8 +54,6 @@
 
             <div class="box-tools pull-right">
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-              </button>
-              <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
               </button>
             </div>
           </div>
@@ -116,7 +135,7 @@
       </div>
       <!-- /.col -->
     </section>
-    
+
   </div>
 
 </div>

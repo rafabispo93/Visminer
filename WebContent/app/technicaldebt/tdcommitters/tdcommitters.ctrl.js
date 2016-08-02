@@ -3,12 +3,11 @@ homeApp = angular.module('homeApp');
 homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarService) {
 
 	var thisCtrl = this;
-
 	$scope.currentPage = sidebarService.getCurrentPage();
-
 	$scope.filtered.repository = sidebarService.getRepository();
 	$scope.filtered.debts = sidebarService.getDebts();
 	$scope.tdItems = sidebarService.getTdItems();
+  $scope.tdIndicators = [];
   $scope.committersTotal = {
     commits: [],
     files: [],
@@ -17,7 +16,6 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
   };
 
   $scope.getGraphData = function(committersEmails, dateIni, dateEnd) {
-
 	  var data = [],
 	  		dates = [];
 	  // Get data & dates
@@ -238,6 +236,7 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
   			graph: $scope.getGraphData([committers[i].email], new Date(dateIni), new Date(dateEnd))
   		})
   	}
+    updateTdIndicators(data);
   	return data;
   }
 
@@ -280,6 +279,47 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
     if (tdItem.principal != null) {
       $scope.committersTotal.principal += tdItem.principal;
     }
+  }
+
+  function createTdIndicators() {
+    $scope.tdIndicators = [];
+    for (i in $scope.tdItems) {
+      var exists = false;
+      for (x in $scope.tdIndicators) {
+        if ($scope.tdIndicators[x].name == $scope.tdItems[i].tdIndicator.name) {
+          exists = true;
+          break;
+        }
+      }
+      if (exists) {
+        $scope.tdIndicators[x].qttyMax += 1; 
+      } else {
+        $scope.tdIndicators.push({
+          name: $scope.tdItems[i].tdIndicator.name,
+          qtty: 0,
+          qttyMax: 1
+        })
+      }
+    }
+  }
+
+  function updateTdIndicators(data) {
+    createTdIndicators();
+    for (i in data) {
+      for (x in data[i].graph) {
+        for (z in $scope.tdIndicators) {
+          if ($scope.tdIndicators[z].name == data[i].graph[x].key) {
+            for (v in data[i].graph[x].values) {
+              $scope.tdIndicators[z].qtty += data[i].graph[x].values[v].y;
+            }
+            break;
+          }
+        }
+      }
+    }
+    setTimeout(function(){ 
+      $(".knob").knob();
+    }, 500);
   }
 
   if ($scope.currentPage == 'tdcommiters') {
