@@ -10,7 +10,6 @@ angular.module('homeApp').component('progressBar', {
   	 $(progressBarModal).on('show.bs.modal', function(e) {
   	    loadBar();
   	 });
-
      $(window).on('resize', centerModals);
    },
   templateUrl: 'app/components/progressbar/progressbar.html',
@@ -23,10 +22,11 @@ function loadBar(){
   var widthPerc = 0;
   var widthPercIncrement = 0.75;
   var progress = setInterval(function() {
-    if ($bar.width()>=widthMax) {
+    if ($bar.width()>=widthMax || $('.progress').is(':visible') == false) {
       $bar.width(0);
       $('.progress').removeClass('active');
       $(progressBarModal).modal("hide");
+      clearInterval(progress);
     } else {
       widthPerc += (widthMax * widthPercIncrement / 100);
       if (widthPerc < 100) {
