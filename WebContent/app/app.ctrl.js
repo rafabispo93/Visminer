@@ -127,6 +127,10 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 			.success(function(result) {
 				committer.avatar = (result.total_count == 1) ? result.items[0].avatar_url : null;
 				sidebarService.addCommitter(committer);
+			})
+			.error(function() {
+				committer.avatar = 'assets/imgs/nophoto.jpg';
+				sidebarService.addCommitter(committer);
 			});
 		}
 	}
