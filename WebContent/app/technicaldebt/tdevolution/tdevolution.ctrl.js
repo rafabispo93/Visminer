@@ -13,7 +13,7 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
   $scope.chartDesignDebtSeries = [];
   
   $scope.filtered.repository = sidebarService.getRepository();
-  $scope.filtered.tags = sidebarService.getTags();
+  // $scope.filtered.tags = sidebarService.getTags();
   $scope.filtered.debts = sidebarService.getDebts();
 
   thisCtrl.loadEvolutionInformation = function(repository) {
@@ -24,16 +24,11 @@ homeApp.controller('TDEvolutionCtrl', function($scope, $http, $q, sidebarService
 
   // Load all tags (versions)
   thisCtrl.tagsLoad = function(repositoryId) { 
-    console.log('tagsLoad=', repositoryId);
-
-     $http.get('TreeServlet', {params:{"action": "getAllTagsAndMaster", "repositoryId": repositoryId}})
-    .success(function(data) {
-      console.log('found', data.length, 'tags');
-      $scope.tags = data.sort(function(tag1, tag2) {
-                      return tag1.commits.length - tag2.commits.length;
-                    });
-      thisCtrl.loadSlider();
-    });
+    $scope.tags = $scope.filtered.tags;
+    $scope.tags = $scope.tags.sort(function(tag1, tag2) {
+                    return tag1.commits.length - tag2.commits.length;
+                  });
+    thisCtrl.loadSlider();
   }
 
   thisCtrl.loadSlider = function() {
