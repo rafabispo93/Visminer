@@ -333,9 +333,22 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
     }, 500);
   }
 
+  $scope.updateCommittersTotal = function() {
+    for (i in $scope.tdItems) {
+      var tdItem = $scope.tdItems[i];
+      if ($scope.committersTotal.commits.indexOf(tdItem.commit.id) == -1) {
+        $scope.committersTotal.commits.push(tdItem.commit.id);
+      }
+      if (typeof tdItem.tdIndicator.file != 'undefined' && $scope.committersTotal.files.indexOf(tdItem.tdIndicator.file) == -1) {
+        $scope.committersTotal.files.push(tdItem.tdIndicator.file);
+      }
+      $scope.committersTotal.principal += tdItem.principal;
+    } 
+  }
+
   if ($scope.currentPage == 'tdcommiters') {
-  	console.log("$scope.currentPage == 'tdcommiters'")
   	$scope.tdItems = sidebarService.getTdItems();
+    $scope.updateCommittersTotal();
   	$scope.graphCommitterData = $scope.getGraphCommitterData(new Date('2000-01-01'), new Date('2100-01-01 00:00:00'));
   }
 });

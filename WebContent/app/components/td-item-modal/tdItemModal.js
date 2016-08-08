@@ -54,16 +54,4 @@ angular.module('homeApp').component('tdItemModal', {
 
   },
   templateUrl: 'app/components/td-item-modal/tdItemModal.html',
-}).filter('thisMethodAndHasValue', function() {
-  return function(items, scope) {
-    if (typeof scope.tdItemModalObj != 'undefined' && scope.tdItemModalObj.tdIndicator.method) {
-      var values = [];
-      for (i in items) {
-        if (typeof items[i].methods != 'undefined' && items[i].methods[0].method == scope.tdItemModalObj.tdIndicator.method && items[i].methods[0].value > 0) {
-          values.push(items[i]);
-        }
-      }
-      return values;
-    }
-  };
 });

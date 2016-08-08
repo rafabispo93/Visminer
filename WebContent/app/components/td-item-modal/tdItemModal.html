@@ -63,10 +63,10 @@
 									      <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.tdIndicator.location" readonly="readonly">
 									    </div>
 									  </div>
-									  <div class="form-group" ng-show="tdItemModalObj.method">
+									  <div class="form-group" ng-show="tdItemModalObj.tdIndicator.method">
 									    <label for="inputPath" class="col-sm-4 control-label">Method</label>
 									    <div class="col-sm-7">
-									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: Method()" ng-model="tdItemModalObj.method" readonly="readonly">
+									      <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.tdIndicator.method" readonly="readonly">
 									    </div>
 									  </div>
 									  <div ng-show="tdItemModalObj.tdIndicator.file" class="form-group">
@@ -141,9 +141,9 @@
 	                  <th>Name</th>
 	                  <th style="width: 40px">Value</th>
 	                </tr>
-	                <tr ng-repeat="metrics in tdItemModalObj.tdIndicator.metrics | thisMethodAndHasValue:this" ng-show="metrics.methods.length > 0">
+	                <tr ng-repeat="metrics in tdItemModalObj.tdIndicator.metrics">
 	                  <td>{{metrics.name}}</td>
-	                  <td><div ng-repeat="method in metrics.methods">{{method.value}}</div></td>
+	                  <td><div>{{metrics.value}}</div></td>
 	                </tr>
 	              </table>
 	            </div>
