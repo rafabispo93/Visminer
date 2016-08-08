@@ -149,7 +149,6 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
   };
 
   var graphData = $scope.getGraphData([], new Date('2000-01-01'), new Date('2100-01-01 00:00:00'));
-  console.log('graphData', graphData)
 	$scope.graphGlobalData = graphData.map(function(series) {
     series.values = series.values.map(function(d) { 
       return {x: d[0], y: d[1] } 
