@@ -91,20 +91,20 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 	thisCtrl.loadTypes = function() {
 		var typeData = tdAnalyzerService.getTypeData();
 		var duplicatedCodeData = tdAnalyzerService.getDuplicatedCodeData();
-		for (i in typeData) {
+		for (a in typeData) {
 			var diffs = [];
-			var info = $scope.getCommitAndCommitter(typeData[i].commit);
+			var info = $scope.getCommitAndCommitter(typeData[a].commit);
 			var commit = info.commit;
 			var committer = info.committer;
-			var debts = thisCtrl.getDebts(typeData[i]);
+			var debts = thisCtrl.getDebts(typeData[a]);
 			for (x in debts) {
 				$scope.tdItems.push(
 					new TDItem(
-						typeData[i].repository, 
-						new Commit(commit._id, new Date(commit.commit_date.$date), {linesAdded: commit.diffs[0].lines_added, linesRemoved: commit.diffs[0].lines_removed, type: commit.diffs[0].type}), 
+						typeData[a].repository, 
+						new Commit(commit._id, formatDate(commit.commit_date.$date), {linesAdded: commit.diffs[0].lines_added, linesRemoved: commit.diffs[0].lines_removed, type: commit.diffs[0].type}), 
 						(typeof committer != 'undefined') ? new Committer(committer.name, committer.email, committer.avatar) : new Committer(),
 						'Code Debt',
-						new LongMethod(debts[x].method, typeData[i].abstract_types[0].metrics, typeData[i].filename, typeData[i].package),
+						new LongMethod(debts[x].method, typeData[a].abstract_types[0].metrics, typeData[a].filename, typeData[a].package),
 						true,
 						null,
 						null,
@@ -115,30 +115,29 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 			}
 			$scope.typesAnalized++;
 		}
-		for (i in duplicatedCodeData) {
-			if (duplicatedCodeData[i].code_smells.length > 0 && duplicatedCodeData[i].code_smells[0].occurrences.length > 0) {
-				var info = $scope.getCommitAndCommitter(duplicatedCodeData[i].commit);
+		for (b in duplicatedCodeData) {
+			if (duplicatedCodeData[b].code_smells.length > 0 && duplicatedCodeData[b].code_smells[0].occurrences.length > 0) {
+				var info = $scope.getCommitAndCommitter(duplicatedCodeData[b].commit);
 				var commit = info.commit;
 				var committer = info.committer;
 				var files = [];
-				for (z in duplicatedCodeData[i].code_smells[0].occurrences) {
+				for (z in duplicatedCodeData[b].code_smells[0].occurrences) {
 					files.push({
 			  		one: {
-			  			name: duplicatedCodeData[i].code_smells[0].occurrences[z].files[0].file_name,
-			  			line: duplicatedCodeData[i].code_smells[0].occurrences[z].files[0].begin_line+' ~ '+duplicatedCodeData[i].code_smells[0].occurrences[z].files[0].end_line,
+			  			name: duplicatedCodeData[b].code_smells[0].occurrences[z].files[0].file_name,
+			  			line: duplicatedCodeData[b].code_smells[0].occurrences[z].files[0].begin_line+' ~ '+duplicatedCodeData[b].code_smells[0].occurrences[z].files[0].end_line,
 			  		},
 			  		two: {
-			  			name: duplicatedCodeData[i].code_smells[0].occurrences[z].files[1].file_name,
-			  			line: duplicatedCodeData[i].code_smells[0].occurrences[z].files[1].begin_line+' ~ '+duplicatedCodeData[i].code_smells[0].occurrences[z].files[1].end_line,
+			  			name: duplicatedCodeData[b].code_smells[0].occurrences[z].files[1].file_name,
+			  			line: duplicatedCodeData[b].code_smells[0].occurrences[z].files[1].begin_line+' ~ '+duplicatedCodeData[b].code_smells[0].occurrences[z].files[1].end_line,
 			  		},
-			  		code: duplicatedCodeData[i].code_smells[0].occurrences[z].source_code_slice
+			  		code: duplicatedCodeData[b].code_smells[0].occurrences[z].source_code_slice
 					})
 				}
-				console.log('committer', committer)
 				$scope.tdItems.push(
 					new TDItem(
-						duplicatedCodeData[i].repository, 
-						new Commit(commit._id, new Date(commit.commit_date.$date), {linesAdded: commit.diffs[0].lines_added, linesRemoved: commit.diffs[0].lines_removed, type: commit.diffs[0].type}), 
+						duplicatedCodeData[b].repository, 
+						new Commit(commit._id, formatDate(commit.commit_date.$date), {linesAdded: commit.diffs[0].lines_added, linesRemoved: commit.diffs[0].lines_removed, type: commit.diffs[0].type}), 
 						(typeof committer != 'undefined') ? new Committer(committer.name, committer.email, committer.avatar) : new Committer(),
 						'Code Debt',
 						new DuplicatedCode(files),
@@ -154,10 +153,27 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 		sidebarService.setTdItems($scope.tdItems);
 	}
 
+	/**
+	 * Format date to yyyy-mm-dd 00:00:00
+	 * @param  date
+	 * @return date object
+	 */
+	function formatDate(date) {
+		var d = new Date(date),
+				month = '' + (d.getMonth() + 1),
+				day = '' + d.getDate(),
+				year = d.getFullYear();
+		if (month.length < 2) 
+			month = '0' + month;
+		if (day.length < 2) 
+			day = '0' + day;
+		return new Date([year, month, day].join('-')+' 00:00:00');
+	}
+
 	$scope.getDuplicatedCodeDebts = function(callback) {
 		var tagsNames = [];
-		for (i in $scope.filtered.tags) {
-			tagsNames.push($scope.filtered.tags[i].name);
+		for (c in $scope.filtered.tags) {
+			tagsNames.push($scope.filtered.tags[c].name);
 		}
 		$http.get('TagAnalysisServlet', {params:{"action": "getAllByTagsName", "tagsName": '['+tagsNames.join(',')+']'}})
 		.success(function(data) {
