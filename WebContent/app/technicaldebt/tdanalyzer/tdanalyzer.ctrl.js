@@ -104,7 +104,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 						new Commit(commit._id, formatDate(commit.commit_date.$date), {linesAdded: commit.diffs[0].lines_added, linesRemoved: commit.diffs[0].lines_removed, type: commit.diffs[0].type}), 
 						(typeof committer != 'undefined') ? new Committer(committer.name, committer.email, committer.avatar) : new Committer(),
 						'Code Debt',
-						new LongMethod(debts[x].method, typeData[a].abstract_types[0].metrics, typeData[a].filename, typeData[a].package),
+						new LongMethod(debts[x].method, getLongMethodMetrics(debts[x].method, typeData[a].abstract_types[0].metrics), typeData[a].filename, typeData[a].package),
 						true,
 						null,
 						null,
@@ -151,6 +151,18 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 			}
 		}
 		sidebarService.setTdItems($scope.tdItems);
+	}
+
+	function getLongMethodMetrics(method, metrics) {
+		var metricsNew = [];
+		for (k in metrics) {
+			for (h in metrics[k].methods) {
+				if (metrics[k].methods[h].method == method && metrics[k].methods[h].value > 0) {
+					metricsNew.push({name: metrics[k].name, value: metrics[k].methods[h].value})
+				}
+			}
+		}
+		return metricsNew;
 	}
 
 	/**
@@ -275,7 +287,7 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route,
 
 	if ($scope.currentPage == 'tdanalyzer') {
 		thisCtrl.loadTypes();
-		$('.sidebar-toggle').click();
+		// $('.sidebar-toggle').click();
 		$('#filter-identificationdate').daterangepicker();
 		// $("#tditem-datatable").DataTable({
 		// 	"ordering": false
