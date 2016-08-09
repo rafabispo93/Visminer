@@ -6,7 +6,9 @@ angular.module('homeApp').component('tdTimeline', {
       $http.get('TypeServlet', {params:{"action": "getTypeTimeline", 
                  "idRepository": $scope.type.repository, "fileHash": $scope.type.file_hash}})
        .success(function(data) {
-          $scope.dataList = data;         
+          $scope.dataList = data.sort(function(item1, item2) {
+                      return item1.tag.commits.length - item2.tag.commits.length;
+                    });;         
           buildTimelineList();
        });
     }); 
