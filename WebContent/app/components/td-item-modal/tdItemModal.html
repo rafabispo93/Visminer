@@ -1,0 +1,197 @@
+<div id="tdItemModal" class="modal fade bs-example-modal-sm" role="dialog">
+  <div class="modal-dialog" style="width: 1000px;">
+	  <div class="modal-content">
+	    <div class="modal-header modal-header-info">
+	      <button type="button" class="close" data-dismiss="modal">&times;</button>
+	      <h3 class="modal-title">
+	      	{{tdItemModalObj.tdIndicator.name}}
+	      </h3>
+	    </div>
+
+	    <div class="modal-body">
+
+	    	<div class="nav-tabs-custom">
+	    	  <ul class="nav nav-tabs">
+	    	    <li ng-class="{'active': tabTd}">
+	    	    	<a href="#"  ng-click="activeTab('td')">TD</a>
+	    	    </li>
+	    	    <li ng-class="{'active': tabMetrics}">
+	    	    	<a href="#" ng-click="activeTab('metrics')">Metrics</a>
+	    	    </li>
+	    	  </ul>
+	    	  <div class="tab-content">
+	    	    <div class="tab-pane" ng-class="{'active': tabTd}" ng-show="tabTd">
+
+    	        <div class="row">
+    	        	<form class="form-horizontal">
+
+    	        		<div class="col-sm-6">
+    	        			<div class="form-group">
+									    <label for="inputPath" class="col-sm-4 control-label">Incurred by</label>
+									    <div class="col-sm-7">
+			                    <img ng-show="tdItemModalObj.committer.avatar != null" ng-src="{{tdItemModalObj.committer.avatar}}" class="avatar-normal" alt="{{tdItemModalObj.committer.name}}">
+									    		{{tdItemModalObj.committer.name}}
+									    </div>
+									  </div>
+									  <div class="form-group">
+									    <label for="inputName" class="col-sm-4 control-label">Identification date</label>
+									    <div class="col-sm-7">
+									      <input type="text" class="form-control" id="inputName" ng-model="tdItemModalObj.commit.date" readonly="readonly">
+									    </div>
+									  </div>
+									  <div class="form-group">
+									    <label for="inputDescription" class="col-sm-4 control-label">Type</label>
+									    <div class="col-sm-7">
+									      <select  class="form-control" id="inputCvs" ng-model="tdItemModalObj.type">
+									    		<option ng-selected="tdItemModalObj.type=='Code Debt'">Code Debt</option>
+									    		<option ng-selected="tdItemModalObj.type=='Design Debt'">Design Debt</option>
+									    	</select>
+									    </div>
+									  </div>
+									  <div class="form-group">
+									    <label for="inputPath" class="col-sm-4 control-label">TD Indicator</label>
+									    <div class="col-sm-7">
+									      <select  class="form-control" ng-model="tdItemModalObj.tdIndicator.name">
+									    		<option ng-selected="tdItemModalObj.tdIndicator.name=='Duplicated Code'">Duplicated code</option>
+									    		<option ng-selected="tdItemModalObj.tdIndicator.name=='Long Method'">Long method</option>
+									    	</select>
+									    </div>
+									  </div>
+									  <div class="form-group" ng-show="tdItemModalObj.tdIndicator.location">
+									    <label for="inputPath" class="col-sm-4 control-label">Location</label>
+									    <div class="col-sm-7">
+									      <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.tdIndicator.location" readonly="readonly">
+									    </div>
+									  </div>
+									  <div class="form-group" ng-show="tdItemModalObj.tdIndicator.method">
+									    <label for="inputPath" class="col-sm-4 control-label">Method</label>
+									    <div class="col-sm-7">
+									      <input type="text" class="form-control" id="inputPath" ng-model="tdItemModalObj.tdIndicator.method" readonly="readonly">
+									    </div>
+									  </div>
+									  <div ng-show="tdItemModalObj.tdIndicator.file" class="form-group">
+									    <label for="inputPath" class="col-sm-4 control-label">File</label>
+									    <div class="col-sm-7">
+									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: name.java" ng-model="tdItemModalObj.tdIndicator.file" readonly="readonly">
+									    </div>
+									  </div>
+									  <div class="form-group" ng-show="tdItemModalObj.package">
+									    <label for="inputPath" class="col-sm-4 control-label">Package</label>
+									    <div class="col-sm-7">
+									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: org.domain" ng-model="tdItemModalObj.package" readonly="readonly">
+									    </div>
+									  </div>
+									  <div class="form-group">
+									    <label for="inputPath" class="col-sm-4 control-label">Commit</label>
+									    <div class="col-sm-7">
+									      <input type="text" class="form-control" id="inputPath" placeholder="E.g.: 1af1e7250f75423328a8b73a1ae1657b421726db" ng-model="tdItemModalObj.commit.id" readonly="readonly">
+									    </div>
+									  </div>									  
+							  	</div>
+							  	<div class="col-sm-6">
+							  		<div class="form-group">
+							  		  <label for="inputPath" class="col-sm-4 control-label">TD item?</label>
+							  		  <div class="col-sm-7">
+							  		    <input type="checkbox" class="minimal" ng-model="tdItemModalObj.isTdItem" ng-click="checkIsTdItemValues()" ng-checked="tdItemModalObj.isTdItem == true">
+							  		  </div>
+							  		</div>
+							  		<div class="form-group">
+							  		  <label for="inputPath" class="col-sm-4 control-label">Principal (h)</label>
+							  		  <div class="col-sm-7">
+							  		    <input type="number" class="form-control" id="inputPath" ng-model="tdItemModalObj.principal" ng-disabled="tdItemModalObj.isTdItem == false">
+							  		  </div>
+							  		</div>
+							  		<div class="form-group">
+							  		  <label for="inputPath" class="col-sm-4 control-label">Interest amount (h)</label>
+							  		  <div class="col-sm-7">
+							  		    <input type="number" class="form-control" id="inputPath" ng-model="tdItemModalObj.interestAmount" ng-disabled="tdItemModalObj.isTdItem == false">
+							  		  </div>
+							  		</div>
+							  		<div class="form-group">
+							  		  <label for="inputPath" class="col-sm-4 control-label" style="padding-left: 0px;">Interest probability (%)</label>
+							  		  <div class="col-sm-7">
+							  		    <input type="number" min="0" max="100" class="form-control" id="inputPath" ng-model="tdItemModalObj.interestProbability" ng-disabled="tdItemModalObj.isTdItem == false">
+							  		  </div>
+							  		</div>
+							  		<div class="form-group">
+									    <label for="inputPath" class="col-sm-4 control-label">Notes</label>
+									    <div class="col-sm-7">
+									      <textarea class="form-control" ng-model="tdItemModalObj.notes" style="height: 215px;"></textarea>
+									    </div>
+									  </div>
+							  	</div>
+
+							  	<div class="form-group">
+								    <div class="col-sm-offset-3 col-sm-9" style="text-align:right;padding-right:65px;">
+								      <button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+								      <button ng-click="save()" class="btn btn-success">Save</button>
+								    </div>
+								  </div>
+
+								</form>
+
+	    		    </div>
+
+	    	    </div>
+	    	    <!-- /.tab-pane -->
+	    	    <div class="tab-pane" ng-class="{'active': tabMetrics}" ng-show="tabMetrics">
+	    	      <div ng-show="tdItemModalObj.tdIndicator.name == 'Long Method'">
+		    	      <table class="table table-bordered">
+	                <tr>
+	                  <th>Name</th>
+	                  <th style="width: 40px">Value</th>
+	                </tr>
+	                <tr ng-repeat="metrics in tdItemModalObj.tdIndicator.metrics">
+	                  <td>{{metrics.name}}</td>
+	                  <td><div>{{metrics.value}}</div></td>
+	                </tr>
+	              </table>
+	            </div>
+
+              <div class="row" ng-show="tdItemModalObj.tdIndicator.name == 'Duplicated Code'">
+	          		<form class="form-horizontal">
+		          		<div ng-repeat="file in tdItemModalObj.tdIndicator.files">
+		          			<div class="col-sm-6">
+				          		<div class="form-group">
+				        		    <div class="col-sm-12" style="word-wrap: break-word;">
+				        		      File: {{file.one.name}}
+				        		    </div>
+				        		    <div class="col-sm-12">
+				        		      Line: {{file.one.line}}
+				        		    </div>
+				        		  </div>
+			        		  </div>
+	            			<div class="col-sm-6">
+	  		          		<div class="form-group">
+	  		        		    <div class="col-sm-12" style="word-wrap: break-word;">
+	  		        		      File: {{file.two.name}}
+	  		        		    </div>
+	  		        		    <div class="col-sm-12">
+	  		        		      Line: {{file.two.line}}
+	  		        		    </div>
+	  		        		  </div>
+	  	        		  </div>
+
+	  	        		  <div class="col-sm-12">
+	  		          		<div class="form-group">
+	  		        		    <div class="col-sm-12">
+	  		        		    	Code:
+	  		        		      <textarea class="form-control" ng-model="file.code" readonly="readonly" style="height: 150px;font-size: 12px;"></textarea>
+	  		        		    </div>
+	  		        		  </div>
+	  	        		  </div>
+
+
+									</div>
+	        		  </form>
+      		  	</div>
+	              
+	    	    </div>
+	    	    <!-- /.tab-pane -->
+	    	  </div>
+	    	  <!-- /.tab-content -->
+	    	</div>
+	    	<!-- nav-tabs-custom -->
+	  </div>
+	</div>
+</div>

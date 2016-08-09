@@ -3,7 +3,7 @@
     <!-- Content Header (Page header) -->
   <section class="content-header">
     <div style="font-size: 22px">
-    	<i class="fa fa-database" style="font-size: 20px"></i>
+      <i class="fa fa-database" style="font-size: 20px"></i>
       {{filtered.repository.name}}
     </div>
 
@@ -35,9 +35,7 @@
     var width = $("#slider-versions").width();
     $("#stacked-column-chart").width(width-13);
   });
-
   window.addEventListener("resize", resizeChart);
-
   function resizeChart() {
     var width = $("#slider-versions").width();
     $("#stacked-column-chart").width(width);
