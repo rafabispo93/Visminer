@@ -13,9 +13,10 @@
 
   <div class="row">
     <section class="content" style="padding-top: 10px">
-        <div>
-          <nvd3 options="graphGlobalOptions" data="graphGlobalData"></nvd3>
-        </div>
+      <h4 style="padding-left: 15px">TD Indicators</h4>
+      <div>
+        <nvd3 options="graphGlobalOptions" data="graphGlobalData"></nvd3>
+      </div>
     </section><!-- /.content -->
   </div>
   <!-- Main content -->
@@ -29,11 +30,18 @@
   </div>
 
   <div class="row">
+    <section style="padding: 15px">
+      <div class="col-md-12">
+      </div>
+    </section>
+  </div>
+
+  <div class="row">
     <section class="content" style="padding-top: 10px">
       <div class="col-md-12">
         <div class="box box-default">
           <div class="box-header with-border">
-            <h3 class="box-title">TD Indicators</h3>
+            <h3 class="box-title">TD Indicators by Type</h3>
             <div class="box-tools pull-right">
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
               </button>
@@ -52,8 +60,7 @@
       <div class="col-md-12">
         <div class="box box-default">
           <div class="box-header with-border">
-            <h3 class="box-title">{{graphCommitterData.length}} Contributors</h3>
-
+            <h3 class="box-title">{{graphCommitterData.length}} Contributor(s)</h3>
             <div class="box-tools pull-right">
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
               </button>
@@ -66,11 +73,26 @@
                 <a class="users-list-name" href="#">{{tdItem.committer.name}}</a>
               </li>
             </ul>
-            <!-- /.users-list -->
           </div>
-          <!-- /.box-body -->
         </div>
       </div>
+
+      <div class="col-md-12">
+        <div class="box box-default">
+          <div class="box-header with-border">
+            <h3 class="box-title">TD Principal by Contributor</h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body no-padding">
+            <nvd3 options="graphCommitterTDPrincipalOptions" data="graphCommitterTDPrincipalData"></nvd3>
+          </div>
+        </div>
+      </div>
+
+      <h4 style="padding-left: 15px">TD Indicators by Contributors</h4>
 
       <div ng-repeat="tdItem in graphCommitterData" class="col-md-12">
         <!-- Box Comment -->

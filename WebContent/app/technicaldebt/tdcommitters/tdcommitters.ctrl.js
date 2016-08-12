@@ -97,7 +97,6 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
 		return date;
 	}
 
-
 	var graphCommitterUpdate;
 	$scope.graphGlobalOptions = {
     chart: {
@@ -128,14 +127,14 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
         showMaxMin: false
       },
       yAxis: {
-       axisLabel: 'Y1 Axis',
+       axisLabel: '',
         tickFormat: function(d){
             return d3.format(',f')(d);
         },
         axisLabelDistance: 12
       },
       y2Axis: {
-				axisLabel: 'Y2 Axis',
+				axisLabel: '',
         tickFormat: function(d) {
           return '$' + d3.format(',.2f')(d)
         }
@@ -146,6 +145,34 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
 				});
       }
     }
+  };
+
+  $scope.graphCommitterTDPrincipalOptions = {
+    chart: {
+      type: 'lineChart',
+      height: 200,
+      margin : {
+        top: 20,
+        right: 20,
+        bottom: 40,
+        left: 55
+      },
+      yDomain1: [0, 100],
+      useInteractiveGuideline: true,
+      xAxis: {
+        axisLabel: 'Date',
+        tickFormat: function(d) {
+          return d3.time.format('%d-%b-%y')(new Date(d))
+        },
+        showMaxMin: false
+      },
+      yAxis: {
+        axisLabel: '',
+        tickFormat: function(d){
+          return d3.format(',f')(d);
+        },
+      }
+    },
   };
 
   var graphData = $scope.getGraphData([], new Date('2000-01-01'), new Date('2100-01-01 00:00:00'));
@@ -169,12 +196,6 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
       },
       yDomain1: [0, 100],
       useInteractiveGuideline: true,
-      // dispatch: {
-      //   stateChange: function(e){ console.log("stateChange"); },
-      //   changeState: function(e){ console.log("changeState"); },
-      //   tooltipShow: function(e){ console.log("tooltipShow"); },
-      //   tooltipHide: function(e){ console.log("tooltipHide"); }
-      // },
       xAxis: {
         axisLabel: 'Date',
         tickFormat: function(d) {
@@ -183,14 +204,14 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
         showMaxMin: false
       },
       yAxis: {
-        axisLabel: 'Y Axis',
+        axisLabel: '',
         tickFormat: function(d){
           return d3.format(',f')(d);
         },
-        // axisLabelDistance: 12
       }
     },
   };
+
   $scope.getGraphCommitterData = function(dateIni, dateEnd) {
   	var committers = [];
   	for (i in $scope.tdItems) {
@@ -247,14 +268,79 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
         })
   		})
   	}
+    $scope.graphCommitterTDPrincipalData = $scope.getGraphCommitterTDPrincipalData([], dateIni, dateEnd);
     updateTdIndicators(data);
   	return data;
+  }
+
+   $scope.getGraphCommitterTDPrincipalData = function(committersEmails, dateIni, dateEnd) {
+    var data = [],
+        dates = [];
+    // Get data & dates
+    for (i in $scope.tdItems) {
+      if ($scope.tdItems[i].isTdItem) {
+        var dataExists = false;
+        for (x in data) {
+          if (data[x].key == $scope.tdItems[i].committer.email) {
+            dataExists = true;
+          }
+        }
+        if (dataExists == false) {
+          data.push({
+            "key": $scope.tdItems[i].committer.email,
+            "values": []
+          })
+        }
+        if (dates.indexOf($scope.tdItems[i].commit.date.getTime()) === -1) {
+          if (committersEmails.length > 0) {
+            if (committersEmails.indexOf($scope.tdItems[i].committer.email) > -1) {
+              var date = getGraphDataDate($scope.tdItems[i], committersEmails, dateIni, dateEnd);
+              if (date != null) {
+                dates.push(date);
+              }
+            }
+          } else {
+            var date = getGraphDataDate($scope.tdItems[i], committersEmails, dateIni, dateEnd);
+            if (date != null) {
+              dates.push(date);
+            }
+          }
+        }
+      }
+    }
+    dates.sort();
+    // Get values
+    for (i in data) {
+      for (z in dates) {
+        var total = 0;
+        for (x in $scope.tdItems) {
+          if ($scope.tdItems[x].committer.email == data[i].key && $scope.tdItems[x].commit.date.getTime() == dates[z]) {
+            if (committersEmails.length > 0) {
+              if (committersEmails.indexOf($scope.tdItems[x].committer.email) > -1) {
+                total += $scope.tdItems[x].principal;
+              }
+            } else {
+              total += $scope.tdItems[x].principal;
+            }
+          }
+        }
+        data[i].values.push([dates[z], total]);
+      }
+    }
+    console.log('data', data);
+    return data.map(function(series) {
+      series.values = series.values.map(function(d) { 
+        return {x: d[0], y: d[1] } 
+      });
+      return series;
+    });
   }
 
   function graphCommitterUpdateTimeout(dateIni, dateEnd) {
   	clearTimeout(graphCommitterUpdate);
     graphCommitterUpdate = setTimeout(function(){ 
-  		$scope.graphCommitterData = $scope.getGraphCommitterData(dateIni, dateEnd);
+      $scope.graphCommitterData = $scope.getGraphCommitterData(dateIni, dateEnd);
+  		$scope.graphCommitterTDPrincipalData = $scope.getGraphCommitterTDPrincipalData(dateIni, dateEnd);
       $scope.$apply();
     }, 500);
   }
@@ -349,6 +435,6 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
   if ($scope.currentPage == 'tdcommiters') {
   	$scope.tdItems = sidebarService.getTdItems();
     $scope.updateCommittersTotal();
-  	$scope.graphCommitterData = $scope.getGraphCommitterData(new Date('2000-01-01'), new Date('2100-01-01 00:00:00'));
+    $scope.graphCommitterData = $scope.getGraphCommitterData(new Date('2000-01-01'), new Date('2100-01-01 00:00:00'));
   }
 });
