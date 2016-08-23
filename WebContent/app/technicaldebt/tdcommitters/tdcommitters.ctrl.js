@@ -150,6 +150,34 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
     }
   };
 
+  $scope.graphTDPrincipalOptions = {
+    chart: {
+      type: 'lineChart',
+      height: 200,
+      margin : {
+        top: 20,
+        right: 20,
+        bottom: 40,
+        left: 55
+      },
+      yDomain1: [0, 100],
+      useInteractiveGuideline: true,
+      xAxis: {
+        axisLabel: 'Date',
+        tickFormat: function(d) {
+          return d3.time.format('%d-%b-%y')(new Date(d))
+        },
+        showMaxMin: false
+      },
+      yAxis: {
+        axisLabel: '',
+        tickFormat: function(d){
+          return d3.format(',f')(d);
+        },
+      }
+    },
+  };
+
   $scope.graphCommitterTDPrincipalOptions = {
     chart: {
       type: 'lineChart',
@@ -276,17 +304,57 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
         })
   		})
   	}
+    $scope.graphTDPrincipalData = $scope.getGraphTDPrincipalData(dateIni, dateEnd);
     $scope.graphCommitterTDPrincipalData = $scope.getGraphCommitterTDPrincipalData([], dateIni, dateEnd);
     updateTdIndicators(data);
   	return data;
   }
 
-   $scope.getGraphCommitterTDPrincipalData = function(committersEmails, dateIni, dateEnd) {
+  $scope.getGraphTDPrincipalData = function(dateIni, dateEnd) {
+    var data = [],
+        dates = [];
+    data.push({
+      "key": 'All',
+      "values": []
+    })
+    // Get data & dates
+    for (i in $scope.tdItems) {
+      if ($scope.tdItems[i].isTdItem) {
+        var commitDate = new Date($scope.tdItems[i].commit.date);
+        if (dates.indexOf($scope.tdItems[i].commit.date) === -1) {
+          var date = getGraphDataDate($scope.tdItems[i], [], dateIni, dateEnd);
+          if (date != null) {
+            dates.push(date);
+          }
+        }
+      }
+    }
+    dates.sort();
+    // Get values
+    for (z in dates) {
+      var total = 0;
+      for (x in $scope.tdItems) {
+        if (new Date($scope.tdItems[x].commit.date).getTime() == dates[z]) {
+          total += $scope.tdItems[x].principal;
+        }
+      }
+      data[0].values.push([dates[z], total]);
+    }
+    return data.map(function(series) {
+      series.values = series.values.map(function(d) { 
+        return {x: d[0], y: d[1] } 
+      });
+      return series;
+    });
+  }
+
+  $scope.getGraphCommitterTDPrincipalData = function(committersEmails, dateIni, dateEnd) {
     var data = [],
         dates = [];
     // Get data & dates
     for (i in $scope.tdItems) {
       if ($scope.tdItems[i].isTdItem) {
+        var commitDate = new Date($scope.tdItems[i].commit.date);
         var dataExists = false;
         for (x in data) {
           if (data[x].key == $scope.tdItems[i].committer.email) {
@@ -301,7 +369,7 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
         }
         if (dates.indexOf($scope.tdItems[i].commit.date) === -1) {
           if (committersEmails.length > 0) {
-            if (committersEmails.indexOf($scope.tdItems[i].committer.email) > -1) {
+            if (committersEmails.indexOf(commitDate.getTime()) > -1) {
               var date = getGraphDataDate($scope.tdItems[i], committersEmails, dateIni, dateEnd);
               if (date != null) {
                 dates.push(date);
@@ -322,7 +390,7 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
       for (z in dates) {
         var total = 0;
         for (x in $scope.tdItems) {
-          if ($scope.tdItems[x].committer.email == data[i].key && new Date($scope.tdItems[x].commit.date) == dates[z]) {
+          if ($scope.tdItems[x].committer.email == data[i].key && new Date($scope.tdItems[x].commit.date).getTime() == dates[z]) {
             if (committersEmails.length > 0) {
               if (committersEmails.indexOf($scope.tdItems[x].committer.email) > -1) {
                 total += $scope.tdItems[x].principal;
@@ -347,6 +415,7 @@ homeApp.controller('TDCommittersCtrl', function ($scope, $http, $q, sidebarServi
   	clearTimeout(graphCommitterUpdate);
     graphCommitterUpdate = setTimeout(function(){ 
       $scope.graphCommitterData = $scope.getGraphCommitterData(dateIni, dateEnd);
+      $scope.graphTDPrincipalData = $scope.getGraphTDPrincipalData(dateIni, dateEnd);
   		$scope.graphCommitterTDPrincipalData = $scope.getGraphCommitterTDPrincipalData(dateIni, dateEnd);
       $scope.$apply();
     }, 500);
