@@ -18,6 +18,8 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route, 
 	$scope.currentDesignDebt = null;
 	$scope.currentCodeDebt = null;
 
+	$scope.tdItems = JSON.parse(localStorage.getItem('tdItems'));
+
 	$scope.filter = {
 		type: ['Code Debt', 'Design Debt'],
 		tdIndicator: ['Duplicated Code', 'Long Method'],
@@ -290,8 +292,31 @@ homeApp.controller('TDAnalyzerCtrl', function($scope, $http, $location, $route, 
 		$('#typeSmellsDetails').modal('show');
 	}
 
+	$scope.analyzeDebts = function() {
+		var analyze = true;
+		if ($scope.filtered.repository == null) {
+		  alertModalService.setMessage("Please Select a Project!");
+		  analyze = false;
+		} 
+		else if ($scope.filtered.tags == null) {
+		  alertModalService.setMessage("Please Select What Tags Will be Analyzed!");
+      analyze = false;
+		} 
+		if (analyze) {
+			$('#progressBarModal').modal('show');
+			tdAnalyzerService.loadData($scope.filtered.tags, function() {
+				$('#progressBarModal').modal('hide');
+				thisCtrl.loadTypes();
+			})
+		} else {
+			$('#alertModal').modal('show');
+		}
+	}
+
 	if ($scope.currentPage == 'tdanalyzer') {
-		thisCtrl.loadTypes();
+		if ($scope.filtered.tags.length > 0 && localStorage.getItem('tdItems') != null) {
+			thisCtrl.loadTypes();
+		}
 		$('#filter-identificationdate').daterangepicker();
 	}
 });

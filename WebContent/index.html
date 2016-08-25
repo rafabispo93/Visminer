@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Visminer Dashboard</title>
+    <title>Visminer</title>
     <base href="/visminer-dashboard/"></base>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -39,16 +39,15 @@
             <div class="alert alert-warn-vmtd alert-dismissable">
               <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
               <h4>Welcome</h4>
-                Please, select the option to mine your first repository at the top right corner.
+                Please, select the option to mine your first project at the top right corner.
             </div>
           </section>
         </div>
         <div ng-show="repositories.length > 0 && filtered.repository==null">
           <section class="content">
             <div class="alert alert-warn-vmtd alert-dismissable">
-              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-              <h4>Welcome</h4>
-                <i class="icon fa fa-hand-o-left"></i>Please, select a repository in the left menu.
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true" style="margin-top:20px;">&times;</button>
+                <i class="icon fa fa-hand-o-left"></i>Please, select a project in the left menu.
             </div>
           </section>
         </div>
@@ -58,7 +57,7 @@
       </div><!-- /.content-wrapper -->
 
       <footer class="main-footer text-center">
-        <strong style="color: rgb(110, 114, 116)">Visminer Dashboard - 2016</strong>
+        <strong style="color: rgb(110, 114, 116)">Visminer - 2016</strong>
       </footer>
 
     </div><!-- ./wrapper -->
@@ -113,11 +112,14 @@
     <script src="app/app.routes.js"></script>
     <script src="app/shared/sidebar/sidebar.service.js"></script>
     <script src="app/app.ctrl.js"></script>
-    <script src="app/technicaldebt/tdevolution/tdevolution.ctrl.js"></script>
-    <script src="app/technicaldebt/tdmanagement/tdmanagement.ctrl.js"></script>
-    <script src="app/technicaldebt/tdanalyzer/tdanalyzer.ctrl.js"></script>
-    <script src="app/technicaldebt/tdanalyzer/tdanalyzer.service.js"></script>
-    <script src="app/technicaldebt/tdcommitters/tdcommitters.ctrl.js"></script>
+    <!-- Code Smells -->
+    <script src="app/codesmells/perspectiveone/perspectiveone.ctrl.js"></script>
+    <!-- Technical Debts -->
+    <script src="app/technicaldebt/evolution/evolution.ctrl.js"></script>
+    <script src="app/technicaldebt/management/management.ctrl.js"></script>
+    <script src="app/technicaldebt/analyzer/analyzer.ctrl.js"></script>
+    <script src="app/technicaldebt/analyzer/analyzer.service.js"></script>
+    <script src="app/technicaldebt/committers/committers.ctrl.js"></script>
     <script src="assets/js/center-modal.js"></script>
     <script src="assets/js/checklist-model.js"></script>
     <script src="app/components/alert-modal/alertModal.service.js"></script>
