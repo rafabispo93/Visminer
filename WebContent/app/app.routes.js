@@ -2,25 +2,29 @@ homeApp.config(['$routeProvider', '$locationProvider',
   function($routeProvider, $locationProvider) {
     $routeProvider.
       when('/', {
-        templateUrl: 'app/technicaldebt/tdevolution/tdevolution.html',
+        templateUrl: 'app/technicaldebt/evolution/evolution.html',
         controller: 'TDEvolutionCtrl'
       }).
-      when('/tdevolution', {
-        templateUrl: 'app/technicaldebt/tdevolution/tdevolution.html',
+      when('/technicaldebt/evolution', {
+        templateUrl: 'app/technicaldebt/evolution/evolution.html',
         controller: 'TDEvolutionCtrl'
       }).
-      when('/tdanalyzer', {
-        templateUrl: 'app/technicaldebt/tdanalyzer/tdanalyzer.html',
+      when('/technicaldebt/analyzer', {
+        templateUrl: 'app/technicaldebt/analyzer/analyzer.html',
         controller: 'TDAnalyzerCtrl'
       }).
-      when('/tdmanagement', {
-        templateUrl: 'app/technicaldebt/tdmanagement/tdmanagement.html',
+      when('/technicaldebt/management', {
+        templateUrl: 'app/technicaldebt/management/management.html',
         controller: 'TDManagementCtrl'
       }).
-      when('/tdcommitters', {
-        templateUrl: 'app/technicaldebt/tdcommitters/tdcommitters.html',
+      when('/technicaldebt/committers', {
+        templateUrl: 'app/technicaldebt/committers/committers.html',
         controller: 'TDCommittersCtrl'
       }).
-      otherwise({ redirectTo: '/tdanalyzer' });
+      when('/codesmells/perspectiveone', {
+        templateUrl: 'app/codesmells/perspectiveone/perspectiveone.html',
+        controller: 'CSPerspectiveOneCtrl'
+      }).
+      otherwise({ redirectTo: '/technicaldebt/analyzer' });
     $locationProvider.html5Mode(true);
  }]);

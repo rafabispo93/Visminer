@@ -4,39 +4,10 @@
   <section class="sidebar">
     <!-- sidebar menu: : style can be found in sidebar.less -->
     <ul class="sidebar-menu">
-      <li class="header filter-header">FILTER</li>
+      <li class="header filter-header">MENU</li>
       <li class="treeview">
         <a href="#">
-          <i class="fa fa-dashboard"></i> 
-          <span>Dashboard</span> 
-          <i class="fa fa-angle-left pull-right"></i>
-        </a>
-        <ul class="treeview-menu">
-          <li>
-            <a href="#" ng-click="ctrl.analyzeDebts()">
-              <i class="fa fa-circle-o"></i> TD Analyzer
-            </a>
-          </li>
-          <li>
-            <a href="tdcommitters" ng-click="ctrl.selectView('tdcommiters')">
-              <i class="fa fa-circle-o"></i> TD Committers
-            </a>
-          </li>
-          <li>
-            <a href="tdevolution" ng-click="ctrl.selectView('tdevolution')">
-              <i class="fa fa-circle-o"></i> TD Evolution
-            </a>
-          </li>
-          <li>
-            <a href="tdmanagement" ng-click="ctrl.selectView('tdmanagement')">
-              <i class="fa fa-circle-o"></i> TD Management
-            </a>
-          </li>
-        </ul>
-      </li>
-      <li class="treeview">
-        <a href="#">
-          <i class="fa fa-database"></i> <span>Repositories</span>
+          <i class="fa fa-database"></i> <span>Projects</span>
           <small class="label pull-right bg-green">{{repositories.length}}</small>
         </a>
         <ul class="treeview-menu">
@@ -49,13 +20,10 @@
       </li>
       <li class="treeview">
         <a href="#">
-          <i class="fa fa-tags"></i> <span>Versions</span>
+          <i class="fa fa-tags"></i> <span>Tags</span>
           <small class="label pull-right bg-green" ng-hide="tags.length==0">{{filtered.tags.length}}/{{tags.length}}</small>
           <small class="label pull-right bg-green" ng-show="tags.length==0">{{tags.length}}</small>
         </a>
-
-
-
         <ul class="treeview-menu">
           <select ng-model="tagTypeSelect" ng-change="ctrl.filterTagTypes(tagTypeSelect)" class="form-control">
             <option ng-repeat="tagType in tagTypesSelect" ng-selected="{{tagType==tagTypeSelect}}" value="{{tagType}}">{{tagType}}</option>
@@ -64,6 +32,55 @@
             <label class="control-sidebar-subheading filter-version-sub-item">
               <input type="checkbox" checklist-model="filtered.tags" checklist-value="tag">{{tag.alias}}
             </label>
+          </li>
+        </ul>
+      </li>
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-fw fa-television"></i> 
+          <span>Perspectives</span> 
+          <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <a href="#">
+              <i class="ion ion-bug"></i> Code Smells
+            </a>
+            <ul class="treeview-menu">
+              <li>
+                <a href="codesmells/perspectiveone" ng-click="ctrl.selectView('csperspectiveone')">
+                  <i class="fa fa-circle-o"></i> Perspective one
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fa fa-line-chart"></i> Evolution</a></li>
+          <li>
+            <a href="#">
+              <i class="ion ion-social-usd"></i> Technical Debt
+            </a>
+            <ul class="treeview-menu">
+              <li>
+                <a href="technicaldebt/analyzer" ng-click="ctrl.selectView('tdanalyzer')">
+                  <i class="fa fa-circle-o"></i> TD Analyzer
+                </a>
+              </li>
+              <li>
+                <a href="technicaldebt/committers" ng-click="ctrl.selectView('tdcommiters')">
+                  <i class="fa fa-circle-o"></i> TD Committers
+                </a>
+              </li>
+              <li>
+                <a href="technicaldebt/evolution" ng-click="ctrl.selectView('tdevolution')">
+                  <i class="fa fa-circle-o"></i> TD Evolution
+                </a>
+              </li>
+              <li>
+                <a href="technicaldebt/management" ng-click="ctrl.selectView('tdmanagement')">
+                  <i class="fa fa-circle-o"></i> TD Management
+                </a>
+              </li>
+            </ul>
           </li>
         </ul>
       </li>
@@ -97,7 +114,7 @@
           </li>
         </ul>
       </li>
-      <li class="treeview">
+      <!-- <li class="treeview">
         <a href="#">
           <i class="fa fa-line-chart"></i> <span>TD Indicators</span>
           <i class="fa fa-angle-left pull-right"></i>
@@ -142,7 +159,7 @@
             </ul>
           </li>
         </ul>
-      </li>
+      </li> -->
       <!-- <li class="treeview">
         <a id="sidebar-tdfilter" href="#">
           <i class="fa fa-usd"></i> <span>Technical Debt</span>
@@ -174,9 +191,6 @@
         </ul>
       </li> -->
     </ul>
-     <div class="form-group" style="padding:10px; padding-top: 0px;">
-        <button class="btn bg-olive btn-flat btn-filter-analyze sidebar-form" ng-click="ctrl.analyzeDebts()">ANALYZE</button>
-      </div>
   </section>
   <!-- /.sidebar -->
 </aside>

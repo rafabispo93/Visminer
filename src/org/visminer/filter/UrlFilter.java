@@ -28,19 +28,19 @@ public class UrlFilter implements Filter {
 		HttpServletResponse resp = (HttpServletResponse) response;		
 		String url = req.getRequestURI();
 		
-		if (url.endsWith("tdevolution")) {
-			resp.sendRedirect(url.replace("tdevolution", "#tdevolution"));
+		if (url.endsWith("technicaldebt/evolution")) {
+			resp.sendRedirect(url.replace("technicaldebt/evolution", "#technicaldebt/evolution"));
 		}
-		else if (url.endsWith("tdanalyzer")) {
-			resp.sendRedirect(url.replace("tdanalyzer", "#tdanalyzer"));
+		else if (url.endsWith("technicaldebt/analyzer")) {
+			resp.sendRedirect(url.replace("technicaldebt/analyzer", "#technicaldebt/analyzer"));
 		}
-		else if (url.endsWith("tdmanagement")) {
-			resp.sendRedirect(url.replace("tdmanagement", "#tdmanagement"));
+		else if (url.endsWith("technicaldebt/management")) {
+			resp.sendRedirect(url.replace("technicaldebt/management", "#technicaldebt/management"));
 		}
-		else if (url.endsWith("tdcommitters")) {
-			resp.sendRedirect(url.replace("tdcommitters", "#tdcommitters"));
+		else if (url.endsWith("technicaldebt/committers")) {
+			resp.sendRedirect(url.replace("technicaldebt/committers", "#technicaldebt/committers"));
 		} else {
-		chain.doFilter(request, response);	
+			chain.doFilter(request, response);	
 		}
 	}
 

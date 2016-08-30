@@ -149,32 +149,6 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
     return ($scope.tagTypeSelect.toLowerCase() == tag.type);
 	};
 
-	thisCtrl.analyzeDebts = function() {
-		var analyze = true;
-		if ($scope.filtered.repository == null) {
-		  alertModalService.setMessage("Please Select a Repository!");
-		  analyze = false;
-		} 
-		else if ($scope.filtered.tags == null) {
-		  alertModalService.setMessage("Please Select What Version Will be Analyzed!");
-      analyze = false;
-		} 
-		else if ($scope.filtered.debts.length == 0) {
-		  alertModalService.setMessage("Please Select What Technical Debts Will be Analyzed!");
-		  analyze = false;
-		}
-		if (analyze) {
-			$('#progressBarModal').modal('show');
-			tdAnalyzerService.loadData($scope.filtered.tags, function() {
-				$('#progressBarModal').modal('hide');
-				thisCtrl.selectView('tdanalyzer');
-  	   	$location.path("/tdanalyzer");
-        $route.reload();
-			})
-		} else {
-			$('#alertModal').modal('show');
-		}
-	}
 });
 // Models
 homeApp.factory('Repository', function() {

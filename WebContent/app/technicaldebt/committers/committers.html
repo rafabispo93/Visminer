@@ -24,7 +24,7 @@
   <div class="row">
     <section style="padding: 15px">
       <div class="col-md-12">
-        <div ng-include="'app/technicaldebt/tdcommitters/small-boxes.html'"></div>
+        <div ng-include="'app/technicaldebt/committers/small-boxes.html'"></div>
       </div>
     </section>
   </div>
@@ -80,13 +80,17 @@
       <div class="col-md-12">
         <div class="box box-default">
           <div class="box-header with-border">
-            <h3 class="box-title">TD Principal by Contributor</h3>
+            <h3 class="box-title">TD Principal</h3>
             <div class="box-tools pull-right">
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
               </button>
             </div>
           </div>
           <div class="box-body no-padding">
+            <h4 style="padding-left: 15px">All Contributors</h4>
+            <nvd3 options="graphTDPrincipalOptions" data="graphTDPrincipalData"></nvd3>
+
+            <h4 style="padding-left: 15px">By Contributors</h4>
             <nvd3 options="graphCommitterTDPrincipalOptions" data="graphCommitterTDPrincipalData"></nvd3>
           </div>
         </div>

@@ -1,9 +1,7 @@
 homeApp.service('tdAnalyzerService', function($http){
 
-	var typeData = [];
-	var duplicatedCodeData = [];
-
 	this.loadData = function(tags, callback){
+		localStorage.setItem('tdItems', JSON.stringify([]));
 		var tagsIds = [];
 		var tagsNames = [];
 		for (i in tags) {
@@ -13,20 +11,22 @@ homeApp.service('tdAnalyzerService', function($http){
 		$http.get('TypeServlet', {params:{"action": "getDebtsByListOfTags", "ids": '['+tagsIds.join(',')+']'}})
 		.success(function(data) {
 			console.log('found', data.length, 'types');
-			typeData = data;
+			localStorage.setItem('typeData', JSON.stringify(data));
 			$http.get('TagAnalysisServlet', {params:{"action": "getAllByTagsName", "tagsName": '['+tagsNames.join(',')+']'}})
 			.success(function(data) {
-				duplicatedCodeData = data;
+				localStorage.setItem('duplicatedCodeData', JSON.stringify(data));
 				callback();
 			})
 		});
 	}
 
 	this.getTypeData = function() {
-		return typeData;
+		var typeData = JSON.parse(localStorage.getItem('typeData'));
+		return (typeData == null) ? [] : typeData;
 	}
 
 	this.getDuplicatedCodeData = function() {
-		return duplicatedCodeData;
+		var duplicatedCodeData = JSON.parse(localStorage.getItem('duplicatedCodeData'));
+		return (duplicatedCodeData == null) ? [] : duplicatedCodeData;
 	}
 });
