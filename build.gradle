@@ -16,3 +16,7 @@ tasks.withType(JavaCompile) {
 repositories {
 	maven { url "http://repo.maven.apache.org/maven2" }
 }
+
+dependencies {
+	compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.24'
+}
