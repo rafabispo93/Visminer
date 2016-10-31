@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'war'
 
 group = 'org.visminer'
 version = '1.0'
@@ -14,9 +14,10 @@ tasks.withType(JavaCompile) {
 }
 
 repositories {
-	maven { url "http://repo.maven.apache.org/maven2" }
+	mavenCentral()
 }
 
 dependencies {
-	compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.24'
+	compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.23'
+	providedCompile group: 'javax', name: 'javaee-web-api', version: '7.0'
 }
