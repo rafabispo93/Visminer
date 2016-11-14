@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
-	compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.23'
+	compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.24'
+	compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.24'
 	providedCompile group: 'javax', name: 'javaee-web-api', version: '7.0'
 }
