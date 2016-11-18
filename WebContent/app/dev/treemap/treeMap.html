@@ -1,0 +1,60 @@
+<div ng-show="filtered.repository != null && currentPage == 'treeMap'">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      D.E.V
+      <small>TreeMap Perspective</small>
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-area-chart"></i> D.E.V</a></li>
+      <li class="active">TreeMap</li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+	<!-- Content Wrapper. Contains page content -->
+      <!--<div class="content-wrapper">-->
+          <section class="high">
+          
+          </section>
+        
+        	
+        </div>
+		<br/>
+
+		<rzslider id= "slider-versions" rz-slider-model="slider.minValue"
+          rz-slider-high="slider.maxValue"
+          rz-slider-options="slider.options">
+         </rzslider>
+
+		<br/><br/>
+		<div class="context-menu-one btn btn-neutral" id="container"></div>
+		<br/><br/>
+		<div id="buttons" >
+				Strategies:
+				<select name="strategies" ng-model="strategies" bs-selectbox>
+		            <option value="1">Differential</option>
+		            <option value="2">Temporal</option>
+		        </select>
+		        Metrics:
+		        <select name="metrics" ng-model="metrics" bs-selectbox>
+		        	<option value="0">SLOC</option>
+		            <option value="1">CC</option>   
+		            <option value="2">ATFD</option>
+		            <option value="3">WMC</option>
+		            <option value="4">TCC</option>
+		            <option value="5">NOA</option>
+		        </select>
+		        <button type="button" class="btn btn-primary" ng-click="generate(slider.maxValue)">Generate</button>
+		</div>
+		
+		<!--</div>--><!-- /.content-wrapper -->
+    <div class="box-header with-border">
+      <div class="row">
+          Welcome to the D.E.V  TreeMap perspective
+      </div>
+    </div>
+	
+  </section>
+</div>

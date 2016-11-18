@@ -25,7 +25,7 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
   // Load all repositories
 	thisCtrl.repositoriesLoad = function() { 
 		console.log('repositoriesLoad');
-		$http.get('RepositoryServlet', {params:{"action": "getAll"}})
+		$http.get('rest/repository/get-repositories')
 		.success(function(data) {
 			console.log('found', data.length, 'repositories');
 			var contributors = [];
@@ -54,23 +54,23 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 
 	// Load all tags (versions)
 	thisCtrl.tagsLoad = function(repository) { 
-		console.log('tagsLoad=', repository.id);
-		$http.get('ReferenceServlet', {params:{"action": "getCustomTagsByRepository", "repositoryId": repository.id}})
+		console.log('tagsLoad=', repository.id.$oid);
+		$http.get('rest/tags/get-tags', {params:{"repositoryId": repository.id.$oid}})
 		.success(function(data) {
 			console.log('found', data.length, 'tags');
 			var tags = [];
 			for(i in data) {
 				var alias, type;
-				var order = data[i].full_name.split('-');
-				if (data[i].full_name.indexOf('MONTH') > -1) {
+				var order = data[i].name.split('-');
+				if (data[i].name.indexOf('MONTH') > -1) {
 					alias = order[1]+'-'+(order[order.length-1].length == 1 ? '0'+order[order.length-1] : order[order.length-1]);
 					order = order[1]+(order[order.length-1].length == 1 ? '0'+order[order.length-1] : order[order.length-1]);
 					type = 'month';
-				} else if (data[i].full_name.indexOf('TRIMESTER') > -1) {
+				} else if (data[i].name.indexOf('TRIMESTER') > -1) {
 					alias = order[1]+'-'+order[order.length-1];
 					order = order[0]+order[order.length-1];
 					type = 'trimester';
-				} else if (data[i].full_name.indexOf('SEMESTER') > -1) {
+				} else if (data[i].name.indexOf('SEMESTER') > -1) {
 					alias = order[1]+'-'+order[order.length-1];
 					order = order[0]+order[order.length-1];
 					type = 'semester';
@@ -83,7 +83,7 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 			}
 			$scope.tags = tags;
 			sidebarService.setTags(tags);
-			thisCtrl.commitsLoad(repository.id);
+			thisCtrl.commitsLoad(repository.id, data);
 		});
 	}
 
@@ -93,28 +93,36 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 	}
 
 	// Load all commits from all trees
-	thisCtrl.commitsLoad = function(repositoryId) { 
+//	thisCtrl.commitsLoad = function(repositoryId) { 
+//		console.log('commitsLoad');
+//		$http.get('CommitServlet', {params:{"action": "getAllByRepository", "repositoryId": repositoryId}})
+//		.success(function(data) {
+//			console.log('found', data.length, 'commits');
+//			$scope.commits = data;
+//			sidebarService.setCommits(data);
+//			for (var i in data) {
+//				$scope.committerEvolution.push({
+//					commit: data[i]._id,
+//					committer: data[i].committer,
+//					date: new Date(data[i].commit_date.$date),
+//					diffs: data[i].diffs	
+//				})
+//				var index = $.inArray(data[i].committer, $scope.committers);
+//  			if (index == -1) {
+//  				$scope.committers.push(data[i].committer);
+//  				thisCtrl.commitsLoadAvatars(data[i].committer);
+//		  	}
+//			}
+//		});
+//  }
+	
+	thisCtrl.commitsLoad = function(repositoryId, data) {
 		console.log('commitsLoad');
-		$http.get('CommitServlet', {params:{"action": "getAllByRepository", "repositoryId": repositoryId}})
-		.success(function(data) {
-			console.log('found', data.length, 'commits');
-			$scope.commits = data;
-			sidebarService.setCommits(data);
-			for (var i in data) {
-				$scope.committerEvolution.push({
-					commit: data[i]._id,
-					committer: data[i].committer,
-					date: new Date(data[i].commit_date.$date),
-					diffs: data[i].diffs	
-				})
-				var index = $.inArray(data[i].committer, $scope.committers);
-  			if (index == -1) {
-  				$scope.committers.push(data[i].committer);
-  				thisCtrl.commitsLoadAvatars(data[i].committer);
-		  	}
-			}
-		});
-  }
+		console.log('found', data[0].commits.length, 'commits');
+		$scope.commits = data[0].commits;
+		sidebarService.setCommits(data[0].commits);
+	}
+	
 
   // Try to catch avatar at github
   var commitsLoadAvatarsEmails = [];

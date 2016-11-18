@@ -25,6 +25,10 @@ homeApp.config(['$routeProvider', '$locationProvider',
         templateUrl: 'app/codesmells/perspectiveone/perspectiveone.html',
         controller: 'CSPerspectiveOneCtrl'
       }).
+      when('/dev/treeMap', {
+          templateUrl: 'app/dev/treemap/treeMap.html',
+          controller: 'DEVTreeMapCtrl'
+        }).
       otherwise({ redirectTo: '/technicaldebt/analyzer' });
     $locationProvider.html5Mode(true);
  }]);

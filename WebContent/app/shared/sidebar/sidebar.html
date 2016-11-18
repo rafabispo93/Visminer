@@ -1,4 +1,4 @@
-<!-- Left side column. contains the logo and sidebar -->
+!-- Left side column. contains the logo and sidebar -->
 <aside class="main-sidebar">
   <!-- sidebar: style can be found in sidebar.less -->
   <section class="sidebar">
@@ -54,6 +54,17 @@
               </li>
             </ul>
           </li>
+          <li>
+          	<a href="#"><i class="fa fa-area-chart"></i> D.E.V</a>
+          	<ul class="treeview-menu">
+          		<li>
+                <a href="dev/treeMap" ng-click="ctrl.selectView('treeMap')">
+                  <i class="fa fa-circle-o"></i> TreeMap
+                </a>
+              </li>
+          	</ul>
+          </li>
+          <li>
           <li><a href="#"><i class="fa fa-line-chart"></i> Evolution</a></li>
           <li>
             <a href="#">
@@ -83,6 +94,7 @@
             </ul>
           </li>
         </ul>
+        
       </li>
       <li class="treeview" ng-show="currentPage == 'committers'">
         <a href="#">
