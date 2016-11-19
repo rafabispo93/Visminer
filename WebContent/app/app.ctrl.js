@@ -37,7 +37,7 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 			}
 		});
 	}
-
+  
 	thisCtrl.repositoriesLoad();
 
 	thisCtrl.selectView = function(view) {
@@ -50,6 +50,7 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		sidebarService.setRepository(repository);
 		$route.reload();
 		thisCtrl.tagsLoad(repository);
+		
 	}
 
 	// Load all tags (versions)
@@ -84,6 +85,7 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 			$scope.tags = tags;
 			sidebarService.setTags(tags);
 			thisCtrl.commitsLoad(repository.id, data);
+			
 		});
 	}
 
@@ -119,9 +121,13 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 	thisCtrl.commitsLoad = function(repositoryId, data) {
 		console.log('commitsLoad');
 		console.log('found', data[0].commits.length, 'commits');
+		console.log(data);
 		$scope.commits = data[0].commits;
 		sidebarService.setCommits(data[0].commits);
 	}
+	
+	
+	
 	
 
   // Try to catch avatar at github

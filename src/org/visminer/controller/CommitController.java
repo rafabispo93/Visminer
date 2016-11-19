@@ -1,5 +1,6 @@
 package org.visminer.controller;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.bson.Document;
 import org.repositoryminer.persistence.handler.CommitDocumentHandler;
 @Path("commits")
 public class CommitController {
@@ -16,12 +18,14 @@ public class CommitController {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("get-commits")
-	public String getCommits(@QueryParam("repositoryId") String repositoryId) {
+	@Path("get-commit")
+	public String getCommits(@QueryParam("commitId") String commitId) {
 		List<String> commitList = new ArrayList<>();
-		//commitHandler.getAllByRepository(repositoryId)
-			//.forEach(commit->commitList.add(commit.toJson()));		
-		
+		Document data = new Document();
+		System.out.println(commitId);
+		data = commitHandler.findById(commitId);
+		commitList.add(data.toJson());
+		System.out.println(commitList);
 		return commitList.toString();	
 	}
 }

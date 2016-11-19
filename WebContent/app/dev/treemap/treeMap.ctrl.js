@@ -19,10 +19,17 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				    }
 				};
 		  $scope.generate = function (commit) {
-			  makeMap(commit);
+			  console.log($scope.commits[0]);
+			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[commit]}})
+				.success(function(data) {
+					console.log(data);
+					makeMap(data);
+				});
+			  
+			  
 		  }
 		  	function makeMap(commit) { 
-			  	$http.get('TypeServlet', {params:{"action": "getAllByCommit", "idCommit": $scope.commits[commit]._id}})
+			  	$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data._id}})
 			  	.success(function(response) {
 			  		console.log(response);
 			  		var responseSize = response.length, a;
