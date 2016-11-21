@@ -20,16 +20,15 @@ public class MetricController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("get-byCommit")
-	public String getMetricsByCommit(@QueryParam("idCommit") String idCommit) {
-		List<Document> data = new ArrayList<>();
-		List<String> result = new ArrayList<>();
-		//data = typeHandler.getAllByCommit(idCommit);
-		for(Document obj:data){
-//			System.out.println(obj.toJson());
-			result.add(obj.toJson());
-		}
-		System.out.println(result);
-		return result.toString();
+	public String getMetricsByCommit(@QueryParam("idCommit") String idCommit, @QueryParam("fileHash") String fileHash) {
+		List<String> metricList = new ArrayList<>();
+		Document data = new Document();
+		long hash = Long.parseLong(fileHash, 10);
+		System.out.println(idCommit);
+		data = typeHandler.getMetricsMeasures(hash, idCommit);
+		metricList.add(data.toJson());
+		System.out.println(metricList);
+		return metricList.toString();
 	}
-
+	
 }

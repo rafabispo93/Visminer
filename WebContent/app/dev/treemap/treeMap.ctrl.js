@@ -26,12 +26,10 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 					makeMap(data);
 				});
 			  
-			  
 		  }
-		  	function makeMap(commit) { 
-			  	$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data._id}})
+		  	function makeMap(data) { 
+			  	$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data[0]._id, "fileHash": data[0].diffs[0].hash.$numberLong}})
 			  	.success(function(response) {
-			  		console.log(response);
 			  		var responseSize = response.length, a;
 			  		
 			  		
