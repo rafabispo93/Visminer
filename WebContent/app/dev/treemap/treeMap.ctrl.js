@@ -21,26 +21,39 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  $scope.generate = function (commit) {
 			  console.log($scope.commits[0]);
 			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[commit]}})
-				.success(function(data) {
-					console.log(data);
-					makeMap(data);
+				.success(function(response) {
+					console.log(response);
+					makeMap(response);
 				});
 			  
 		  }
+		  
+		  var causeName = {
+		            
+	        };
+	  		
+  		  var clazz = {
+  				
+  		  };
+  		var 
+        points = [],
+        regionP,
+        regionVal,
+        regionI = 0,
+        countryP,
+        countryI,
+        causeP,
+        causeI,
+        region,
+        country,
+        cause;
+		var i;
+		var name;
 		  	function makeMap(data) { 
 			  	$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data[0]._id, "fileHash": data[0].diffs[0].hash.$numberLong}})
 			  	.success(function(response) {
 			  		var responseSize = response.length, a;
-			  		
-			  		
-			  		var causeName = {
-				            
-			        };
-			  		
-			  		var clazz = {
-			  				
-			  		};
-			  	
+			  		console.log("Response", response);
 			  		
 			  		for (a = 0; a < responseSize; ++a) {
 			  			if(response[a].package){
@@ -53,20 +66,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			  				data[packName] = {};
 			  			}
 			  			
-				  		var 
-					        points = [],
-					        regionP,
-					        regionVal,
-					        regionI = 0,
-					        countryP,
-					        countryI,
-					        causeP,
-					        causeI,
-					        region,
-					        country,
-					        cause;
-				  		var i;
-				  		var name;
 				  		var chosenMetric = $("select[name=metrics]").val();
 				  		$scope.allMetrics = response[a].abstract_types[0];
 
@@ -112,100 +111,107 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 					  			data[packName][clazzName] = clazz[clazzName];
 					  		}
 				  		}
-				  		
-					    for (region in data) {
-					        if (data.hasOwnProperty(region)) {
-					            regionVal = 0;
-					            regionP = {
-					                id: 'id_' + regionI,
-					                name: region,
-					                color: Highcharts.getOptions().colors[regionI],
-					                borderColor:"#000000"
-					            };
-					            countryI = 0;
-					            for (country in data[region]) {
-					                if (data[region].hasOwnProperty(country)) {
-					                    countryP = {
-					                        id: regionP.id + '_' + countryI,
-					                        name: country,
-					                        parent: regionP.id,
-					                        borderColor:"#fff000"
-					                    };
-					                    points.push(countryP);
-					                    causeI = 0;
-					                    for (cause in data[region][country]) {
-					                        if (data[region][country].hasOwnProperty(cause)) {
-					                            causeP = {
-					                                id: countryP.id + '_' + causeI,
-					                                name: causeName[cause],
-					                                parent: countryP.id,
-					                                value: Math.round(+data[region][country][cause]),
-					                                borderColor: "#ff0000"
-					                                
-					                            };
-					                            regionVal += causeP.value;
-					                            points.push(causeP);
-					                            causeI = causeI + 1;
-					                        }
-					                    }
-					                    countryI = countryI + 1;
-					                }
-					            }
-					            regionP.value = regionVal;
-					            points.push(regionP);
-					            regionI = regionI + 1;
-					        }
-					    }
-					    var chart = $('.high').highcharts({
-					        series: [{
-					        	drillUpButton: {
-					                text: '<< return',
-					                name: 'teste',
-					                position: {
-					                    align: 'right',
-					                    x: -10
-					                },
-					                theme: {
-					                    fill: 'white',
-					                    'stroke-width': 1,
-					                    stroke: 'silver',
-					                    r: 5,
-					                    states: {
-					                        hover: {
-					                            fill: '#bada55'
-					                        }
-					                    }
-					                }
-		
-					            },
-					            type: 'treemap',
-					            layoutAlgorithm: 'squarified',
-					            allowDrillToNode: true,
-					            animationLimit: 1000,
-					            dataLabels: {
-					                enabled: false
-					            },
-					            levelIsConstant: true,
-					            levels: [{
-					                level: 1,
-					                dataLabels: {
-					                    enabled: true
-					                },
-					                borderWidth: 3
-					            }],
-					            data: points
-					        }],
-					        subtitle: {
-					            text: ''
-					        },
-					        title: {
-					            text: 'Results'
-					        }
-					    });
+
 			  		}
-			  		console.log(data);
+			  		console.log("Data inside response",data);
+			  		mapping(data);
 			  });
+
+			   
 			  	
+		  }
+		  	
+		  function mapping(data) {
+			  for (region in data) {
+			        if (data.hasOwnProperty(region)) {
+			            regionVal = 0;
+			            regionP = {
+			                id: 'id_' + regionI,
+			                name: region,
+			                color: Highcharts.getOptions().colors[regionI],
+			                borderColor:"#000000"
+			            };
+			            countryI = 0;
+			            for (country in data[region]) {
+			                if (data[region].hasOwnProperty(country)) {
+			                    countryP = {
+			                        id: regionP.id + '_' + countryI,
+			                        name: country,
+			                        parent: regionP.id,
+			                        borderColor:"#fff000"
+			                    };
+			                    points.push(countryP);
+			                    causeI = 0;
+			                    for (cause in data[region][country]) {
+			                        if (data[region][country].hasOwnProperty(cause)) {
+			                            causeP = {
+			                                id: countryP.id + '_' + causeI,
+			                                name: causeName[cause],
+			                                parent: countryP.id,
+			                                value: Math.round(+data[region][country][cause]),
+			                                borderColor: "#ff0000"
+			                                
+			                            };
+			                            regionVal += causeP.value;
+			                            points.push(causeP);
+			                            causeI = causeI + 1;
+			                        }
+			                    }
+			                    countryI = countryI + 1;
+			                }
+			            }
+			            regionP.value = regionVal;
+			            points.push(regionP);
+			            regionI = regionI + 1;
+			        }
+			    }
+			    var chart = $('.high').highcharts({
+			        series: [{
+			        	drillUpButton: {
+			                text: '<< return',
+			                name: 'teste',
+			                position: {
+			                    align: 'right',
+			                    x: -10
+			                },
+			                theme: {
+			                    fill: 'white',
+			                    'stroke-width': 1,
+			                    stroke: 'silver',
+			                    r: 5,
+			                    states: {
+			                        hover: {
+			                            fill: '#bada55'
+			                        }
+			                    }
+			                }
+
+			            },
+			            type: 'treemap',
+			            layoutAlgorithm: 'squarified',
+			            allowDrillToNode: true,
+			            animationLimit: 1000,
+			            dataLabels: {
+			                enabled: false
+			            },
+			            levelIsConstant: true,
+			            levels: [{
+			                level: 1,
+			                dataLabels: {
+			                    enabled: true
+			                },
+			                borderWidth: 3
+			            }],
+			            data: points
+			        }],
+			        subtitle: {
+			            text: ''
+			        },
+			        title: {
+			            text: 'Results'
+			        }
+			    });
+			    console.log("Data outside response",data);
 		  }
 		  	
 	}
