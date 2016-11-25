@@ -45,26 +45,20 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				    }
 				};
 		  $scope.generate = function () {
-			  console.log($scope.commits[0]);
-			  console.log("GENERATE",data, clazz);
-			  data = {};
 			  if (chart !== undefined) {
-				  console.log(chart);
-				  //$('.high').remove();
-				  $('.high').remove();
-				  chart = undefined;
-				  $scope.generate();
+
 			  }
-			  
+			  console.log(chart);
+//			  
 			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.max]}})
 				.success(function(response) {
-					console.log(response);
+					console.log("Commit 1", response);
 					makeMap(response);
 				});
 
 			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.min]}})
 				.success(function(response) {
-					console.log(response);
+					console.log("Commit 2",response);
 					makeMap(response);
 				});
 
@@ -72,73 +66,77 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 
 
 		  	function makeMap(data) {
-			  	$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data[0]._id, "fileHash": data[0].diffs[0].hash.$numberLong}})
-			  	.success(function(response) {
-			  		var responseSize = response.length, a;
-			  		console.log("Response", response);
+		  		
+		  		var count, diffCounter;
+		  		for (count = 0;count < data.length; ++count) {
 
-			  		for (a = 0; a < responseSize; ++a) {
-			  			if(response[a].package){
-			  				var packName = response[a].package.toString();
-				  			packName = packName.split(".").pop();
-			  			}
+		  				$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data[count]._id, "fileHash": data[count].diffs[0].hash.$numberLong}})
+					  	.success(function(response) {
+					  		var responseSize = response.length, a;
+					  		//console.log("Response", response);
 
-
-			  			if(!data[packName]) {
-			  				data[packName] = {};
-			  			}
-
-				  		var chosenMetric = $("select[name=metrics]").val();
-				  		$scope.allMetrics = response[a].abstract_types[0];
-
-				  		var structure = {
-
-				  		};
-				  		var lastClazz;
-
-				  		var clazzName = response[a].filename.toString();
-			  			clazzName =  clazzName.split("/").pop();
-			  			if( lastClazz !== clazzName) {
-
-			  				clazz = {
-
-			  				};
-			  				lastClazz = clazzName;
-			  			}
-
-				  		if ($scope.allMetrics && packName){
-				  			if($scope.allMetrics.metrics[chosenMetric].methods) {
-					  			var methodsSize = $scope.allMetrics.metrics[chosenMetric].methods.length;
-					  			var value = 0;
-					  			for (i = 0; i< methodsSize; ++i) {
-						  	    	name = $scope.allMetrics.metrics[chosenMetric].methods[i].method.toString();
-						  	    	causeName[name] = $scope.allMetrics.metrics[chosenMetric].methods[i].method;
-						  	    	value = value + parseInt($scope.allMetrics.metrics[chosenMetric].methods[i].value);
-						  	    	structure[name] = value;
-						  	    	clazz[clazzName] = structure;
+					  		for (a = 0; a < responseSize; ++a) {
+					  			if(response[a].package){
+					  				var packName = response[a].package.toString();
+						  			packName = packName.split(".").pop();
+					  			}
 
 
-						  	    }
+					  			if(!data[packName]) {
+					  				data[packName] = {};
+					  			}
 
-					  			data[packName][clazzName] = clazz[clazzName];
+						  		var chosenMetric = $("select[name=metrics]").val();
+						  		$scope.allMetrics = response[a].abstract_types[0];
+
+						  		var structure = {
+
+						  		};
+						  		var lastClazz;
+
+						  		var clazzName = response[a].filename.toString();
+					  			clazzName =  clazzName.split("/").pop();
+					  			if( lastClazz !== clazzName) {
+
+					  				clazz = {
+
+					  				};
+					  				lastClazz = clazzName;
+					  			}
+
+						  		if ($scope.allMetrics && packName){
+						  			if($scope.allMetrics.metrics[chosenMetric].methods) {
+							  			var methodsSize = $scope.allMetrics.metrics[chosenMetric].methods.length;
+							  			var value = 0;
+							  			for (i = 0; i< methodsSize; ++i) {
+								  	    	name = $scope.allMetrics.metrics[chosenMetric].methods[i].method.toString();
+								  	    	causeName[name] = $scope.allMetrics.metrics[chosenMetric].methods[i].method;
+								  	    	value = value + parseInt($scope.allMetrics.metrics[chosenMetric].methods[i].value);
+								  	    	structure[name] = value;
+								  	    	clazz[clazzName] = structure;
+
+
+								  	    }
+
+							  			data[packName][clazzName] = clazz[clazzName];
+
+							  		}
+							  		else {
+							  			causeName = {
+							  					'All': 'All'
+								        };
+							  			clazz[clazzName] = {
+							  					'All': $scope.allMetrics.metrics[chosenMetric].accumulated
+							  			};
+							  			data[packName][clazzName] = clazz[clazzName];
+							  		}
+						  		}
 
 					  		}
-					  		else {
-					  			causeName = {
-					  					'All': 'All'
-						        };
-					  			clazz[clazzName] = {
-					  					'All': $scope.allMetrics.metrics[chosenMetric].accumulated
-					  			};
-					  			data[packName][clazzName] = clazz[clazzName];
-					  		}
-				  		}
-
-			  		}
-			  		console.log("Data inside response",data);
-			  		mapping(data);
-			  });
-
+					  		console.log("Data inside response",data);
+					  		mapping(data);
+					  });
+		  		}
 		  }
 
 		  function mapping(info) {
@@ -230,10 +228,10 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			        title: {
 			            text: 'Results'
 			        }
-			    });
-			    console.log("Data outside response",info);
+			    }, false);
+			    console.log("Data outside response",info); 
 		  }
-
+		  
 	}
 
 });
