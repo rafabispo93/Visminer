@@ -66,7 +66,10 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 
 
 		  	function makeMap(data) {
-		  		
+		  		$http.get('rest/wDirectories/get-by-id', {params:{"fileHash": data[0]._id}})
+		  		.success(function(response) {
+		  			console.log(response);
+		  		});
 		  		var count, diffCounter;
 		  		for (count = 0;count < data.length; ++count) {
 

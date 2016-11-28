@@ -54,7 +54,7 @@ public class MiningController {
 		rm.addParser(new JavaParser());
 		
 		for (Reference ref : request.getReferences()) {
-			rm.addReference(ref.getPath());
+			rm.addReference(ref.getPath(),null);
 		}
 		
 		for (String metric : request.getMetrics()) {

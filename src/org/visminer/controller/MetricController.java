@@ -24,10 +24,8 @@ public class MetricController {
 		List<String> metricList = new ArrayList<>();
 		Document data = new Document();
 		long hash = Long.parseLong(fileHash, 10);
-		System.out.println(idCommit);
 		data = typeHandler.getMetricsMeasures(hash, idCommit);
 		metricList.add(data.toJson());
-		System.out.println(metricList);
 		return metricList.toString();
 	}
 	

@@ -22,10 +22,8 @@ public class CommitController {
 	public String getCommits(@QueryParam("commitId") String commitId) {
 		List<String> commitList = new ArrayList<>();
 		Document data = new Document();
-		System.out.println(commitId);
 		data = commitHandler.findById(commitId);
 		commitList.add(data.toJson());
-		System.out.println(commitList);
 		return commitList.toString();	
 	}
 }
