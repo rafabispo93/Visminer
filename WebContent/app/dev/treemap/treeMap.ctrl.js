@@ -66,17 +66,39 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 
 
 		  	function makeMap(data) {
-		  		$http.get('rest/wDirectories/get-by-id', {params:{"fileHash": data[0]._id}})
-		  		.success(function(response) {
-		  			console.log(response);
-		  		});
-		  		var count, diffCounter;
+		  		var count, diffCounter, commitID, diffHash, teste;
 		  		for (count = 0;count < data.length; ++count) {
-
+		  				console.log("xxxxxxxxxxxx ",data[0]._id);
+		  				commitID = data[count]._id;
+		  				diffHash = data[count].diffs[0].hash.$numberLong;
+		  				//Tentativa de gerar estado de repositorio para commit
+		  				
+		  				$http.get('rest/wDirectories/get-by-id', {params:{"fileHash": data[count]._id}})
+				  		.success(function(response) {
+				  			console.log(response, commitID);
+				  			teste = response[0]._id;
+				  			console.log("Agora sim", teste);
+				  			$http.get('rest/stringUtils/encodeToCRC32', {params:{"input": response[0].files[0].file}})
+				  			.success(function (info){
+				  				console.log("INFO, input", info, commitID, teste);
+				  				$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": teste, "fileHash":info}})
+							  	.success(function(res) {
+							  		console.log("retorno de data ",res);
+							  	});
+				  				
+				  			});
+				  		});
+		  				
+		  				
+		  				
+		  				
+		  				
+		  				
+		  				
+		  				
 		  				$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data[count]._id, "fileHash": data[count].diffs[0].hash.$numberLong}})
 					  	.success(function(response) {
 					  		var responseSize = response.length, a;
-					  		//console.log("Response", response);
 
 					  		for (a = 0; a < responseSize; ++a) {
 					  			if(response[a].package){
