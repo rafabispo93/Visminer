@@ -50,6 +50,7 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		sidebarService.setRepository(repository);
 		$route.reload();
 		thisCtrl.tagsLoad(repository);
+		$scope.repoSelected = repository.id.$oid;
 		
 	}
 

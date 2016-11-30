@@ -45,11 +45,24 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				    }
 				};
 		  $scope.generate = function () {
-			  if (chart !== undefined) {
-
+			  var iMax,
+			  	  iMin,
+			  	  commitsIdMax = [],
+			  	  commitsIdMin = [];
+			  for (iMax = 0; iMax < $scope.max; iMax++) {
+				  commitsIdMax.push($scope.commits[iMax]);
 			  }
-			  console.log(chart);
-//			  
+			  
+			  for (iMin = 0; iMin < $scope.min; iMin++) {
+				  commitsIdMin.push($scope.commits[iMin]);
+			  }
+			  $http.get('rest/commits/get-all-commits', {params:{"repositoryId":$scope.repoSelected, "commitsId": commitsIdMin}}).success(function (backInf) {
+				  console.log("back", backInf);
+			  });
+			  
+			  $http.get('rest/commits/get-all-commits', {params:{"repositoryId":$scope.repoSelected, "commitsId": commitsIdMax}}).success(function (backInf) {
+				  console.log("back", backInf);
+			  });
 			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.max]}})
 				.success(function(response) {
 					console.log("Commit 1", response);
@@ -61,6 +74,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 					console.log("Commit 2",response);
 					makeMap(response);
 				});
+			  console.log($scope.repoSelected);
 
 		  }
 
@@ -68,26 +82,26 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	function makeMap(data) {
 		  		var count, diffCounter, commitID, diffHash, teste;
 		  		for (count = 0;count < data.length; ++count) {
-		  				console.log("xxxxxxxxxxxx ",data[0]._id);
-		  				commitID = data[count]._id;
-		  				diffHash = data[count].diffs[0].hash.$numberLong;
-		  				//Tentativa de gerar estado de repositorio para commit
-		  				
-		  				$http.get('rest/wDirectories/get-by-id', {params:{"fileHash": data[count]._id}})
-				  		.success(function(response) {
-				  			console.log(response, commitID);
-				  			teste = response[0]._id;
-				  			console.log("Agora sim", teste);
-				  			$http.get('rest/stringUtils/encodeToCRC32', {params:{"input": response[0].files[0].file}})
-				  			.success(function (info){
-				  				console.log("INFO, input", info, commitID, teste);
-				  				$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": teste, "fileHash":info}})
-							  	.success(function(res) {
-							  		console.log("retorno de data ",res);
-							  	});
-				  				
-				  			});
-				  		});
+//		  				console.log("xxxxxxxxxxxx ",data[0]._id);
+//		  				commitID = data[count]._id;
+//		  				diffHash = data[count].diffs[0].hash.$numberLong;
+//		  				//Tentativa de gerar estado de repositorio para commit
+//		  				
+//		  				$http.get('rest/wDirectories/get-by-id', {params:{"fileHash": data[count]._id}})
+//				  		.success(function(response) {
+//				  			console.log(response, commitID);
+//				  			teste = response[0]._id;
+//				  			console.log("Agora sim", teste);
+//				  			$http.get('rest/stringUtils/encodeToCRC32', {params:{"input": response[0].files[0].file}})
+//				  			.success(function (info){
+//				  				console.log("INFO, input", info, commitID, teste);
+//				  				$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": "8226e3e64a7d4ace29eb08ab6c9fc9d4055f20c9", "fileHash":info}})
+//							  	.success(function(res) {
+//							  		console.log("retorno de data ",res);
+//							  	});
+//				  				
+//				  			});
+//				  		});
 		  				
 		  				
 		  				
