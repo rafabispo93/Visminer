@@ -30,7 +30,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		      cause;
 		var i;
 		var name;
-		var chart;
+		var chart = this;
 		  $scope.slider = {
 				    minValue: 0,
 				    maxValue: $scope.commits.length / 2,
@@ -45,24 +45,29 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				    }
 				};
 		  $scope.generate = function () {
-			  var iMax,
-			  	  iMin,
-			  	  commitsIdMax = [],
-			  	  commitsIdMin = [];
-			  for (iMax = 0; iMax < $scope.max; iMax++) {
-				  commitsIdMax.push($scope.commits[iMax]);
+			  if(chart) {
+				  points = [];
+				  //chart.series[0].setData([], true);
 			  }
-			  
-			  for (iMin = 0; iMin < $scope.min; iMin++) {
-				  commitsIdMin.push($scope.commits[iMin]);
-			  }
-			  $http.get('rest/commits/get-all-commits', {params:{"repositoryId":$scope.repoSelected, "commitsId": commitsIdMin}}).success(function (backInf) {
-				  console.log("back", backInf);
-			  });
-			  
-			  $http.get('rest/commits/get-all-commits', {params:{"repositoryId":$scope.repoSelected, "commitsId": commitsIdMax}}).success(function (backInf) {
-				  console.log("back", backInf);
-			  });
+			
+//			  var iMax,
+//			  	  iMin,
+//			  	  commitsIdMax = [],
+//			  	  commitsIdMin = [];
+//			  for (iMax = 0; iMax < $scope.max; iMax++) {
+//				  commitsIdMax.push($scope.commits[iMax]);
+//			  }
+//			  
+//			  for (iMin = 0; iMin < $scope.min; iMin++) {
+//				  commitsIdMin.push($scope.commits[iMin]);
+//			  }
+//			  $http.get('rest/commits/get-all-commits', {params:{"repositoryId":$scope.repoSelected, "commitsId": commitsIdMin}}).success(function (backInf) {
+//				  console.log("back", backInf);
+//			  });
+//			  
+//			  $http.get('rest/commits/get-all-commits', {params:{"repositoryId":$scope.repoSelected, "commitsId": commitsIdMax}}).success(function (backInf) {
+//				  console.log("back", backInf);
+//			  });
 			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.max]}})
 				.success(function(response) {
 					console.log("Commit 1", response);
