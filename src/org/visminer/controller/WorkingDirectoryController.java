@@ -19,31 +19,46 @@ import org.json.JSONObject;
 
 import org.bson.Document;
 import org.repositoryminer.persistence.handler.WorkingDirectoryDocumentHandler;
+import org.visminer.util.UtilsString;
 
-import com.google.gson.Gson;
 
 @Path("wDirectories")
 public class WorkingDirectoryController {
 	private WorkingDirectoryDocumentHandler directoryHandler = new WorkingDirectoryDocumentHandler();
+	private UtilsString us = new UtilsString();
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("get-by-id")
-	public String getDirectory(@QueryParam("fileHash") String fileHash) {
+	public String getDirectory(@QueryParam("fileHash") String fileHash, @QueryParam("commit") String commit) {
 		List<String> metricList = new ArrayList<>();
 		Document data = new Document();
 		data = directoryHandler.findById(fileHash, null);
 		
 		JsonReader reader = Json.createReader(new StringReader(data.toJson()));
-        JsonObject dataJson = reader.readObject();      
+        JsonObject dataJson = reader.readObject();
         reader.close();
         
         JsonArray filesArray = dataJson.getJsonArray("files");
+        JsonArray checkoutArray = dataJson.getJsonArray("checkout");
+//        List<String> infoFiles = new ArrayList<String>();
+//        List<String> infoCheckouts = new ArrayList<String>();
+//        for (JsonValue jsonValue : checkoutArray) {
+//        	System.out.println("Checkout"+jsonValue.toString());
+//            
+//        }
         for (JsonValue jsonValue : filesArray) {
         	JSONObject jo = new JSONObject(jsonValue.toString());
-            System.out.println(jo.getString("file"));
+            String infoFiles = us.encodeToCRC32(jo.getString("file"));
+            String infoCheckouts = jo.getString("checkout");
+            System.out.println("Checkout: "+infoCheckouts+ ", File: "+infoFiles + ", Lenght: " +infoFiles.length());
+            //JSONObject response = new JSONObject(info);
+            //System.out.println("Dentro: " + info.toString() + "commitHash: " + dataJson.getString("_id"));
+            //String info2 = us.getMetricsByCommit(info.toString(),dataJson.getString("_id"));
+            String info2 = us.getMetricsByCommit(infoFiles,infoCheckouts);
+            System.out.println(info2);
         }
-		System.out.println(dataJson.getString("_id"));
+        //System.out.println(dataJson);
 		metricList.add(data.toJson());
 		return metricList.toString();
 	}

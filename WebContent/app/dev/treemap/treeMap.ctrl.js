@@ -32,8 +32,10 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		var name;
 		var chart = this;
 		  $scope.slider = {
-				    minValue: 0,
-				    maxValue: $scope.commits.length / 2,
+				    //minValue: 0,
+				    //maxValue: $scope.commits.length / 2,
+				  	minValue: 629,
+				  	maxValue: 729,
 				    options: {
 				        floor: 0,
 				        ceil: $scope.commits.length,
@@ -81,14 +83,13 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 //			  				}
 //		  					
 //		  				});
-		  			
-		  			$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": data[count]._id}}).success(function (answer){
+		  			console.log("DATA count", data);
+		  			$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": data[count]._id, "commit": data[count]._id}}).success(function (answer){
 		  				console.log(answer[0].files.length, answer);
 		  			});	
 		  				$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data[count]._id, "fileHash": data[count].diffs[0].hash.$numberLong}})
 					  	.success(function(response) {
 					  		var responseSize = response.length, a;
-
 					  		for (a = 0; a < responseSize; ++a) {
 					  			if(response[a].package){
 					  				var packName = response[a].package.toString();

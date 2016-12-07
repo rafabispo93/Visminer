@@ -9,7 +9,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.bson.Document;
 import org.repositoryminer.utility.StringUtils;
 
 @Path("stringUtils")
