@@ -32,10 +32,8 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		var name;
 		var chart = this;
 		  $scope.slider = {
-				    //minValue: 0,
-				    //maxValue: $scope.commits.length / 2,
-				  	minValue: 629,
-				  	maxValue: 729,
+				    minValue: 0,
+				    maxValue: $scope.commits.length / 2,
 				    options: {
 				        floor: 0,
 				        ceil: $scope.commits.length,
@@ -63,96 +61,146 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 					console.log("Commit 2",response);
 					makeMap(response);
 				});
-			  console.log($scope.repoSelected);
-
 		  }
 
 
 		  	function makeMap(data) {
 		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [];
 		  		for (count = 0;count < data.length; ++count) {
-		  				
-//			  			$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": data[count]._id}}).success(function (answer){
-//			  				if(answer) {
-//			  					console.log(answer);
-//			  					for (countHash = 0; countHash < answer[0].files.length; ++countHash) {
-//			  						$http.get('rest/stringUtils/encodeToCRC32', {params: {"input": answer[0].files[countHash].file}}).success(function (res) {
-//			  							filesHash.push(res);
-//			  						});
-//			  					}
-//			  				}
-//		  					
-//		  				});
 		  			console.log("DATA count", data);
-		  			$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": data[count]._id, "commit": data[count]._id}}).success(function (answer){
-		  				console.log(answer[0].files.length, answer);
-		  			});	
-		  				$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data[count]._id, "fileHash": data[count].diffs[0].hash.$numberLong}})
-					  	.success(function(response) {
-					  		var responseSize = response.length, a;
-					  		for (a = 0; a < responseSize; ++a) {
-					  			if(response[a].package){
-					  				var packName = response[a].package.toString();
-						  			packName = packName.split(".").pop();
-					  			}
+		  			$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": data[count]._id}}).success(function (response){
+		  				console.log("Answer",response);
+		  				var responseSize = response.length, a;
+				  		for (a = 0; a < responseSize; ++a) {
+				  			if(response[a].package){
+				  				var packName = response[a].package.toString();
+					  			packName = packName.split(".").pop();
+				  			}
 
 
-					  			if(!data[packName]) {
-					  				data[packName] = {};
-					  			}
+				  			if(!data[packName]) {
+				  				data[packName] = {};
+				  			}
 
-						  		var chosenMetric = $("select[name=metrics]").val();
-						  		$scope.allMetrics = response[a].abstract_types[0];
+					  		var chosenMetric = $("select[name=metrics]").val();
+					  		$scope.allMetrics = response[a].abstract_types[0];
 
-						  		var structure = {
+					  		var structure = {
 
-						  		};
-						  		var lastClazz;
+					  		};
+					  		var lastClazz;
 
-						  		var clazzName = response[a].filename.toString();
-					  			clazzName =  clazzName.split("/").pop();
-					  			if( lastClazz !== clazzName) {
+					  		var clazzName = response[a].filename.toString();
+				  			clazzName =  clazzName.split("/").pop();
+				  			if( lastClazz !== clazzName) {
 
-					  				clazz = {
+				  				clazz = {
 
-					  				};
-					  				lastClazz = clazzName;
-					  			}
+				  				};
+				  				lastClazz = clazzName;
+				  			}
 
-						  		if ($scope.allMetrics && packName){
-						  			if($scope.allMetrics.metrics[chosenMetric].methods) {
-							  			var methodsSize = $scope.allMetrics.metrics[chosenMetric].methods.length;
-							  			var value = 0;
-							  			for (i = 0; i< methodsSize; ++i) {
-								  	    	name = $scope.allMetrics.metrics[chosenMetric].methods[i].method.toString();
-								  	    	causeName[name] = $scope.allMetrics.metrics[chosenMetric].methods[i].method;
-								  	    	value = value + parseInt($scope.allMetrics.metrics[chosenMetric].methods[i].value);
-								  	    	structure[name] = value;
-								  	    	clazz[clazzName] = structure;
+					  		if ($scope.allMetrics && packName){
+					  			if($scope.allMetrics.metrics[chosenMetric].methods) {
+						  			var methodsSize = $scope.allMetrics.metrics[chosenMetric].methods.length;
+						  			var value = 0;
+						  			for (i = 0; i< methodsSize; ++i) {
+							  	    	name = $scope.allMetrics.metrics[chosenMetric].methods[i].method.toString();
+							  	    	causeName[name] = $scope.allMetrics.metrics[chosenMetric].methods[i].method;
+							  	    	value = value + parseInt($scope.allMetrics.metrics[chosenMetric].methods[i].value);
+							  	    	structure[name] = value;
+							  	    	clazz[clazzName] = structure;
 
 
-								  	    }
+							  	    }
 
-							  			data[packName][clazzName] = clazz[clazzName];
+						  			data[packName][clazzName] = clazz[clazzName];
 
-							  		}
-							  		else {
-							  			causeName = {
-							  					'All': 'All'
-								        };
-							  			clazz[clazzName] = {
-							  					'All': $scope.allMetrics.metrics[chosenMetric].accumulated
-							  			};
-							  			data[packName][clazzName] = clazz[clazzName];
-							  		}
 						  		}
-
+						  		else {
+						  			causeName = {
+						  					'All': 'All'
+							        };
+						  			clazz[clazzName] = {
+						  					'All': $scope.allMetrics.metrics[chosenMetric].accumulated
+						  			};
+						  			data[packName][clazzName] = clazz[clazzName];
+						  		}
 					  		}
-					  		console.log("Data inside response",data);
-					  		mapping(data);
-					  });
+
+				  		}
+				  		console.log("Data inside response",data);
+				  		mapping(data);
+		  				
+		  			});
 		  		}
-		  }
+			  }
+//		  				$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data[count]._id, "fileHash": data[count].diffs[0].hash.$numberLong}})
+//					  	.success(function(response) {
+//					  		var responseSize = response.length, a;
+//					  		for (a = 0; a < responseSize; ++a) {
+//					  			if(response[a].package){
+//					  				var packName = response[a].package.toString();
+//						  			packName = packName.split(".").pop();
+//					  			}
+//
+//
+//					  			if(!data[packName]) {
+//					  				data[packName] = {};
+//					  			}
+//
+//						  		var chosenMetric = $("select[name=metrics]").val();
+//						  		$scope.allMetrics = response[a].abstract_types[0];
+//
+//						  		var structure = {
+//
+//						  		};
+//						  		var lastClazz;
+//
+//						  		var clazzName = response[a].filename.toString();
+//					  			clazzName =  clazzName.split("/").pop();
+//					  			if( lastClazz !== clazzName) {
+//
+//					  				clazz = {
+//
+//					  				};
+//					  				lastClazz = clazzName;
+//					  			}
+//
+//						  		if ($scope.allMetrics && packName){
+//						  			if($scope.allMetrics.metrics[chosenMetric].methods) {
+//							  			var methodsSize = $scope.allMetrics.metrics[chosenMetric].methods.length;
+//							  			var value = 0;
+//							  			for (i = 0; i< methodsSize; ++i) {
+//								  	    	name = $scope.allMetrics.metrics[chosenMetric].methods[i].method.toString();
+//								  	    	causeName[name] = $scope.allMetrics.metrics[chosenMetric].methods[i].method;
+//								  	    	value = value + parseInt($scope.allMetrics.metrics[chosenMetric].methods[i].value);
+//								  	    	structure[name] = value;
+//								  	    	clazz[clazzName] = structure;
+//
+//
+//								  	    }
+//
+//							  			data[packName][clazzName] = clazz[clazzName];
+//
+//							  		}
+//							  		else {
+//							  			causeName = {
+//							  					'All': 'All'
+//								        };
+//							  			clazz[clazzName] = {
+//							  					'All': $scope.allMetrics.metrics[chosenMetric].accumulated
+//							  			};
+//							  			data[packName][clazzName] = clazz[clazzName];
+//							  		}
+//						  		}
+//
+//					  		}
+//					  		console.log("Data inside response",data);
+//					  		mapping(data);
+//					  });
+//		  		}
+//		  }
 
 		  function mapping(info) {
 			  for (region in info) {
@@ -224,6 +272,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			            layoutAlgorithm: 'squarified',
 			            allowDrillToNode: true,
 			            animationLimit: 1000,
+			            turboThreshold: 0,
 			            dataLabels: {
 			                enabled: false
 			            },

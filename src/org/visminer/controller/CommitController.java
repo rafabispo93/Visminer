@@ -34,7 +34,6 @@ public class CommitController {
 	public String getAllCommits(@QueryParam("repositoryId") String repository, @QueryParam("commitsId") List<String> commitsId) {
 		List<String> commitList = new ArrayList<>();
 		List<Document> data = new ArrayList<Document>();
-		System.out.println("AQUII" + commitsId + repository);
 		data = commitHandler.findByIdColl(repository, commitsId, null);
 		
 		for (Document commit : data) {

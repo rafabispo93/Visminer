@@ -21,7 +21,6 @@ public class UtilsString {
 	}
 	
 	public String getMetricsByCommit(String fileHash, String commitHash) {
-		System.out.println("VAI: "+fileHash + "Com: " + commitHash);
 		List<String> metricList = new ArrayList<>();
 		Document data = new Document();
 		long hash = Long.parseLong(fileHash, 10);
@@ -29,7 +28,7 @@ public class UtilsString {
 			data = typeHandler.getMetricsMeasures(hash, commitHash);
 			//data = typeHandler.getMetricsByHash(hash);
 			metricList.add(data.toJson());
-			return metricList.toString();
+			return data.toJson();
 		}
 		catch (Exception e) {
 			return "";
