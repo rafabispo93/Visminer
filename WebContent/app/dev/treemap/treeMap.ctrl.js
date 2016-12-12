@@ -31,6 +31,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		var i;
 		var name;
 		var chart = this;
+		commitsHash = [];
 		  $scope.slider = {
 				    minValue: 0,
 				    maxValue: $scope.commits.length / 2,
@@ -47,29 +48,36 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  $scope.generate = function () {
 			  if(chart) {
 				  points = [];
-				  //chart.series[0].setData([], true);
 			  }
 			
 			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.max]}})
 				.success(function(response) {
-					console.log("Commit 1", response);
 					makeMap(response);
+					setCommits(response[0]._id);
 				});
 
 			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.min]}})
 				.success(function(response) {
-					console.log("Commit 2",response);
 					makeMap(response);
+					setCommits(response[0]._id);
 				});
 		  }
-
-
+		  	function setCommits(commit) {
+		  		commitsHash.push(commit);
+		  		teste(commitsHash);
+		  	}
+		  
+		  	function teste (commits) {
+		  		$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": commits[0], "fileHash2": commits[1]}}).success(function (response){
+		  			console.log("Response: ", response);
+		  		});
+		  	}
+		  	
+		  
 		  	function makeMap(data) {
 		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [];
 		  		for (count = 0;count < data.length; ++count) {
-		  			console.log("DATA count", data);
-		  			$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": data[count]._id}}).success(function (response){
-		  				console.log("Answer",response);
+		  			$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": data[count]._id, "fileHash2": data[count]._id}}).success(function (response){
 		  				var responseSize = response.length, a;
 				  		for (a = 0; a < responseSize; ++a) {
 				  			if(response[a].package){
@@ -81,6 +89,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  			if(!data[packName]) {
 				  				data[packName] = {};
 				  			}
+				  			
 
 					  		var chosenMetric = $("select[name=metrics]").val();
 					  		$scope.allMetrics = response[a].abstract_types[0];
@@ -129,7 +138,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 					  		}
 
 				  		}
-				  		console.log("Data inside response",data);
 				  		mapping(data);
 		  				
 		  			});
@@ -293,7 +301,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			            text: 'Results'
 			        }
 			    }, false);
-			    console.log("Data outside response",info); 
 		  }
 		  
 	}

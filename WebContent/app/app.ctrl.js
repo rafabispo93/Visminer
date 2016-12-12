@@ -122,7 +122,6 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 	thisCtrl.commitsLoad = function(repositoryId, data) {
 		console.log('commitsLoad');
 		console.log('found', data[0].commits.length, 'commits');
-		console.log(data);
 		$scope.commits = data[0].commits;
 		sidebarService.setCommits(data[0].commits);
 	}
