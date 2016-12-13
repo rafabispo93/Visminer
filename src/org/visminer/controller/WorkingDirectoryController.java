@@ -44,17 +44,18 @@ public class WorkingDirectoryController {
 		
 		JsonReader reader = Json.createReader(new StringReader(data.toJson()));
         JsonObject dataJson = reader.readObject();
-        reader.close();
+        
         
         JsonReader reader2 = Json.createReader(new StringReader(data2.toJson()));
         JsonObject dataJson2 = reader2.readObject();
         reader2.close();
+        reader.close();
         
         JsonArray filesArray = dataJson.getJsonArray("files");
         JsonArray filesArray2 = dataJson2.getJsonArray("files");
         //JsonArray checkoutArray = dataJson.getJsonArray("checkout");
         
-        System.out.println("Processing");
+        System.out.println("Processing " + fileHash);
         for (JsonValue jsonValue : filesArray) {
         	JSONObject jo = new JSONObject(jsonValue.toString());
             String infoFiles = us.encodeToCRC32(jo.getString("file"));
@@ -64,7 +65,7 @@ public class WorkingDirectoryController {
             	try{
             		JSONObject obj = new JSONObject(info.toString());
                 	//JSONObject obj2 = new JSONObject(obj.getJSONArray("abstract_types").get(0).toString());
-            		JSONObject obj2 = new JSONObject(obj.getJSONArray("abstract_types"));
+            		JSONObject obj2 = new JSONObject(obj.getJSONArray("abstract_types").get(0).toString());
                 	packages1.put(obj.getString("package"), obj2);
             	}
             	catch (Exception e) {
@@ -76,7 +77,7 @@ public class WorkingDirectoryController {
         System.out.println("Done");
         
         
-        System.out.println("Processing2");
+        System.out.println("Processing " + fileHash2);
         for (JsonValue jsonValue2 : filesArray2) {
         	JSONObject jo = new JSONObject(jsonValue2.toString());
             String infoFiles = us.encodeToCRC32(jo.getString("file"));
@@ -97,23 +98,61 @@ public class WorkingDirectoryController {
         }
         System.out.println("Done2 " + packages1.length() + " , " + packages2.length());
         
-        Iterator<String> keys1 = packages1.keys();
-        Iterator<String> keys2 = packages2.keys();
-        while( keys1.hasNext() ){
-           while( keys2.hasNext() ) {
-        	   String key1 = (String)keys1.next();
-               String key2 = (String)keys2.next();          
-               
-               if (key1.equals(key2)){
-            	   System.out.println(key1 + " , " + key2);
-               }
-               
-               
-           }
-           
-        }
+//        Iterator<String> keys1 = packages1.keys();
+//        Iterator<String> keys2 = packages2.keys();
+//        while( keys1.hasNext() ){
+//           String key1 = (String)keys1.next();
+//           while( keys2.hasNext() ) {
+//        	   
+//               String key2 = (String)keys2.next();          
+//               
+//               if (key1.equals(key2)){
+//            	   //System.out.println(packages1.get(key1) + key1);
+//            	   //Comparando classes
+//            	   JSONObject job = new JSONObject(packages1.get(key1).toString());
+//            	   JSONObject job2 = new JSONObject(packages2.get(key2).toString());
+//            	   if (job.get("name").equals(job2.get("name"))) {  		   
+//            		   for (int a = 0; a < job.getJSONArray("metrics").length(); a++){
+//            			   try {
+//            				   JSONObject joA = new JSONObject(job.getJSONArray("metrics").get(a).toString());
+//                			   JSONObject joA2 = new JSONObject(job2.getJSONArray("metrics").get(a).toString());		   
+//                			   for (int count = 0; count < joA2.getJSONArray("methods").length(); count++) {
+//                				   JSONObject objT = new JSONObject(joA.getJSONArray("methods").get(count).toString());
+//                    			   JSONObject objT2 = new JSONObject(joA2.getJSONArray("methods").get(count).toString());
+//                				   if(objT.get("method").equals(objT2.get("method"))){
+//                					   //System.out.println(objT.get("method"));
+//                					   if ( Integer.parseInt(objT.get("value").toString()) > Integer.parseInt(objT2.get("value").toString())) {
+//                						   int value = Integer.parseInt(objT.get("value").toString()) - Integer.parseInt(objT2.get("value").toString());
+//                						   System.out.println(Integer.parseInt(objT.get("value").toString()) + " , " + Integer.parseInt(objT2.get("value").toString()));
+//                					   } 
+//                					   else {
+//                						   int value = Integer.parseInt(objT2.get("value").toString()) - Integer.parseInt(objT.get("value").toString());
+//                						   System.out.println(Integer.parseInt(objT.get("value").toString()) + " , " + Integer.parseInt(objT2.get("value").toString()));
+//                					   }
+//                				   }
+//                			   }
+//            			   }
+//            			   catch(Exception e) {
+//            				   
+//            			   }
+//            			   
+//            			   
+//            		   }
+//            		   
+//            	   }
+//        
+//            	   
+//               }
+//               
+//               
+//           }
+//           
+//        }
+        JSONObject packagesResult = new JSONObject();
+        packagesResult.put("commit1", packages1);
+        packagesResult.put("commit2", packages2);
         
-		return metricList.toString();
+		return packagesResult.toString();
         //return "";
 	}
 }
