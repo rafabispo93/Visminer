@@ -47,44 +47,59 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				    }
 				};
 		  $scope.generate = function () {
-			 
 			  if(chart) {
 				  points = [];
 			  }
-			
-			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.max]}})
-				.success(function(response) {
-					//makeMap(response);
-					c1 = response[0]._id;
-					//setCommits(response[0]._id);
-					$http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.min]}})
-					.success(function(response2) {
-						//makeMap(response);
-						c2 = response2[0]._id;
-						console.log(c1, c2);
-						setCommits(c1, c2);
-						
-					});
-				});
 			  
+//			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.max]}})
+//				.success(function(response) {
+//					//makeMap(response);
+//					$http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.min]}})
+//					.success(function(response2) {
+//						//makeMap(response);
+//
+//						setState();
+//						
+//					});
+//				});
 			  
-			  
-			  
+			  setState();			  
 		  }
-		  	function setCommits(commit1, commit2) {
-		  		commitsHash.push(commit1);
-		  		commitsHash.push(commit2);
-		  		teste(commitsHash);
+		  	function setState() {
+		  		teste();
 		  	}
 		  
-		  	function teste (commits) {
+		  	function teste () {
 		  		var obj, obj2;
-		  		$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": commits[0], "fileHash2": commits[1]}}).success(function (response){
+		  		var chosenMetric = $("select[name=metrics]").val();
+		  		$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": $scope.commits[$scope.max], "fileHash2": $scope.commits[$scope.min]}}).success(function (response){
 		  			console.log("Response: ", response);
 		  			for (obj in response.commit1) {
 		  				for(obj2 in response.commit2){
 		  					if( obj2 === obj) {
-		  						console.log("Um igual");
+		  						if ( response.commit1[obj].name === response.commit2[obj2].name ) {
+		  							if (response.commit1[obj].metrics[chosenMetric].methods) {
+	  									for (var k = 0; k < response.commit2[obj2].metrics[chosenMetric].methods.length; k++) {
+	  										for (var kj = 0; kj < response.commit1[obj].metrics[chosenMetric].methods.length; kj++) {
+		  										if (response.commit1[obj].metrics[chosenMetric].methods[kj].method === 
+		  											response.commit2[obj2].metrics[chosenMetric].methods[k].method) {
+		  											if (response.commit1[obj].metrics[chosenMetric].methods[kj] && response.commit2[obj2].metrics[chosenMetric].methods[kj]) {
+		  												if(parseInt(response.commit1[obj].metrics[chosenMetric].methods[kj].value) >= parseInt(response.commit2[obj2].metrics[chosenMetric].methods[kj].value)){
+			  												console.log(parseInt(response.commit1[obj].metrics[chosenMetric].methods[kj].value) - parseInt(response.commit2[obj2].metrics[chosenMetric].methods[kj].value));
+			  											}
+			  											else {
+			  												console.log(parseInt(response.commit2[obj2].metrics[chosenMetric].methods[kj].value) - parseInt(response.commit1[obj].metrics[chosenMetric].methods[kj].value));
+			  											}
+		  											}
+		  											
+		  										}
+		  									}
+	  									}
+			  								
+			  							
+		  							}
+		  						}
+		  						
 		  					}
 		  				}
 		  			}

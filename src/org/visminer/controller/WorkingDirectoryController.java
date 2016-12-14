@@ -28,6 +28,7 @@ public class WorkingDirectoryController {
 	private WorkingDirectoryDocumentHandler directoryHandler = new WorkingDirectoryDocumentHandler();
 	private UtilsString us = new UtilsString();
 	
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("get-by-id")
@@ -44,17 +45,16 @@ public class WorkingDirectoryController {
 		
 		JsonReader reader = Json.createReader(new StringReader(data.toJson()));
         JsonObject dataJson = reader.readObject();
-        
+        reader.close();
         
         JsonReader reader2 = Json.createReader(new StringReader(data2.toJson()));
         JsonObject dataJson2 = reader2.readObject();
         reader2.close();
-        reader.close();
+        
         
         JsonArray filesArray = dataJson.getJsonArray("files");
         JsonArray filesArray2 = dataJson2.getJsonArray("files");
         //JsonArray checkoutArray = dataJson.getJsonArray("checkout");
-        
         System.out.println("Processing " + fileHash);
         for (JsonValue jsonValue : filesArray) {
         	JSONObject jo = new JSONObject(jsonValue.toString());
