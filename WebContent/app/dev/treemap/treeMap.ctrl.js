@@ -71,6 +71,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  
 		  	function teste () {
 		  		var obj, obj2;
+		  		var mapInfo = [];
 		  		var chosenMetric = $("select[name=metrics]").val();
 		  		$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": $scope.commits[$scope.max], "fileHash2": $scope.commits[$scope.min]}}).success(function (response){
 		  			console.log("Response: ", response);
@@ -78,18 +79,21 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  				for(obj2 in response.commit2){
 		  					if( obj2 === obj) {
 		  						if ( response.commit1[obj].name === response.commit2[obj2].name ) {
+		  							var name = response.commit1[obj].name;
 		  							if (response.commit1[obj].metrics[chosenMetric].methods) {
 	  									for (var k = 0; k < response.commit2[obj2].metrics[chosenMetric].methods.length; k++) {
 	  										for (var kj = 0; kj < response.commit1[obj].metrics[chosenMetric].methods.length; kj++) {
+	  											mapInfo.push({
+  													"package": obj,
+  													"filename": name,
+  													"abstract_types":[]
+  												});
 		  										if (response.commit1[obj].metrics[chosenMetric].methods[kj].method === 
 		  											response.commit2[obj2].metrics[chosenMetric].methods[k].method) {
+		  											mapInfo[k].abstract_types.push(response.commit1[obj].metrics);
 		  											if (response.commit1[obj].metrics[chosenMetric].methods[kj] && response.commit2[obj2].metrics[chosenMetric].methods[kj]) {
-		  												if(parseInt(response.commit1[obj].metrics[chosenMetric].methods[kj].value) >= parseInt(response.commit2[obj2].metrics[chosenMetric].methods[kj].value)){
-			  												console.log(parseInt(response.commit1[obj].metrics[chosenMetric].methods[kj].value) - parseInt(response.commit2[obj2].metrics[chosenMetric].methods[kj].value));
-			  											}
-			  											else {
-			  												console.log(parseInt(response.commit2[obj2].metrics[chosenMetric].methods[kj].value) - parseInt(response.commit1[obj].metrics[chosenMetric].methods[kj].value));
-			  											}
+		  												console.log(parseInt(response.commit1[obj].metrics[chosenMetric].methods[kj].value) - parseInt(response.commit2[obj2].metrics[chosenMetric].methods[kj].value));
+		  												
 		  											}
 		  											
 		  										}
@@ -103,8 +107,82 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  					}
 		  				}
 		  			}
+		  			console.log(mapInfo.length);
 		  		});
+		  		
 		  	}
+		  	
+		  	
+		  	function makeNewMap(data) {
+		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [];
+		  		for (count in data) {
+				  			if(data[count].package){
+				  				var packName = data[count].package.toString();
+					  			packName = packName.split(".").pop();
+				  			}
+
+
+				  			if(!data[packName]) {
+				  				data[packName] = {};
+				  			}
+				  			
+
+					  		var chosenMetric = $("select[name=metrics]").val();
+					  		$scope.allMetrics = data[count].abstract_types;
+
+					  		var structure = {
+
+					  		};
+					  		var lastClazz;
+
+					  		var clazzName = data[count].filename.toString();
+				  			clazzName =  clazzName.split("/").pop();
+				  			if( lastClazz !== clazzName) {
+
+				  				clazz = {
+
+				  				};
+				  				lastClazz = clazzName;
+				  			}
+				  			for (var cc=0; cc < $scope.allMetrics.length; cc++) {
+				  				if ($scope.allMetrics && packName){
+						  			var methodsSize = $scope.allMetrics[cc][chosenMetric].methods.length;
+						  			var value = 0;
+						  			for (i = 0; i< methodsSize; ++i) {
+							  	    	name = $scope.allMetrics[cc][chosenMetric].methods[i].method.toString();
+							  	    	causeName[name] = $scope.allMetrics[cc][chosenMetric].methods[i].method;
+							  	    	value = value + parseInt($scope.allMetrics[cc][chosenMetric].methods[i].value);
+							  	    	structure[name] = value;
+							  	    	clazz[clazzName] = structure;
+
+
+							  	    }
+
+						  	data[packName][clazzName] = clazz[clazzName];
+						  		
+					  		}
+					  		else {
+					  			causeName = {
+					  					'All': 'All'
+						        };
+					  			clazz[clazzName] = {
+					  					'All': $scope.allMetrics.metrics[chosenMetric].accumulated
+					  			};
+					  			data[packName][clazzName] = clazz[clazzName];
+					  		}
+				  			}
+					  		
+
+				  		mapping(data);
+		  		}
+			  }
+		  	
+		  	
+		  	
+		  	
+		  	
+		  	
+		  	
 		  	
 		  
 		  	function makeMap(data) {
