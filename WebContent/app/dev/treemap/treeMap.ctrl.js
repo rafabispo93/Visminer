@@ -73,7 +73,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  		var obj, obj2;
 		  		var mapInfo = [];
 		  		var chosenMetric = $("select[name=metrics]").val();
-		  		$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": $scope.commits[$scope.max], "fileHash2": $scope.commits[$scope.min]}}).success(function (response){
+		  		$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": $scope.commits[$scope.max], "fileHash2": $scope.commits[$scope.min], "chosenMetric":chosenMetric }}).success(function (response){
 		  			console.log("Response: ", response);
 		  			for (obj in response.commit1) {
 		  				for(obj2 in response.commit2){
@@ -83,16 +83,20 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  							if (response.commit1[obj].metrics[chosenMetric].methods) {
 	  									for (var k = 0; k < response.commit2[obj2].metrics[chosenMetric].methods.length; k++) {
 	  										for (var kj = 0; kj < response.commit1[obj].metrics[chosenMetric].methods.length; kj++) {
-	  											mapInfo.push({
-  													"package": obj,
-  													"filename": name,
-  													"abstract_types":[]
-  												});
 		  										if (response.commit1[obj].metrics[chosenMetric].methods[kj].method === 
 		  											response.commit2[obj2].metrics[chosenMetric].methods[k].method) {
-		  											mapInfo[k].abstract_types.push(response.commit1[obj].metrics);
+		  											mapInfo.push({
+	  													"package": obj,
+	  													"filename": name,
+	  													"abstract_types":[]
+	  												});
 		  											if (response.commit1[obj].metrics[chosenMetric].methods[kj] && response.commit2[obj2].metrics[chosenMetric].methods[kj]) {
-		  												console.log(parseInt(response.commit1[obj].metrics[chosenMetric].methods[kj].value) - parseInt(response.commit2[obj2].metrics[chosenMetric].methods[kj].value));
+		  												//console.log(parseInt(response.commit1[obj].metrics[chosenMetric].methods[kj].value) - parseInt(response.commit2[obj2].metrics[chosenMetric].methods[kj].value));
+		  												
+		  												if(mapInfo[k]){
+		  													mapInfo[k].abstract_types.push(response.commit1[obj].metrics[chosenMetric]);
+		  													//console.log(response.commit1[obj].metrics[chosenMetric]);
+		  												}
 		  												
 		  											}
 		  											
@@ -107,7 +111,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  					}
 		  				}
 		  			}
-		  			console.log(mapInfo.length);
+		  			//makeNewMap(mapInfo);
 		  		});
 		  		
 		  	}
@@ -116,6 +120,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	function makeNewMap(data) {
 		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [];
 		  		for (count in data) {
+		  			
 				  			if(data[count].package){
 				  				var packName = data[count].package.toString();
 					  			packName = packName.split(".").pop();

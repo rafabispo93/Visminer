@@ -1,8 +1,10 @@
 package org.visminer.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -20,6 +22,7 @@ import org.json.JSONObject;
 
 import org.bson.Document;
 import org.repositoryminer.persistence.handler.WorkingDirectoryDocumentHandler;
+import org.visminer.util.MakeTMap;
 import org.visminer.util.UtilsString;
 
 
@@ -27,14 +30,17 @@ import org.visminer.util.UtilsString;
 public class WorkingDirectoryController {
 	private WorkingDirectoryDocumentHandler directoryHandler = new WorkingDirectoryDocumentHandler();
 	private UtilsString us = new UtilsString();
+	private MakeTMap mTm = new MakeTMap();
 	
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("get-by-id")
-	public String getDirectory(@QueryParam("fileHash") String fileHash, @QueryParam("fileHash2") String fileHash2) {
+	public String getDirectory(@QueryParam("fileHash") String fileHash, @QueryParam("fileHash2") String fileHash2, @QueryParam("chosenMetric") String chosenMetric) {
 		List<String> metricList = new ArrayList<>();
 		List<String> metricList2 = new ArrayList<>();
+		Map<String, JSONObject> items = new HashMap<String, JSONObject>();
+		Map<String, JSONObject> items2 = new HashMap<String, JSONObject>();
 		JSONObject packages1 = new JSONObject();
 		JSONObject packages2 = new JSONObject();
 		JSONObject result = new JSONObject();
@@ -67,6 +73,7 @@ public class WorkingDirectoryController {
                 	//JSONObject obj2 = new JSONObject(obj.getJSONArray("abstract_types").get(0).toString());
             		JSONObject obj2 = new JSONObject(obj.getJSONArray("abstract_types").get(0).toString());
                 	packages1.put(obj.getString("package"), obj2);
+                    items.put(obj.getString("package"), obj2);
             	}
             	catch (Exception e) {
             		//System.out.println("Error");
@@ -88,6 +95,7 @@ public class WorkingDirectoryController {
             		JSONObject obj = new JSONObject(info.toString());
                 	JSONObject obj2 = new JSONObject(obj.getJSONArray("abstract_types").get(0).toString());
                 	packages2.put(obj.getString("package"), obj2);
+                	items2.put(obj.getString("package"), obj2);
             	}
             	catch (Exception e) {
             		//System.out.println("Error");
@@ -98,60 +106,10 @@ public class WorkingDirectoryController {
         }
         System.out.println("Done2 " + packages1.length() + " , " + packages2.length());
         
-//        Iterator<String> keys1 = packages1.keys();
-//        Iterator<String> keys2 = packages2.keys();
-//        while( keys1.hasNext() ){
-//           String key1 = (String)keys1.next();
-//           while( keys2.hasNext() ) {
-//        	   
-//               String key2 = (String)keys2.next();          
-//               
-//               if (key1.equals(key2)){
-//            	   //System.out.println(packages1.get(key1) + key1);
-//            	   //Comparando classes
-//            	   JSONObject job = new JSONObject(packages1.get(key1).toString());
-//            	   JSONObject job2 = new JSONObject(packages2.get(key2).toString());
-//            	   if (job.get("name").equals(job2.get("name"))) {  		   
-//            		   for (int a = 0; a < job.getJSONArray("metrics").length(); a++){
-//            			   try {
-//            				   JSONObject joA = new JSONObject(job.getJSONArray("metrics").get(a).toString());
-//                			   JSONObject joA2 = new JSONObject(job2.getJSONArray("metrics").get(a).toString());		   
-//                			   for (int count = 0; count < joA2.getJSONArray("methods").length(); count++) {
-//                				   JSONObject objT = new JSONObject(joA.getJSONArray("methods").get(count).toString());
-//                    			   JSONObject objT2 = new JSONObject(joA2.getJSONArray("methods").get(count).toString());
-//                				   if(objT.get("method").equals(objT2.get("method"))){
-//                					   //System.out.println(objT.get("method"));
-//                					   if ( Integer.parseInt(objT.get("value").toString()) > Integer.parseInt(objT2.get("value").toString())) {
-//                						   int value = Integer.parseInt(objT.get("value").toString()) - Integer.parseInt(objT2.get("value").toString());
-//                						   System.out.println(Integer.parseInt(objT.get("value").toString()) + " , " + Integer.parseInt(objT2.get("value").toString()));
-//                					   } 
-//                					   else {
-//                						   int value = Integer.parseInt(objT2.get("value").toString()) - Integer.parseInt(objT.get("value").toString());
-//                						   System.out.println(Integer.parseInt(objT.get("value").toString()) + " , " + Integer.parseInt(objT2.get("value").toString()));
-//                					   }
-//                				   }
-//                			   }
-//            			   }
-//            			   catch(Exception e) {
-//            				   
-//            			   }
-//            			   
-//            			   
-//            		   }
-//            		   
-//            	   }
-//        
-//            	   
-//               }
-//               
-//               
-//           }
-//           
-//        }
         JSONObject packagesResult = new JSONObject();
         packagesResult.put("commit1", packages1);
-        packagesResult.put("commit2", packages2);
-        
+        packagesResult.put("commit2", packages2);  
+  		mTm.organizeJson(items, items2, chosenMetric);
 		return packagesResult.toString();
         //return "";
 	}
