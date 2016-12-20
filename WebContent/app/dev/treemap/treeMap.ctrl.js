@@ -60,8 +60,12 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			  if(chart) {
 				  points = [];
 			  }
-			  
+			  console.log($scope.infoRepo);
 			  console.log($scope.selectedVersion1, $scope.selectedVersion2);
+			  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion1, "repositoryId":$scope.repoSelected}}).success(function (tagRes)
+			  {
+				  console.log(tagRes);
+			  });
 			  
 //			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.max]}})
 //				.success(function(response) {
