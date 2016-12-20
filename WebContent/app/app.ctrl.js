@@ -7,6 +7,7 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
   $scope.commits = [];
   $scope.committers = [];
   $scope.repositories = [];
+  $scope.tagsLoaded = [];
   $scope.tags = [];
   $scope.tagTypesSelect = sidebarService.getTagTypesSelect();
   $scope.tagTypeSelect = sidebarService.getTagTypeSelect();
@@ -50,6 +51,7 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
 		sidebarService.setRepository(repository);
 		$route.reload();
 		thisCtrl.tagsLoad(repository);
+		$scope.infoRepo = repository;
 		$scope.repoSelected = repository.id.$oid;
 		
 	}

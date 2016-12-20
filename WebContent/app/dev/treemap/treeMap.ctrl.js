@@ -4,6 +4,16 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 
 	$scope.currentPage = sidebarService.getCurrentPage();
 	$scope.allmetrics;
+	$http.get('rest/mining/get-references', {
+		params : {
+			"path" : $scope.infoRepo.path,
+			"scm" : "GIT",
+		}
+	}).success(function(data) {
+		data.shift();
+		$scope.tagsLoaded = data;
+	});
+	
 	if ($scope.currentPage == 'treeMap') {
 		// This controller instance
 		  var thisCtrl = this;
@@ -51,6 +61,8 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  points = [];
 			  }
 			  
+			  console.log($scope.selectedVersion1, $scope.selectedVersion2);
+			  
 //			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.max]}})
 //				.success(function(response) {
 //					//makeMap(response);
@@ -63,7 +75,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 //					});
 //				});
 			  
-			  setState();			  
+			  //setState();			  
 		  }
 		  	function setState() {
 		  		teste();

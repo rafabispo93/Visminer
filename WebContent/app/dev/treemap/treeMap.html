@@ -16,18 +16,18 @@
 	<!-- Content Wrapper. Contains page content -->
       <!--<div class="content-wrapper">-->
           <section class="high">
-          
+
           </section>
-        
-        	
+
+
         </div>
 		<br/>
 
-		<rzslider id= "slider-versions" rz-slider-model="slider.minValue"
+		<!-- <rzslider id= "slider-versions" rz-slider-model="slider.minValue"
           rz-slider-high="slider.maxValue"
           rz-slider-options="slider.options">
-         </rzslider>
-
+         </rzslider> -->
+        
 		<br/><br/>
 		<div class="context-menu-one btn btn-neutral" id="container"></div>
 		<br/><br/>
@@ -40,21 +40,29 @@
 		        Metrics:
 		        <select name="metrics" ng-model="metrics" bs-selectbox>
 		        	<option value="0">ATDF</option>
-		            <option value="1">CC</option>   
+		            <option value="1">CC</option>
 		            <option value="0">LOC</option>
 		            <option value="3">LVAR</option>
 		            <option value="4">MAXNesting</option>
 		            <option value="5">MLOC</option>
 		        </select>
+		        Version-Start:
+		        <select ng-model="selectedVersion1">
+					<option ng-repeat="x in tagsLoaded" value="{{x.name}}">{{x.name}}</option>
+				</select>
+				Version-End:
+		        <select ng-model="selectedVersion2">
+					<option ng-repeat="x in tagsLoaded" value="{{x.name}}">{{x.name}}</option>
+				</select>
 		        <button type="button" class="btn btn-primary" ng-click="generate()">Generate</button>
 		</div>
-		
+
 		<!--</div>--><!-- /.content-wrapper -->
     <div class="box-header with-border">
       <div class="row">
           Welcome to the D.E.V  TreeMap perspective
       </div>
     </div>
-	
+
   </section>
 </div>
