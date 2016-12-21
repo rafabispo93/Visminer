@@ -62,10 +62,21 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			  }
 			  console.log($scope.infoRepo);
 			  console.log($scope.selectedVersion1, $scope.selectedVersion2);
-			  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion1, "repositoryId":$scope.repoSelected}}).success(function (tagRes)
+			  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion1, "repositoryId":$scope.repoSelected }}).success(function (tagRes)
 			  {
-				  console.log(tagRes);
+				  
+				  $scope.tagCommit = tagRes.commit;
+				  console.log($scope.tagCommit);
+				  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion2, "repositoryId":$scope.repoSelected }}).success(function (tagRes)
+						  {
+							  
+							  $scope.tagCommit2 = tagRes.commit;
+							  console.log($scope.tagCommit2);
+							  teste();
+						  });
 			  });
+			  
+			  
 			  
 //			  $http.get('rest/commits/get-commit', {params:{"commitId": $scope.commits[$scope.max]}})
 //				.success(function(response) {
@@ -79,7 +90,8 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 //					});
 //				});
 			  
-			  //setState();			  
+			  //setState();
+			  
 		  }
 		  	function setState() {
 		  		teste();
@@ -88,8 +100,9 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	function teste () {
 		  		var obj, obj2;
 		  		var mapInfo = [];
+		  		console.log($scope.tagCommit);
 		  		var chosenMetric = $("select[name=metrics]").val();
-		  		$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": $scope.commits[$scope.max], "fileHash2": $scope.commits[$scope.min], "chosenMetric":chosenMetric }}).success(function (response){
+		  		$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2, "chosenMetric":chosenMetric }}).success(function (response){
 		  			console.log("Response: ", response);
 		  			for (obj in response.commit1) {
 		  				for(obj2 in response.commit2){

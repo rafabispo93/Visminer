@@ -46,8 +46,8 @@ public class WorkingDirectoryController {
 		JSONObject result = new JSONObject();
 		Document data = new Document();
 		Document data2 = new Document();
-		data = directoryHandler.findById(fileHash, null);
-		data2 = directoryHandler.findById(fileHash2, null);
+		data = directoryHandler.findById(fileHash);
+		data2 = directoryHandler.findById(fileHash2);
 		
 		JsonReader reader = Json.createReader(new StringReader(data.toJson()));
         JsonObject dataJson = reader.readObject();

@@ -8,9 +8,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.bson.Document;
-
+import org.json.JSONObject;
+import org.repositoryminer.model.Reference;
 import org.repositoryminer.persistence.handler.ReferenceDocumentHandler;
 import org.repositoryminer.scm.ReferenceType;
+
+import com.mongodb.client.model.Projections;
 @Path("tags")
 public class ReferenceController {
 	
@@ -30,9 +33,14 @@ public class ReferenceController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("get-tags-reference")
 	public String getTagReference(@QueryParam("tag") String tag, @QueryParam("repositoryId") String repositoryId) {
-		Document r = referenceHandler.findByPath("refs/heads/repositoryminer_v1_5_0",repositoryId, null);
-		System.out.println(tag + ", " +repositoryId);
-		System.out.println(r);
-		return "";
+		JSONObject infoToPut = new JSONObject();
+		Document r = referenceHandler.findByNameAndType(tag, ReferenceType.TAG, repositoryId, Projections.include("_id"));
+		String id = r.get("_id").toString();
+		Document doc = referenceHandler.findById(id,
+				Projections.fields(Projections.include("commits"), Projections.slice("commits", 1)));
+
+		String lastCommit = ((List<String>) doc.get("commits")).get(0);
+		infoToPut.put("commit", lastCommit);
+		return infoToPut.toString();
 	}
 }
