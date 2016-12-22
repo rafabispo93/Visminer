@@ -48,7 +48,6 @@ public class WorkingDirectoryController {
 		Document data2 = new Document();
 		data = directoryHandler.findById(fileHash);
 		data2 = directoryHandler.findById(fileHash2);
-		
 		JsonReader reader = Json.createReader(new StringReader(data.toJson()));
         JsonObject dataJson = reader.readObject();
         reader.close();
@@ -108,9 +107,9 @@ public class WorkingDirectoryController {
         
         JSONObject packagesResult = new JSONObject();
         packagesResult.put("commit1", packages1);
-        packagesResult.put("commit2", packages2);  
+        packagesResult.put("commit2", packages2);
   		mTm.organizeJson(items, items2, chosenMetric);
-		//return packagesResult.toString();
-  		return mTm.organizeJson(items, items2, chosenMetric);
+		return packagesResult.toString();
+  		//return mTm.organizeJson(items, items2, chosenMetric);
 	}
 }

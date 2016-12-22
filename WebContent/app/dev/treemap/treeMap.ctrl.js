@@ -140,7 +140,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  					}
 		  				}
 		  			}
-		  			//makeNewMap(mapInfo);
+		  			makeMap(mapInfo);
 		  		});
 		  		
 		  	}
@@ -149,7 +149,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	function makeNewMap(data) {
 		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [];
 		  		for (count in data) {
-		  			
+		  	 				console.log(data[count]);
 				  			if(data[count].package){
 				  				var packName = data[count].package.toString();
 					  			packName = packName.split(".").pop();
@@ -163,7 +163,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 
 					  		var chosenMetric = $("select[name=metrics]").val();
 					  		$scope.allMetrics = data[count].abstract_types;
-
+					  		
 					  		var structure = {
 
 					  		};
@@ -180,16 +180,14 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  			}
 				  			for (var cc=0; cc < $scope.allMetrics.length; cc++) {
 				  				if ($scope.allMetrics && packName){
-						  			var methodsSize = $scope.allMetrics[cc][chosenMetric].methods.length;
+						  			var methodsSize = $scope.allMetrics[cc].methods.length;
 						  			var value = 0;
 						  			for (i = 0; i< methodsSize; ++i) {
-							  	    	name = $scope.allMetrics[cc][chosenMetric].methods[i].method.toString();
-							  	    	causeName[name] = $scope.allMetrics[cc][chosenMetric].methods[i].method;
-							  	    	value = value + parseInt($scope.allMetrics[cc][chosenMetric].methods[i].value);
+							  	    	name = $scope.allMetrics[cc].methods[i].method.toString();
+							  	    	causeName[name] = $scope.allMetrics[cc].methods[i].method;
+							  	    	value = value + parseInt($scope.allMetrics[cc].methods[i].value);
 							  	    	structure[name] = value;
 							  	    	clazz[clazzName] = structure;
-
-
 							  	    }
 
 						  	data[packName][clazzName] = clazz[clazzName];
@@ -205,8 +203,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 					  			data[packName][clazzName] = clazz[clazzName];
 					  		}
 				  			}
-					  		
-
+					  	
 				  		mapping(data);
 		  		}
 			  }
@@ -221,12 +218,13 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  
 		  	function makeMap(data) {
 		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [];
+		  		var chosenMetric = $("select[name=metrics]").val();
 		  		for (count = 0;count < data.length; ++count) {
-		  			$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": data[count]._id, "fileHash2": data[count]._id}}).success(function (response){
-		  				var responseSize = response.length, a;
+		  				console.log("Test");
+		  				var responseSize = data.length, a;
 				  		for (a = 0; a < responseSize; ++a) {
 				  			if(response[a].package){
-				  				var packName = response[a].package.toString();
+				  				var packName = data[a].package.toString();
 					  			packName = packName.split(".").pop();
 				  			}
 
@@ -237,14 +235,14 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  			
 
 					  		var chosenMetric = $("select[name=metrics]").val();
-					  		$scope.allMetrics = response[a].abstract_types[0];
+					  		$scope.allMetrics = data[a].abstract_types[0];
 
 					  		var structure = {
 
 					  		};
 					  		var lastClazz;
 
-					  		var clazzName = response[a].filename.toString();
+					  		var clazzName = data[a].filename.toString();
 				  			clazzName =  clazzName.split("/").pop();
 				  			if( lastClazz !== clazzName) {
 
@@ -283,9 +281,8 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 					  		}
 
 				  		}
+				  		console.log(data);
 				  		mapping(data);
-		  				
-		  			});
 		  		}
 			  }
 //		  				$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data[count]._id, "fileHash": data[count].diffs[0].hash.$numberLong}})
