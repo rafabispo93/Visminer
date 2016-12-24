@@ -14,13 +14,15 @@ public class MakeTMap {
   		List<JSONObject> mapInfo = new ArrayList<JSONObject>();
   		JSONObject infoToPut = new JSONObject();
   		JSONObject infoToPut2 = new JSONObject();
-  		System.out.println(items.toString().equals(items2.toString()));
+  		
 		for (String pack : items.keySet()) {
+			System.out.println(pack);
 			for (String pack2 : items2.keySet()) {
-				if(items2.get(pack2).toString().equals(items.get(pack).toString())) {
+				if(pack.equals(pack2)) {
+					
 					JSONObject obj = new JSONObject(items.get(pack).toString());
 					JSONObject obj2 = new JSONObject(items2.get(pack2).toString());
-					
+					System.out.println(obj +", " + obj2);
 					if(obj.get("name").equals(obj2.get("name"))) {
 						JSONArray metricsArray = new JSONArray(obj.get("metrics").toString());
 						JSONArray metricsArray2 = new JSONArray(obj2.get("metrics").toString());
@@ -66,7 +68,7 @@ public class MakeTMap {
 			
 			
 		}
-		//System.out.println(infoToPut);
+		System.out.println(infoToPut);
 		return infoToPut.toString();
 	}
 }

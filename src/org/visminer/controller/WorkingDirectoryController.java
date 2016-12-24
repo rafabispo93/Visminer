@@ -109,7 +109,7 @@ public class WorkingDirectoryController {
         packagesResult.put("commit1", packages1);
         packagesResult.put("commit2", packages2);
   		mTm.organizeJson(items, items2, chosenMetric);
-		return packagesResult.toString();
-  		//return mTm.organizeJson(items, items2, chosenMetric);
+		//return packagesResult.toString();
+  		return mTm.organizeJson(items, items2, chosenMetric);
 	}
 }
