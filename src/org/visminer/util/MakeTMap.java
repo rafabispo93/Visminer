@@ -71,4 +71,68 @@ public class MakeTMap {
 		System.out.println(infoToPut);
 		return infoToPut.toString();
 	}
+	
+	public String differentialAbsolute (JSONObject packagesResult, String chosenMetric) {
+		JSONObject packages1 = new JSONObject();
+		JSONObject commit1 = new JSONObject(packagesResult.get("commit1").toString());
+		JSONArray commit1Array = new JSONArray(commit1.keySet().toString());
+		int commit1Size = commit1Array.length();
+		
+		
+		JSONObject packages2 = new JSONObject();
+		JSONObject commit2 = new JSONObject(packagesResult.get("commit2").toString());
+		JSONArray commit2Array = new JSONArray(commit2.keySet().toString());
+		int commit2Size = commit2Array.length();
+		
+		for (int a = 0; a < commit1Size; a++) {
+			
+			JSONArray arr1 = new JSONArray(commit1.get(commit1Array.get(a).toString()).toString()); 
+			for (int z = 0; z < arr1.length(); z++) {
+				JSONObject jsonInfo = new JSONObject();
+				JSONObject clazz1 = new JSONObject(arr1.get(z).toString());
+				for (int b = 0; b < commit2Size; b++) {
+					JSONArray arr2 = new JSONArray(commit2.get(commit2Array.get(b).toString()).toString());
+					for (int y = 0; y < arr2.length(); y++) {
+						JSONObject clazz2 = new JSONObject(arr2.get(y).toString());
+						if (!clazz1.get("name").equals(clazz2.get("name"))) {
+							
+							jsonInfo.put("name", clazz1.get("name"));
+							jsonInfo.put("metrics",clazz1.get("metrics"));
+							
+						}
+					}		
+				}
+				packages1.append(commit1Array.get(a).toString(), jsonInfo);
+			}	
+		}
+		
+		// Infomation for second version
+		
+		for (int a = 0; a < commit2Size; a++) {
+			
+			JSONArray arr2 = new JSONArray(commit2.get(commit2Array.get(a).toString()).toString()); 
+			for (int z = 0; z < arr2.length(); z++) {
+				JSONObject jsonInfo = new JSONObject();
+				JSONObject clazz2 = new JSONObject(arr2.get(z).toString());
+				for (int b = 0; b < commit1Size; b++) {
+					JSONArray arr1 = new JSONArray(commit1.get(commit1Array.get(b).toString()).toString());
+					for (int y = 0; y < arr1.length(); y++) {
+						JSONObject clazz1 = new JSONObject(arr1.get(y).toString());
+						if (!clazz2.get("name").equals(clazz1.get("name"))) {
+							
+							jsonInfo.put("name", clazz2.get("name"));
+							jsonInfo.put("metrics",clazz2.get("metrics"));
+							
+						}
+					}		
+				}
+				packages2.append(commit2Array.get(a).toString(), jsonInfo);
+			}	
+		}
+		JSONObject packagesRes = new JSONObject();
+        packagesRes.put("commit1", packages1);
+        packagesRes.put("commit2", packages2);
+		
+		return packagesRes.toString();
+	}
 }

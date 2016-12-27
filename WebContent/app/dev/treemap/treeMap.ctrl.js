@@ -132,6 +132,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 //			  		makeMap(result);
 //			  		
 //			  		makeMap(result2);
+		  			makeMap(response.commit1);
 		  		});
 		  		
 		  	}
@@ -262,8 +263,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	function makeMap(data) {
 		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [];
 		  		var chosenMetric = $("select[name=metrics]").val();
-		  		//for (count = 0;count < data.length; ++count) {
-		  				console.log("Test");
+		  		for (count = 0;count < data.length; ++count) {
 		  				var responseSize = data.length, a;
 				  		for (a = 0; a < responseSize; ++a) {
 				  			if(data[a].package){
@@ -325,6 +325,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 					  		}
 
 				  		}
+		  		}
 				  		console.log(data);
 				  		mapping(data);
 		  		//}

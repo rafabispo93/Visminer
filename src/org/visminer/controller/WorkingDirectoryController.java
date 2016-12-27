@@ -71,7 +71,7 @@ public class WorkingDirectoryController {
             		JSONObject obj = new JSONObject(info.toString());
                 	//JSONObject obj2 = new JSONObject(obj.getJSONArray("abstract_types").get(0).toString());
             		JSONObject obj2 = new JSONObject(obj.getJSONArray("abstract_types").get(0).toString());
-                	packages1.put(obj.getString("package"), obj2);
+                	packages1.append(obj.getString("package"), obj2);
                     items.put(obj.getString("package").toString(), obj2);
             	}
             	catch (Exception e) {
@@ -93,7 +93,7 @@ public class WorkingDirectoryController {
             	try{
             		JSONObject obj = new JSONObject(info.toString());
                 	JSONObject obj2 = new JSONObject(obj.getJSONArray("abstract_types").get(0).toString());
-                	packages2.put(obj.getString("package"), obj2);
+                	packages2.append(obj.getString("package"), obj2);
                 	items2.put(obj.getString("package").toString(), obj2);
             	}
             	catch (Exception e) {
@@ -108,8 +108,10 @@ public class WorkingDirectoryController {
         JSONObject packagesResult = new JSONObject();
         packagesResult.put("commit1", packages1);
         packagesResult.put("commit2", packages2);
-  		mTm.organizeJson(items, items2, chosenMetric);
+  		//mTm.organizeJson(items, items2, chosenMetric);
 		//return packagesResult.toString();
-  		return mTm.organizeJson(items, items2, chosenMetric);
+  		//return mTm.organizeJson(items, items2, chosenMetric);
+        //return metricList.toString();
+       return mTm.differentialAbsolute(packagesResult, chosenMetric);
 	}
 }
