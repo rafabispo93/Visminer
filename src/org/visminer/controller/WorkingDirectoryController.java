@@ -108,10 +108,6 @@ public class WorkingDirectoryController {
         JSONObject packagesResult = new JSONObject();
         packagesResult.put("commit1", packages1);
         packagesResult.put("commit2", packages2);
-  		//mTm.organizeJson(items, items2, chosenMetric);
-		//return packagesResult.toString();
-  		//return mTm.organizeJson(items, items2, chosenMetric);
-        //return metricList.toString();
        return mTm.differentialAbsolute(packagesResult, chosenMetric);
 	}
 }

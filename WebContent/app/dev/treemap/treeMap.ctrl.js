@@ -102,37 +102,34 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  		var result = [];
 		  		$http.get('rest/wDirectories/get-by-id', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2, "chosenMetric":chosenMetric }}).success(function (response){
 		  			console.log(response);
-//		  			for (packName in response.commit1) {
-//		  				var resultObj1 = {};
-//		  				resultObj1["package"] = packName;
-//		  				resultObj1["filename"] = response.commit1[packName].name;
-//		  				resultObj1["abstract_types"] = [];
-//		  				resultObj1["abstract_types"].push(response.commit1[packName].metrics);
-//		  				result1.push(resultObj1);
-//		  			}
-//		  			
-//		  			for (packName in response.commit2) {
-//		  				var resultObj2 = {};
-//		  				resultObj2["package"] = packName;
-//		  				resultObj2["filename"] = response.commit2[packName].name;
-//		  				resultObj2["abstract_types"] = [];
-//		  				resultObj2["abstract_types"].push(response.commit2[packName].metrics);
-//		  				result1.push(resultObj1);
-//		  			}
-//		  			
-//		  			for (obj in result1) {
-//		  				console.log(result1[obj].package);
-//		  				for(obj2 in result2){
-//		  					if( result1[obj].package === result2[obj2].package) {
-//		  						
-//		  						console.log("uyaga");
-//		  					}
-//		  				}
-//		  			}
-//			  		makeMap(result);
-//			  		
-//			  		makeMap(result2);
-		  			makeMap(response.commit1);
+		  			var a, aSize;
+		  			for (packName in response.commit1) {
+		  				aSize = response.commit1[packName].length;
+		  				for (a = 0; a < aSize; a++) {
+		  					var resultObj1 = {};
+			  				resultObj1["package"] = packName;
+			  				resultObj1["filename"] = response.commit1[packName][a].name;
+			  				resultObj1["abstract_types"] = [];
+			  				resultObj1["abstract_types"].push(response.commit1[packName][a].metrics);
+			  				result1.push(resultObj1);
+		  				}
+		  				
+		  			}
+		  			
+		  			for (packName in response.commit2) {
+		  				aSize = response.commit2[packName].length;
+		  				for (a = 0; a < aSize; a++) {
+			  				var resultObj2 = {};
+			  				resultObj2["package"] = packName;
+			  				resultObj2["filename"] = response.commit2[packName][a].name;
+			  				resultObj2["abstract_types"] = [];
+			  				resultObj2["abstract_types"].push(response.commit2[packName][a].metrics);
+			  				result2.push(resultObj2);
+		  				}
+		  			}
+			  		makeMap(result1, "#0000FF");			  		
+			  		makeMap(result2, "#00FF00");
+		  			//makeMap(response.commit1);
 		  		});
 		  		
 		  	}
@@ -260,7 +257,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	
 		  	
 		  
-		  	function makeMap(data) {
+		  	function makeMap(data, colorD) {
 		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [];
 		  		var chosenMetric = $("select[name=metrics]").val();
 		  		for (count = 0;count < data.length; ++count) {
@@ -296,7 +293,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  			}
 
 					  		if ($scope.allMetrics && packName){
-					  			console.log($scope.allMetrics);
 					  			if($scope.allMetrics[chosenMetric].methods) {
 						  			var methodsSize = $scope.allMetrics[chosenMetric].methods.length;
 						  			var value = 0;
@@ -326,8 +322,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 
 				  		}
 		  		}
-				  		console.log(data);
-				  		mapping(data);
+				  		mapping(data, colorD);
 		  		//}
 			  }
 //		  				$http.get('rest/get-metrics/get-byCommit', {params:{"idCommit": data[count]._id, "fileHash": data[count].diffs[0].hash.$numberLong}})
@@ -397,14 +392,15 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 //		  		}
 //		  }
 
-		  function mapping(info) {
+		  function mapping(info, colorD) {
 			  for (region in info) {
 			        if (info.hasOwnProperty(region)) {
 			            regionVal = 0;
 			            regionP = {
 			                id: 'id_' + regionI,
 			                name: region,
-			                color: Highcharts.getOptions().colors[regionI],
+			                //color: Highcharts.getOptions().colors[regionI],
+			                color: colorD,
 			                borderColor:"#000000"
 			            };
 			            countryI = 0;
