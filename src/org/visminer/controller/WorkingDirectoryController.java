@@ -36,14 +36,14 @@ public class WorkingDirectoryController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("get-by-id")
-	public String getDirectory(@QueryParam("fileHash") String fileHash, @QueryParam("fileHash2") String fileHash2, @QueryParam("chosenMetric") String chosenMetric) {
+	public String getDirectory(@QueryParam("fileHash") String fileHash, @QueryParam("fileHash2") String fileHash2,  @QueryParam("strategy") String strategy) {
 		List<String> metricList = new ArrayList<>();
 		List<String> metricList2 = new ArrayList<>();
 		Map<String, JSONObject> items = new HashMap<String, JSONObject>();
 		Map<String, JSONObject> items2 = new HashMap<String, JSONObject>();
 		JSONObject packages1 = new JSONObject();
 		JSONObject packages2 = new JSONObject();
-		JSONObject result = new JSONObject();
+		//JSONObject result = new JSONObject();
 		Document data = new Document();
 		Document data2 = new Document();
 		data = directoryHandler.findById(fileHash);
@@ -60,6 +60,7 @@ public class WorkingDirectoryController {
         JsonArray filesArray = dataJson.getJsonArray("files");
         JsonArray filesArray2 = dataJson2.getJsonArray("files");
         //JsonArray checkoutArray = dataJson.getJsonArray("checkout");
+        System.out.println(strategy);
         System.out.println("Processing " + fileHash);
         for (JsonValue jsonValue : filesArray) {
         	JSONObject jo = new JSONObject(jsonValue.toString());
@@ -103,11 +104,17 @@ public class WorkingDirectoryController {
             	metricList2.add(info);
             }
         }
-        System.out.println("Done2 " + packages1.length() + " , " + packages2.length());
+        System.out.println("Done" + packages1.length() + " , " + packages2.length());
         
         JSONObject packagesResult = new JSONObject();
         packagesResult.put("commit1", packages1);
         packagesResult.put("commit2", packages2);
-       return mTm.differentialAbsolute(packagesResult, chosenMetric);
+       if (strategy.equals("1")) {
+    	   return mTm.differentialAbsolute(packagesResult);
+       }
+       else {
+    	   System.out.println(packages1.toString().equals(packages2.toString()));
+    	   return metricList.toString();
+       }
 	}
 }
