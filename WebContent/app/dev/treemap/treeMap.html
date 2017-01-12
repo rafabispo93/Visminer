@@ -5,6 +5,51 @@
       D.E.V
       <small>TreeMap Perspective</small>
     </h1>
+    <br/><br/>
+      <div id="buttons" >
+		        Area:
+		        <select name="metrics" ng-model="metrics" bs-selectbox>
+		        	<option value="0">ATDF</option>
+		            <option value="1" selected>CC</option>
+		            <option value="0">LOC</option>
+		            <option value="3">LVAR</option>
+		            <option value="4">MAXNesting</option>
+		            <option value="5">MLOC</option>
+		        </select>
+		         Color:
+		        <select name="metrics2" ng-model="metrics2" bs-selectbox>
+		        	<option value="0">ATDF</option>
+		            <option value="1" selected>CC</option>
+		            <option value="0">LOC</option>
+		            <option value="3">LVAR</option>
+		            <option value="4">MAXNesting</option>
+		            <option value="5">MLOC</option>
+		        </select>
+		        <span>
+		        <input ng-model="selectMethod" type="radio" name="q1" value="s"/>Single Version
+				<input ng-model="selectMethod" type="radio" name="q1" value="e"/>Evolution
+			    </span>
+				</br>
+				<div ng-show="selectMethod == 'e'">
+		        Version-1:
+		        <select ng-model="selectedVersion1">
+					<option ng-repeat="x in tagsLoaded" value="{{x.name}}">{{x.name}}</option>
+				</select>
+				</div>
+				Version-2:
+		        <select ng-model="selectedVersion2">
+					<option ng-repeat="x in tagsLoaded" value="{{x.name}}">{{x.name}}</option>
+				</select>
+				<div ng-show="selectMethod == 'e'">
+				Strategies:
+				<select name="strategies" ng-model="strategies" bs-selectbox>
+		            <option value="1" selected>Differential - Absolute</option>
+		            <option value="2">Differential - Relative</option>
+		        </select>
+		        </div>
+		        </br>
+		        <button type="button" class="btn btn-primary" ng-click="generate()">Generate</button>
+		</div>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-area-chart"></i> D.E.V</a></li>
       <li class="active">TreeMap</li>
@@ -16,7 +61,6 @@
 	<!-- Content Wrapper. Contains page content -->
       <!--<div class="content-wrapper">-->
           <section class="high">
-
           </section>
 
 
@@ -31,31 +75,7 @@
 		<br/><br/>
 		<div class="context-menu-one btn btn-neutral" id="container"></div>
 		<br/><br/>
-		<div id="buttons" >
-				Strategies:
-				<select name="strategies" ng-model="strategies" bs-selectbox>
-		            <option value="1" selected>Differential - Absolute</option>
-		            <option value="2">Differential - Relative</option>
-		        </select>
-		        Metrics:
-		        <select name="metrics" ng-model="metrics" bs-selectbox>
-		        	<option value="0">ATDF</option>
-		            <option value="1" selected>CC</option>
-		            <option value="0">LOC</option>
-		            <option value="3">LVAR</option>
-		            <option value="4">MAXNesting</option>
-		            <option value="5">MLOC</option>
-		        </select>
-		        Version-1:
-		        <select ng-model="selectedVersion1">
-					<option ng-repeat="x in tagsLoaded" value="{{x.name}}">{{x.name}}</option>
-				</select>
-				Version-2:
-		        <select ng-model="selectedVersion2">
-					<option ng-repeat="x in tagsLoaded" value="{{x.name}}">{{x.name}}</option>
-				</select>
-		        <button type="button" class="btn btn-primary" ng-click="generate()">Generate</button>
-		</div>
+	
 
 		<!--</div>--><!-- /.content-wrapper -->
     <div class="box-header with-border">

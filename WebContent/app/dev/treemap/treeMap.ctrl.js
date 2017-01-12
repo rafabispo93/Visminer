@@ -60,22 +60,59 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			  if(chart) {
 				  points = [];
 			  }
-			  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion1, "repositoryId":$scope.repoSelected }}).success(function (tagRes)
-			  {
-				  
-				  $scope.tagCommit = tagRes.commit;
-				  console.log($scope.tagCommit);
-				  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion2, "repositoryId":$scope.repoSelected }}).success(function (tagRes)
+			  if ($scope.selectMethod === "e") {
+				  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion1, "repositoryId":$scope.repoSelected }}).success(function (tagRes)
 						  {
 							  
-							  $scope.tagCommit2 = tagRes.commit;
-							  console.log($scope.tagCommit2);
-							  referenceCheck();
+							  $scope.tagCommit = tagRes.commit;
+							  console.log($scope.tagCommit);
+							  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion2, "repositoryId":$scope.repoSelected }}).success(function (tagRes)
+									  {
+										  
+										  $scope.tagCommit2 = tagRes.commit;
+										  console.log($scope.tagCommit2);
+										  referenceCheck();
+									  });
 						  });
-			  });
+			  } else {
+				  if ($scope.selectMethod === "s") {
+					  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion2, "repositoryId":$scope.repoSelected }}).success(function (tagRes)
+							  {
+						  		$scope.tagCommit = tagRes.commit;
+						  		console.log(tagRes);
+						  		singleVersion();
+							  }); 
+				  }
+				  
+			  }
+			 
 			  
 			  
 		  }
+		  	
+		  	function singleVersion () {
+		  		var chosenMetric = $scope.metrics;
+		  		var chosenMetric2 = $scope.metrics2;
+		  		
+		  		$http.get('rest/wDirectories/get-by-id-single', {params: {"fileHash": $scope.tagCommit}}).success(function (response)
+						  { 
+					  		var result1 = [];
+					  		var a, aSize;
+				  			for (packName in response) {
+			  					var resultObj1 = {};
+				  				resultObj1["package"] = response[packName].package;
+				  				resultObj1["filename"] = response[packName].filename;
+				  				resultObj1["abstract_types"] = [];
+				  				if(response[packName].abstract_types[0]){
+				  					resultObj1["abstract_types"].push(response[packName].abstract_types[0].metrics);
+				  				}
+				  				
+				  				result1.push(resultObj1);
+				  				
+				  			}
+					  		makeMap(result1, "#8B4513", chosenMetric, chosenMetric2);
+						  });
+		  	}
 		  
 		  	function referenceCheck () {
 		  		var chosenMetric = $("select[name=metrics]").val();
@@ -109,17 +146,16 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			  				result2.push(resultObj2);
 		  				}
 		  			}
-			  		makeMap(result1, "#0000FF");			  		
-			  		makeMap(result2, "#00FF00");
+			  		makeMap(result1, "#0000FF", $scope.metrics);			  		
+			  		makeMap(result2, "#00FF00", $scope.metrics);
 		  		});
 		  		
 		  	}
 		  	
 		  	
 
-		  	function makeMap(data, colorD) {
+		  	function makeMap(data, colorD, chosenMetric, chosenMetric2) {
 		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [];
-		  		var chosenMetric = $("select[name=metrics]").val();
 		  		for (count = 0;count < data.length; ++count) {
 		  				var responseSize = data.length, a;
 				  		for (a = 0; a < responseSize; ++a) {
@@ -134,7 +170,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  			}
 				  			
 
-					  		var chosenMetric = $("select[name=metrics]").val();
 					  		$scope.allMetrics = data[a].abstract_types[0];
 
 					  		var structure = {
@@ -153,19 +188,22 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  			}
 
 					  		if ($scope.allMetrics && packName){
+					  			
 					  			if($scope.allMetrics[chosenMetric].methods) {
 						  			var methodsSize = $scope.allMetrics[chosenMetric].methods.length;
-						  			var value = 0;
+						  			var value = 0, valueColor = 0
 						  			for (i = 0; i< methodsSize; ++i) {
 							  	    	name = $scope.allMetrics[chosenMetric].methods[i].method.toString();
 							  	    	causeName[name] = $scope.allMetrics[chosenMetric].methods[i].method;
 							  	    	value = value + parseInt($scope.allMetrics[chosenMetric].methods[i].value);
+							  	    	valueColor = valueColor + parseInt($scope.allMetrics[chosenMetric2].methods[i].value);
 							  	    	structure[name] = value;
+//							  	    	console.log(structure);
+//							  	    	structure[name] = {"value": value, "colorValue": valueColor};
 							  	    	clazz[clazzName] = structure;
-
+							  	    	
 
 							  	    }
-
 						  			data[packName][clazzName] = clazz[clazzName];
 
 						  		}
@@ -192,7 +230,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			            regionP = {
 			                id: 'id_' + regionI,
 			                name: region,
-			                //color: Highcharts.getOptions().colors[regionI],
+//			                color: Highcharts.getOptions().colors[regionI],
 			                color: colorD,
 			                borderColor:"#000000"
 			            };
@@ -231,7 +269,11 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			        }
 			    }
 			    chart = $('.high').highcharts({
-			        series: [{
+//			    	colorAxis: {
+//			            minColor: '#f4a460',
+//			            maxColor: "#181009"
+//			        },
+			    	series: [{
 			        	drillUpButton: {
 			                text: '<< return',
 			                name: 'teste',
@@ -277,6 +319,8 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			            text: 'Results'
 			        }
 			    }, false);
+			    
+			    console.log(info, "SAIDA");    
 		  }
 		  
 	}
