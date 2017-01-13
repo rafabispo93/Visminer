@@ -17,8 +17,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 	if ($scope.currentPage == 'treeMap') {
 		// This controller instance
 		  var thisCtrl = this;
-		  var data = {
-	        	};
+		  var infoGeneral;
 		  var causeName = {
 
 	        };
@@ -40,6 +39,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		      cause;
 		var i;
 		var name;
+		var name2;
 		var chart = this;
 		var c1, c2;
 		var commitsHash = [];
@@ -111,6 +111,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  				
 				  			}
 					  		makeMap(result1, "#8B4513", chosenMetric, chosenMetric2);
+					  		makeMap2(result1, "#8B4513", chosenMetric, chosenMetric2);
 						  });
 		  	}
 		  
@@ -155,13 +156,16 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	
 
 		  	function makeMap(data, colorD, chosenMetric, chosenMetric2) {
-		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [];
+		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [], valueAux = 0;
 		  		for (count = 0;count < data.length; ++count) {
 		  				var responseSize = data.length, a;
 				  		for (a = 0; a < responseSize; ++a) {
 				  			if(data[a].package){
 				  				var packName = data[a].package.toString();
 					  			packName = packName.split(".").pop();
+					  			
+					  			var packName2 = data[a].package.toString();
+					  			packName2 = packName2.split(".").pop();
 				  			}
 
 
@@ -176,6 +180,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 
 					  		};
 					  		var lastClazz;
+					  		
 
 					  		var clazzName = data[a].filename.toString();
 				  			clazzName =  clazzName.split("/").pop();
@@ -186,26 +191,28 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  				};
 				  				lastClazz = clazzName;
 				  			}
+				  			
 
 					  		if ($scope.allMetrics && packName){
 					  			
 					  			if($scope.allMetrics[chosenMetric].methods) {
 						  			var methodsSize = $scope.allMetrics[chosenMetric].methods.length;
-						  			var value = 0, valueColor = 0
+						  			var value = 0, valueColor = 0;
 						  			for (i = 0; i< methodsSize; ++i) {
+						  				var valueArray = [];
 							  	    	name = $scope.allMetrics[chosenMetric].methods[i].method.toString();
 							  	    	causeName[name] = $scope.allMetrics[chosenMetric].methods[i].method;
 							  	    	value = value + parseInt($scope.allMetrics[chosenMetric].methods[i].value);
-							  	    	valueColor = valueColor + parseInt($scope.allMetrics[chosenMetric2].methods[i].value);
+							  	    	valueColor = valueColor + parseInt($scope.allMetrics[chosenMetric].methods[i].value);
 							  	    	structure[name] = value;
-//							  	    	console.log(structure);
-//							  	    	structure[name] = {"value": value, "colorValue": valueColor};
+							  	    	if (valueColor > valueAux) {
+							  	    		valueAux = valueColor;
+							  	    	}
 							  	    	clazz[clazzName] = structure;
-							  	    	
 
 							  	    }
 						  			data[packName][clazzName] = clazz[clazzName];
-
+						  			//console.log(data);
 						  		}
 						  		else {
 						  			causeName = {
@@ -216,14 +223,124 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 						  			};
 						  			data[packName][clazzName] = clazz[clazzName];
 						  		}
+						  		
 					  		}
 
 				  		}
-		  		}
-				  		mapping(data, colorD);
+		  		}		
+		  				console.log("Max 1", valueAux);
+		  				infoGeneral = data;
+				  		///mapping(data, colorD, valueAux);
+			  }
+		  	
+		  	
+		  // TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+		  	
+		  	function makeMap2(data, colorD, chosenMetric, chosenMetric2) {
+		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [], valueAux = 0;
+		  		for (count = 0;count < data.length; ++count) {
+		  				var responseSize = data.length, a;
+				  		for (a = 0; a < responseSize; ++a) {
+				  			if(data[a].package){
+				  				var packName = data[a].package.toString();
+					  			packName = packName.split(".").pop();
+					  			
+					  			var packName2 = data[a].package.toString();
+					  			packName2 = packName2.split(".").pop();
+				  			}
+
+
+				  			if(!data[packName]) {
+				  				data[packName] = {};
+				  			}
+				  			
+
+					  		$scope.allMetrics = data[a].abstract_types[0];
+
+					  		var structure = {
+
+					  		};
+					  		var lastClazz;
+					  		
+
+					  		var clazzName = data[a].filename.toString();
+				  			clazzName =  clazzName.split("/").pop();
+				  			if( lastClazz !== clazzName) {
+
+				  				clazz = {
+
+				  				};
+				  				lastClazz = clazzName;
+				  			}
+				  			
+
+					  		if ($scope.allMetrics && packName){
+					  			
+					  			if($scope.allMetrics[chosenMetric].methods) {
+						  			var methodsSize = $scope.allMetrics[chosenMetric].methods.length;
+						  			var value = 0, valueColor = 0;
+						  			for (i = 0; i< methodsSize; ++i) {
+						  				var valueArray = [];
+							  	    	name = $scope.allMetrics[chosenMetric].methods[i].method.toString();
+							  	    	causeName[name] = $scope.allMetrics[chosenMetric].methods[i].method;
+							  	    	//value = value + parseInt($scope.allMetrics[chosenMetric2].methods[i].value);
+							  	    	valueColor = valueColor + parseInt($scope.allMetrics[chosenMetric2].methods[i].value);
+							  	    	structure[name] = valueColor;
+							  	    	if (valueColor > valueAux) {
+							  	    		valueAux = valueColor;
+							  	    	}
+							  	    	clazz[clazzName] = structure;
+
+							  	    }
+						  			data[packName][clazzName] = clazz[clazzName];
+						  			//console.log(data);
+						  		}
+						  		else {
+						  			causeName = {
+						  					'All': 'All'
+							        };
+						  			clazz[clazzName] = {
+						  					'All': $scope.allMetrics[chosenMetric].accumulated
+						  			};
+						  			data[packName][clazzName] = clazz[clazzName];
+						  		}
+						  		
+					  		}
+
+				  		}
+		  		}		
+		  			
+		  				console.log("Max 2",valueAux);
+				  		mapping(infoGeneral, colorD, valueAux, data);
 			  }
 
-		  function mapping(info, colorD) {
+		  function mapping(info, colorD, valueAux, infoColor) {
+			  var one = (valueAux/10).toString(),
+	  			two = one * 2,
+	  			three = one * 3,
+	  			four = one * 4,
+	  			five = one * 5,
+	  			six = one * 6,
+	  			seven = one * 7,
+	  			eight = one * 8,
+	  			nine = one * 9,
+	  			ten = valueAux,
+	  			colorsData;
+	  		
+		  		colorsData = {
+						
+				};
+	  			colorsData[one] = "#c3834c";
+	  			colorsData[two] = "#af7544";
+	  			colorsData[three] = "#9c683c";
+	  			colorsData[four] = "#885b35";
+	  			colorsData[five] = "#754e2d";
+	  			colorsData[six] = "#614126";
+	  			colorsData[seven] = "#4e341e";
+	  			colorsData[eight] = "#3a2716";
+	  			colorsData[nine] = "#271a0f";
+	  			colorsData[ten] = "#130d07";
+	  		
 			  for (region in info) {
 			        if (info.hasOwnProperty(region)) {
 			            regionVal = 0;
@@ -231,7 +348,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			                id: 'id_' + regionI,
 			                name: region,
 //			                color: Highcharts.getOptions().colors[regionI],
-			                color: colorD,
+//			                color: colorsData[one],
 			                borderColor:"#000000"
 			            };
 			            countryI = 0;
@@ -247,10 +364,43 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			                    causeI = 0;
 			                    for (cause in info[region][country]) {
 			                        if (info[region][country].hasOwnProperty(cause)) {
+			                        	var result;
+			                        	var rValue = Math.round(+infoColor[region][country][cause])
+			                        	if (rValue >=0 && rValue <= one) {
+			                        		result = "#c3834c";
+			                        	}
+			                        	if (rValue >one && rValue <= two) {
+			                        		result = "#af7544";
+			                        	}
+			                        	if (rValue >two && rValue <= three) {
+			                        		result = "#9c683c";
+			                        	}
+			                        	if (rValue >three && rValue <= four) {
+			                        		result = "#885b35";
+			                        	}
+			                        	if (rValue >four && rValue <= five) {
+			                        		result = "#754e2d";
+			                        	}
+			                        	if (rValue >five && rValue <= six) {
+			                        		result = "#614126";
+			                        	}
+			                        	if (rValue >six && rValue <= seven) {
+			                        		result = "#4e341e";
+			                        	}
+			                        	if (rValue >seven && rValue <= eight) {
+			                        		result = "#3a2716";
+			                        	}
+			                        	if (rValue >eight && rValue <= nine) {
+			                        		result = "#271a0f";
+			                        	}
+			                        	if (rValue >nine && rValue <= ten) {
+			                        		result = "#130d07";
+			                        	}
 			                            causeP = {
 			                                id: countryP.id + '_' + causeI,
 			                                name: causeName[cause],
 			                                parent: countryP.id,
+			                                color: result,
 			                                value: Math.round(+info[region][country][cause]),
 			                                borderColor: "#ff0000"
 
@@ -269,10 +419,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			        }
 			    }
 			    chart = $('.high').highcharts({
-//			    	colorAxis: {
-//			            minColor: '#f4a460',
-//			            maxColor: "#181009"
-//			        },
 			    	series: [{
 			        	drillUpButton: {
 			                text: '<< return',
@@ -320,7 +466,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			        }
 			    }, false);
 			    
-			    console.log(info, "SAIDA");    
+			    //console.log(info, "SAIDA");    
 		  }
 		  
 	}
