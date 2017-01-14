@@ -56,22 +56,24 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				        }
 				    }
 				};
+		  
+		  
 		  $scope.generate = function () {
 			  if(chart) {
 				  points = [];
 			  }
-			  if ($scope.selectMethod === "e") {
+			  if ($scope.selectMethod === "e" && $scope.strategies === "2") {
 				  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion1, "repositoryId":$scope.repoSelected }}).success(function (tagRes)
 						  {
 							  
 							  $scope.tagCommit = tagRes.commit;
-							  console.log($scope.tagCommit);
+							  console.log("EVOLUTION",$scope.tagCommit);
 							  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion2, "repositoryId":$scope.repoSelected }}).success(function (tagRes)
 									  {
 										  
 										  $scope.tagCommit2 = tagRes.commit;
-										  console.log($scope.tagCommit2);
-										  referenceCheck();
+										  console.log("EVOLUTION",$scope.tagCommit2);
+										  differentialRelative ()
 									  });
 						  });
 			  } else {
@@ -79,7 +81,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 					  $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.selectedVersion2, "repositoryId":$scope.repoSelected }}).success(function (tagRes)
 							  {
 						  		$scope.tagCommit = tagRes.commit;
-						  		console.log(tagRes);
 						  		singleVersion();
 							  }); 
 				  }
@@ -90,6 +91,24 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			  
 		  }
 		  	
+		  
+		   function differentialRelative () {
+			   var chosenMetric = $scope.metrics;
+		  	   var chosenMetric2 = $scope.metrics2;
+		  	   
+		  	 $http.get('rest/wDirectories/get-by-id-relative', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2}}).success(function (response) {
+		  		 console.log(response);
+		  	 });
+					   
+		   }
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
 		  	function singleVersion () {
 		  		var chosenMetric = $scope.metrics;
 		  		var chosenMetric2 = $scope.metrics2;
