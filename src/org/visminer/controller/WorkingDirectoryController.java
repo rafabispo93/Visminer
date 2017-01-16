@@ -168,8 +168,7 @@ public class WorkingDirectoryController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("get-by-id-relative")
-	public String getDirectoryRelative(@QueryParam("fileHash") String fileHash, @QueryParam("fileHash2") String fileHash2) { 
-		
+	public String getDirectoryRelative(@QueryParam("fileHash") String fileHash, @QueryParam("fileHash2") String fileHash2, @QueryParam("chosenMetric") int chosenMetric) { 
 		List<String> metricList = new ArrayList<>();
 		Map<String, JSONObject> items = new HashMap<String, JSONObject>();
 		JSONObject packages1 = new JSONObject();
@@ -238,7 +237,7 @@ public class WorkingDirectoryController {
         JSONObject packagesResult = new JSONObject();
         packagesResult.put("commit1", packages1);
         packagesResult.put("commit2", packages2);
-        mTm.differentialRelative(packagesResult); 
-		return mTm.differentialRelative(packagesResult).toString();
+        mTm.differentialRelative(packagesResult, chosenMetric); 
+		return mTm.differentialRelative(packagesResult, chosenMetric).toString();
 	}
 }

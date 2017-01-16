@@ -6,6 +6,7 @@ import java.util.List;
 import javax.json.JsonValue;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MakeTMap {
@@ -74,7 +75,7 @@ public class MakeTMap {
 		return packagesRes.toString();
 	}
 
-	public String differentialRelative(JSONObject packagesResult) {
+	public String differentialRelative(JSONObject packagesResult, int chosenMetric) {
 		JSONObject packages1 = new JSONObject();
 		JSONObject commit1 = new JSONObject(packagesResult.get("commit1").toString());
 		JSONArray commit1Array = new JSONArray(commit1.keySet().toString());
@@ -134,33 +135,65 @@ public class MakeTMap {
         packagesRes.put("commit1", packages1);
         packagesRes.put("commit2", packages2);
         
-        Iterator<?> keys = packages1.keys();
-        Iterator<?> keys2 = packages2.keys();
-        while( keys.hasNext() ) {
-            String key = (String)keys.next();
-            JSONArray arr1 = new JSONArray(packages1.get(key).toString());
-            JSONArray arr2 = new JSONArray(packages2.get(key).toString());
-
-            for (Object val1 : arr1) {
-            	JSONObject valObj1 = new JSONObject(val1.toString());
-            	JSONArray valArray1 = new JSONArray(valObj1.get("metrics").toString());
-            	for (Object val2 : arr2) {
-                	JSONObject valObj2 = new JSONObject(val2.toString());
-                	JSONArray valArray2 = new JSONArray(valObj2.get("metrics").toString());
-                	if (valObj1.get("name").toString().equals(valObj2.get("name").toString())) {
-                		for (Object methodRes : valArray1) {
-                			JSONObject methodResObj = new JSONObject(methodRes.toString());
-                			System.out.println(methodResObj.toString());	
-                		}
-                	}
-                	
+        JSONObject trueRes = new JSONObject();
+        
+        Iterator<String> iter = packages1.keys();
+        Iterator<String> iter2 = packages2.keys();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            while (iter2.hasNext()) {
+            	String key2 = iter2.next();
+            	try {
+                    JSONArray value = (JSONArray) packages1.get(key);
+                    JSONArray value2 = (JSONArray) packages2.get(key2);
+                    for (int countA = 0; countA < value.length(); countA++) {
+                    	for (int countA2 = 0; countA2 < value2.length(); countA2++) {
+                    		
+                    		JSONObject objValue = (JSONObject) value.get(countA);
+                        	JSONArray arrayValue = (JSONArray) objValue.get("metrics");
+                        	JSONObject methodValues = (JSONObject) arrayValue.get(chosenMetric);
+                        	
+                        	JSONObject objValue2 = (JSONObject) value2.get(countA2);
+                        	JSONArray arrayValue2 = (JSONArray) objValue2.get("metrics");
+                        	JSONObject methodValues2 = (JSONObject) arrayValue2.get(chosenMetric);
+                        	
+                        	if(methodValues.has("methods")) {
+                        		if(methodValues2.has("methods")) {
+                        			JSONArray methodsArray = (JSONArray) methodValues.get("methods");
+                        			JSONArray methodsArray2 = (JSONArray) methodValues2.get("methods");
+                            		for ( int countB = 0; countB < methodsArray.length(); countB++) {
+                            			for ( int countB2 = 0; countB2 < methodsArray2.length(); countB2++) {
+                            				
+                            				JSONObject valueResult = (JSONObject) methodsArray.get(countB);
+                            				JSONObject valueResult2 = (JSONObject) methodsArray2.get(countB2);
+                            				
+                            				int result1 = Integer.parseInt(valueResult.get("value").toString());
+                            				int result2 = Integer.parseInt(valueResult2.get("value").toString());
+                            				int result = result1 - result2;
+                            				System.out.println(result);
+                            			}
+                            			
+                            		}
+                        		}
+                        		
+                        		else {
+                            		
+                            	}
+                        	}
+                        	else {
+                        		
+                        	}
+                    	}
+                    	
+                    	
+                    }
+                    
+                    
+                } catch (JSONException e) {
+                    // Something went wrong!
                 }
             }
-//            while( keys2.hasNext() ) {
-//                String key2 = (String)keys2.next();
-//                JSONArray arr2 = new JSONArray(packages2.get(key2));
-//            }
-       
+            
         }
         
 		return packagesRes.toString();

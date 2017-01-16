@@ -96,8 +96,9 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			   var chosenMetric = $scope.metrics;
 		  	   var chosenMetric2 = $scope.metrics2;
 		  	   
-		  	 $http.get('rest/wDirectories/get-by-id-relative', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2}}).success(function (response) {
+		  	 $http.get('rest/wDirectories/get-by-id-relative', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2, "chosenMetric": chosenMetric}}).success(function (response) {
 		  		 console.log(response);
+		  		 
 		  	 });
 					   
 		   }
