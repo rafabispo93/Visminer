@@ -146,6 +146,7 @@ public class MakeTMap {
             	try {
                     JSONArray value = (JSONArray) packages1.get(key);
                     JSONArray value2 = (JSONArray) packages2.get(key2);
+                    JSONArray valueFinal = (JSONArray) packages1.get(key);
                     for (int countA = 0; countA < value.length(); countA++) {
                     	for (int countA2 = 0; countA2 < value2.length(); countA2++) {
                     		
@@ -157,23 +158,40 @@ public class MakeTMap {
                         	JSONArray arrayValue2 = (JSONArray) objValue2.get("metrics");
                         	JSONObject methodValues2 = (JSONObject) arrayValue2.get(chosenMetric);
                         	
+                        	
+                        	
+                        	JSONObject methodValuesFinal = new JSONObject();
+                        	JSONArray arrayValueFinal = new JSONArray();
+                        	JSONObject objValueFinal = (JSONObject) value.get(countA);
                         	if(methodValues.has("methods")) {
                         		if(methodValues2.has("methods")) {
                         			JSONArray methodsArray = (JSONArray) methodValues.get("methods");
                         			JSONArray methodsArray2 = (JSONArray) methodValues2.get("methods");
+                        			JSONArray methodsArrayFinal = new JSONArray();
                             		for ( int countB = 0; countB < methodsArray.length(); countB++) {
+                            			JSONObject valueResult = (JSONObject) methodsArray.get(countB);
                             			for ( int countB2 = 0; countB2 < methodsArray2.length(); countB2++) {
-                            				
-                            				JSONObject valueResult = (JSONObject) methodsArray.get(countB);
                             				JSONObject valueResult2 = (JSONObject) methodsArray2.get(countB2);
                             				
-                            				int result1 = Integer.parseInt(valueResult.get("value").toString());
-                            				int result2 = Integer.parseInt(valueResult2.get("value").toString());
-                            				int result = result1 - result2;
-                            				System.out.println(result);
+                            				if (valueResult.get("method").toString().equals(valueResult2.get("method").toString())) {
+                            					int result1 = Integer.parseInt(valueResult.get("value").toString());
+                                				int result2 = Integer.parseInt(valueResult2.get("value").toString());
+                                				int result = result1 - result2;
+                                				
+                                				//ArrayList<JSONObject> methodsArrayFinal = new ArrayList<JSONObject>();
+                                				valueResult.put("value", result);
+                                				methodsArrayFinal.put(valueResult);
+                                				
+                                				
+                            				}
+                            				else {
+                            					methodsArrayFinal.put(valueResult);
+                            				}
+                            				
                             			}
                             			
                             		}
+                            		methodValuesFinal.append("methods", methodsArrayFinal);
                         		}
                         		
                         		else {
@@ -183,12 +201,19 @@ public class MakeTMap {
                         	else {
                         		
                         	}
+                        	
+                        	arrayValueFinal.put(methodValuesFinal);	
+                        	objValueFinal.put("metrics", arrayValueFinal);
+                        	valueFinal.put(objValueFinal);
+                        	trueRes = objValueFinal;
+                        	System.out.println(valueFinal);
+                        	
                     	}
                     	
-                    	
+                    	 
                     }
                     
-                    
+                   
                 } catch (JSONException e) {
                     // Something went wrong!
                 }
