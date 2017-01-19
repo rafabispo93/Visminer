@@ -29,7 +29,6 @@
 		        <input ng-model="selectMethod" type="radio" name="q1" value="s"/>Single Version
 				<input ng-model="selectMethod" type="radio" name="q1" value="e"/>Evolution
 			    </span>
-				</br>
 				<div ng-show="selectMethod == 'e'">
 		        Version-1:
 		        <select ng-model="selectedVersion1">
@@ -60,9 +59,9 @@
   <section class="content">
 	<!-- Content Wrapper. Contains page content -->
       <!--<div class="content-wrapper">-->
-          <section class="high">
+          <section class="high" id="container">
           </section>
-
+		<div id="container" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
 
         </div>
 		<br/>

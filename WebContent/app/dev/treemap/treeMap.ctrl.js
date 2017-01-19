@@ -113,9 +113,11 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	function singleVersion () {
 		  		var chosenMetric = $scope.metrics;
 		  		var chosenMetric2 = $scope.metrics2;
-		  		
+		  		console.time("JAVA");
 		  		$http.get('rest/wDirectories/get-by-id-single', {params: {"fileHash": $scope.tagCommit}}).success(function (response)
 						  { 
+		  					console.log(response);
+		  					console.timeEnd("JAVA");
 					  		var result1 = [];
 					  		var a, aSize;
 				  			for (packName in response) {
@@ -331,10 +333,16 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  		}		
 		  			
 		  				console.log("Max 2",valueAux);
+		  				console.log(infoGeneral);
+		  				for (var i =0 ; i <30;i++) {
+		  					delete infoGeneral[i];
+		  				}
+		  				
 				  		mapping(infoGeneral, colorD, valueAux, data);
 			  }
 
 		  function mapping(info, colorD, valueAux, infoColor) {
+			  console.time("javascript");
 			  var one = (valueAux/10).toString(),
 	  			two = one * 2,
 	  			three = one * 3,
@@ -346,7 +354,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 	  			nine = one * 9,
 	  			ten = valueAux,
 	  			colorsData;
-	  		
+	  			
 		  		colorsData = {
 						
 				};
@@ -438,57 +446,86 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			            regionI = regionI + 1;
 			        }
 			    }
-			    chart = $('.high').highcharts({
-			    	series: [{
-			        	drillUpButton: {
-			                text: '<< return',
-			                name: 'teste',
-			                position: {
-			                    align: 'right',
-			                    x: -10
-			                },
-			                theme: {
-			                    fill: 'white',
-			                    'stroke-width': 1,
-			                    stroke: 'silver',
-			                    r: 5,
-			                    states: {
-			                        hover: {
-			                            fill: '#bada55'
-			                        }
-			                    }
-			                }
-
-			            },
-			            type: 'treemap',
-			            layoutAlgorithm: 'squarified',
-			            allowDrillToNode: true,
-			            animationLimit: 1000,
-			            turboThreshold: 0,
-			            dataLabels: {
-			                enabled: false
-			            },
-			            levelIsConstant: true,
-			            levels: [{
-			                level: 1,
-			                dataLabels: {
-			                    enabled: true
-			                },
-			                borderWidth: 3
-			            }],
-			            data: points
-			        }],
-			        subtitle: {
-			            text: ''
-			        },
-			        title: {
-			            text: 'Results'
-			        }
-			    }, false);
-			    
-			    //console.log(info, "SAIDA");    
+			  	
+//			    chart = $('.high').highcharts({
+//			    	series: [{
+//			        	drillUpButton: {
+//			                text: '<< return',
+//			                name: 'teste',
+//			                position: {
+//			                    align: 'right',
+//			                    x: -10
+//			                },
+//			                theme: {
+//			                    fill: 'white',
+//			                    'stroke-width': 1,
+//			                    stroke: 'silver',
+//			                    r: 5,
+//			                    states: {
+//			                        hover: {
+//			                            fill: '#bada55'
+//			                        }
+//			                    }
+//			                }
+//
+//			            },
+//			            type: 'treemap',
+//			            layoutAlgorithm: 'squarified',
+//			            allowDrillToNode: true,
+//			            animationLimit: 1000,
+//			            turboThreshold: 0,
+//			            dataLabels: {
+//			                enabled: false
+//			            },
+//			            levelIsConstant: true,
+//			            levels: [{
+//			                level: 1,
+//			                dataLabels: {
+//			                    enabled: true
+//			                },
+//			                borderWidth: 3
+//			            }],
+//			            data: points
+//			        }],
+//			        subtitle: {
+//			            text: ''
+//			        },
+//			        title: {
+//			            text: 'Results'
+//			        }
+//			    }, false);
+			  console.timeEnd("javascript");
+			  console.time("highcharts");
+			  var options = { series: [{
+		            type: 'treemap',
+		            layoutAlgorithm: 'squarified',
+		            allowDrillToNode: true,
+		            animationLimit: 1000,
+		            turboThreshold: 0,
+		            dataLabels: {
+		                enabled: false
+		            },
+		            levelIsConstant: false,
+		            levels: [{
+		                level: 1,
+		                dataLabels: {
+		                    enabled: true
+		                },
+		                borderWidth: 3
+		            }],
+		            data: points
+		            
+		        }],
+		        subtitle: {
+		            text: ''
+		        },
+		        title: {
+		            text: 'Results'
+		        } };
+			    Highcharts.chart('container', options);
+			    console.timeEnd("highcharts");
 		  }
 		  
 	}
-
+	
 });
