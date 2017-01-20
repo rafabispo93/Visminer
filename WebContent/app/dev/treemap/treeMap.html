@@ -7,24 +7,14 @@
     </h1>
     <br/><br/>
       <div id="buttons" >
-		        Area:
-		        <select name="metrics" ng-model="metrics" bs-selectbox>
-		        	<option value="0">ATDF</option>
-		            <option value="1" selected>CC</option>
-		            <option value="0">LOC</option>
-		            <option value="3">LVAR</option>
-		            <option value="4">MAXNesting</option>
-		            <option value="5">MLOC</option>
-		        </select>
-		         Color:
-		        <select name="metrics2" ng-model="metrics2" bs-selectbox>
-		        	<option value="0">ATDF</option>
-		            <option value="1" selected>CC</option>
-		            <option value="0">LOC</option>
-		            <option value="3">LVAR</option>
-		            <option value="4">MAXNesting</option>
-		            <option value="5">MLOC</option>
-		        </select>
+		    	Area:
+		        <select ng-model="metrics">
+					<option ng-repeat="x in metricsLoaded" value="{{metricsLoaded.indexOf(x)}}">{{x}}</option>
+				</select>
+		        Color:
+		        <select ng-model="metrics2">
+					<option ng-repeat="x in metricsLoaded" value="{{metricsLoaded.indexOf(x)}}">{{x}}</option>
+				</select>
 		        <span>
 		        <input ng-model="selectMethod" type="radio" name="q1" value="s"/>Single Version
 				<input ng-model="selectMethod" type="radio" name="q1" value="e"/>Evolution
@@ -61,7 +51,7 @@
       <!--<div class="content-wrapper">-->
           <section class="high" id="container">
           </section>
-		<div id="container" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+		
 
         </div>
 		<br/>

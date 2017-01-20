@@ -131,8 +131,8 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  				result1.push(resultObj1);
 				  				
 				  			}
-					  		makeMap(result1, "#8B4513", chosenMetric, chosenMetric2);
-					  		makeMap2(result1, "#8B4513", chosenMetric, chosenMetric2);
+					  		makeMap(result1, "#8B4513", chosenMetric2, chosenMetric);
+					  		makeMap2(result1, "#8B4513", chosenMetric2, chosenMetric);
 						  });
 		  	}
 		  
@@ -215,7 +215,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  			
 
 					  		if ($scope.allMetrics && packName){
-					  			
 					  			if($scope.allMetrics[chosenMetric].methods) {
 						  			var methodsSize = $scope.allMetrics[chosenMetric].methods.length;
 						  			var value = 0, valueColor = 0;
@@ -331,17 +330,16 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				  		}
 		  		}		
 		  			
-		  				console.log("Max 2",valueAux);
-		  				var respToMap =[];
-		  				Object.keys(infoGeneral).filter(
-	  							function (e) {
-	  								if (isNaN(parseInt(e))) {
-//	  									delete infoGeneral[i];
-	  									respToMap[e] = infoGeneral[e];
-	  								}
-	  							}
-	  					);
-				  		mapping(respToMap, colorD, valueAux, data);
+  				console.log("Max 2",valueAux);
+  				var respToMap =[];
+  				Object.keys(infoGeneral).filter(
+						function (e) {
+							if (isNaN(parseInt(e))) {
+								respToMap[e] = infoGeneral[e];
+							}
+						}
+				);
+		  		mapping(respToMap, colorD, valueAux, data);
 			  }
 
 		  function mapping(info, colorD, valueAux, infoColor) {
@@ -450,53 +448,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			        }
 			    }
 			  	
-//			    chart = $('.high').highcharts({
-//			    	series: [{
-//			        	drillUpButton: {
-//			                text: '<< return',
-//			                name: 'teste',
-//			                position: {
-//			                    align: 'right',
-//			                    x: -10
-//			                },
-//			                theme: {
-//			                    fill: 'white',
-//			                    'stroke-width': 1,
-//			                    stroke: 'silver',
-//			                    r: 5,
-//			                    states: {
-//			                        hover: {
-//			                            fill: '#bada55'
-//			                        }
-//			                    }
-//			                }
-//
-//			            },
-//			            type: 'treemap',
-//			            layoutAlgorithm: 'squarified',
-//			            allowDrillToNode: true,
-//			            animationLimit: 1000,
-//			            turboThreshold: 0,
-//			            dataLabels: {
-//			                enabled: false
-//			            },
-//			            levelIsConstant: true,
-//			            levels: [{
-//			                level: 1,
-//			                dataLabels: {
-//			                    enabled: true
-//			                },
-//			                borderWidth: 3
-//			            }],
-//			            data: points
-//			        }],
-//			        subtitle: {
-//			            text: ''
-//			        },
-//			        title: {
-//			            text: 'Results'
-//			        }
-//			    }, false);
 			  console.timeEnd("javascript");
 			  console.time("highcharts");
 			  var options = { series: [{
@@ -516,7 +467,12 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		                },
 		                borderWidth: 3
 		            }],
-		            data: points
+		            data: points,
+		            events: {
+		            	 click: function(e) {
+                             console.log(this.tooltipOptions.pointFormat);
+                         }
+			        }
 		            
 		        }],
 		        subtitle: {
@@ -524,8 +480,14 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		        },
 		        title: {
 		            text: 'Results'
-		        } };
-			    Highcharts.chart('container', options);
+		        },
+		        tooltip: {
+		            pointFormat: Object.keys(info)[0]
+		        },
+		        
+		       };
+			    var chart = Highcharts.chart('container', options);
+			    console.log(Object.keys(info)[0]);
 			    console.timeEnd("highcharts");
 		  }
 		  
