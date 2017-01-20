@@ -116,7 +116,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  		console.time("JAVA");
 		  		$http.get('rest/wDirectories/get-by-id-single', {params: {"fileHash": $scope.tagCommit}}).success(function (response)
 						  { 
-		  					console.log(response);
 		  					console.timeEnd("JAVA");
 					  		var result1 = [];
 					  		var a, aSize;
@@ -333,12 +332,16 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  		}		
 		  			
 		  				console.log("Max 2",valueAux);
-		  				console.log(infoGeneral);
-		  				for (var i =0 ; i <30;i++) {
-		  					delete infoGeneral[i];
-		  				}
-		  				
-				  		mapping(infoGeneral, colorD, valueAux, data);
+		  				var respToMap =[];
+		  				Object.keys(infoGeneral).filter(
+	  							function (e) {
+	  								if (isNaN(parseInt(e))) {
+//	  									delete infoGeneral[i];
+	  									respToMap[e] = infoGeneral[e];
+	  								}
+	  							}
+	  					);
+				  		mapping(respToMap, colorD, valueAux, data);
 			  }
 
 		  function mapping(info, colorD, valueAux, infoColor) {
