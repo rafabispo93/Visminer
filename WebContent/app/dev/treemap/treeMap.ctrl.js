@@ -104,12 +104,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		   }
 		  
 		  
-		  
-		  
-		  
-		  
-		  
-		  
 		  	function singleVersion () {
 		  		var chosenMetric = $scope.metrics;
 		  		var chosenMetric2 = $scope.metrics2;
@@ -177,7 +171,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	
 
 		  	function makeMap(data, colorD, chosenMetric, chosenMetric2) {
-		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [], valueAux = 0;
+		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [], valueAux1 = 0;
 		  		for (count = 0;count < data.length; ++count) {
 		  				var responseSize = data.length, a;
 				  		for (a = 0; a < responseSize; ++a) {
@@ -225,8 +219,8 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 							  	    	value = value + parseInt($scope.allMetrics[chosenMetric].methods[i].value);
 							  	    	valueColor = valueColor + parseInt($scope.allMetrics[chosenMetric].methods[i].value);
 							  	    	structure[name] = value;
-							  	    	if (valueColor > valueAux) {
-							  	    		valueAux = valueColor;
+							  	    	if (valueColor > valueAux1) {
+							  	    		valueAux1 = valueColor;
 							  	    	}
 							  	    	clazz[clazzName] = structure;
 
@@ -248,7 +242,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 
 				  		}
 		  		}		
-		  				console.log("Max 1", valueAux);
+		  				console.log("Max 1", valueAux1);
 		  				infoGeneral = data;
 				  		///mapping(data, colorD, valueAux);
 			  }
@@ -376,10 +370,10 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			            regionP = {
 			                id: 'id_' + regionI,
 			                name: region,
-//			                color: Highcharts.getOptions().colors[regionI],
-//			                color: colorsData[one],
 			                borderColor:"#000000"
 			            };
+			            
+			            console.log(regionP);
 			            countryI = 0;
 			            for (country in info[region]) {
 			                if (info[region].hasOwnProperty(country)) {
@@ -463,14 +457,19 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		            levels: [{
 		                level: 1,
 		                dataLabels: {
-		                    enabled: true
+		                    enabled: true,
+		                    pointFormat: "VAMO"
 		                },
 		                borderWidth: 3
 		            }],
 		            data: points,
 		            events: {
 		            	 click: function(e) {
-                             console.log(this.tooltipOptions.pointFormat);
+//                             console.log(e.point.id);
+		            		 console.log(e);
+                         },
+                         contextmenu: function(e) {
+                        	 console.log(e);
                          }
 			        }
 		            
@@ -481,16 +480,262 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		        title: {
 		            text: 'Results'
 		        },
-		        tooltip: {
-		            pointFormat: Object.keys(info)[0]
-		        },
+//		        tooltip: {
+//		            pointFormat: Object.keys(info)[0]
+//		        },
 		        
 		       };
 			    var chart = Highcharts.chart('container', options);
-			    console.log(Object.keys(info)[0]);
 			    console.timeEnd("highcharts");
 		  }
 		  
+	}
+	$(function() {
+        $.contextMenu({
+            selector: '.high', 
+            callback: function(key, options) {
+                var m = "clicked: " + key;
+                console.log(options);
+//                window.console && console.log(m) || alert(m); 
+                codeParallel();
+            },
+            items: {
+                "open": {name: "Open on Parallel Coordinates", icon: "edit"}
+            }
+        });  
+    });
+	
+	function codeParallel () {
+		var INACTIVE_OPACITY = .67
+
+		// This is input.
+		var isDiscrete = [false, false, false, false, ['setosa', 'versicolor', 'virginica']];
+		var axis_texts = ['sepal length', 'sepal width', 'petal length', 'petal width', 'iris'];
+		var data = [
+		    [5.1, 3.5, 1.4, .2, null],
+		    [4.9, 3, 1.4, .2, 0],
+		    [7, 3.2, null, 1.4, 1],
+		    [6.3, 2.9, 5.6, 1.8, 2],
+		    [2.9, 5.6, 1.8, 1.5, 2],
+		    [5.2, 3, 4, 1.1, 1],
+		    [3.2, 1.5, 1.8, .2, 1],
+		];
+
+
+
+		/** Transpose the data to get columns */
+		var colData = [];
+		for (var j=0; j<data[0].length; ++j) {
+			colData[j] = [];
+			for (var i=0; i<data.length; ++i)
+		    	colData[j][i] = data[i][j];
+		}
+
+		/** Get per-column extremes and scale columns onto [0, 1] */
+		var colLimits = [];
+		function nonNull(el) { return el != null; };
+		for (var j=0, col; j<colData.length; ++j) {
+			col = colData[j];
+			var nncol = col.filter(nonNull);
+			colLimits.push([Math.min.apply(null, nncol), 
+		                    Math.max.apply(null, nncol)]);
+		    for (var i=0, val; i<col.length; ++i) {
+		    	val = col[i];
+		    	if (nonNull(val))
+		        	data[i][j] = colData[j][i] = (val - colLimits[j][0]) / (colLimits[j][1] - colLimits[j][0]);
+		    }
+		}
+		console.log(data);
+
+		/** Convert value from [0, 1] back to columns real span */
+		function toValue(value, column) {
+			return value * (colLimits[column][1] - colLimits[column][0]) + colLimits[column][0];
+		}
+
+		/** Align yAxes onto the integer ticks of the xAxis.
+		 */
+		var _in_redraw = false;
+		function reposition_yaxes() {
+		    if (_in_redraw)
+		        return;
+		    _in_redraw = true;
+		    var ax = this.xAxis[0],
+		        ex = ax.getExtremes(),
+		        spacing = (ax.toPixels(ex.max) - ax.toPixels(ex.min)) / (ex.max - ex.min);
+		    for (var i=1; i<this.yAxis.length; ++i)
+		        this.yAxis[i].update({offset: - (i - 1) * spacing}, false);
+		    this.redraw(false);
+		    _in_redraw = false;
+		}
+
+		$(function () {
+
+			function labels_formatter(col) {
+		    	return {
+		        	reserveSpace: false,
+		            x: -3,
+		        	formatter: function() {
+		                var value = toValue(this.value, col);
+		                return isDiscrete[col][Math.round(value)] || Highcharts.numberFormat(value, 2);
+		            }
+		        };
+		    };
+		    
+		    Highcharts.setOptions({
+		    	chart: {
+		            zoomType: 'y',
+		            alignTicks: false,
+		            events: { redraw: reposition_yaxes }
+		        },
+		        tooltip: {
+		            shared: false,
+		            followPointer: true,
+		            formatter: function() {
+		            	if (this.series.color == 'transparent')
+		                	return false;
+		            	var str = [],
+		                    yAxis = this.series.chart.yAxis,
+		                    data = this.series.data;
+		                for (var i=0, value; i<data.length; ++i) {
+		                	value = '—';
+		                    if (data[i] && !data[i].isNull) {
+		                    	value = toValue(data[i].y, i);
+		                        if (isDiscrete[i])
+		                        	value = isDiscrete[i][value];
+		                    }
+		                	str.push('<b>' + yAxis[i + 1].userOptions.title.text + ':</b> ' + value);
+		                }
+		                return str.join('<br>');
+		            },
+		        },
+		        legend: {
+		        	enabled: false
+		        },
+		        plotOptions: {
+		        	series: { 
+		            	marker: {
+		                	enabled: false,
+		                    states: {
+		                    	hover: { enabled: false }
+		                    }
+		                },
+		                events: {
+		                    mouseOver: function() {
+		                        this.group.toFront();
+		                        this.group.attr('opacity', 1);
+		                        this.chart.tooltip.refresh(this.data[0]);
+		                    },
+		                    mouseOut: function() {
+		                    	this.group.attr('opacity', INACTIVE_OPACITY);
+		                    }
+		                },
+		                states: {
+		                	hover: { lineWidthPlus: 2 }
+		                }
+		            },
+		            line: { lineWidth: .8 }
+		        },
+		        xAxis: { 
+		        	visible: false,
+		            maxPadding: 0,
+		            minPadding:0,
+		            max: colData.length - 1,
+		        },
+		        yAxis: {
+		        	lineWidth: 1,
+		            lineColor: 'black',
+		            max: 1,
+		            min: 0,
+		            gridLineWidth: 0,
+					title: {
+		            	align: 'high',
+		                rotation: 0,
+		                y: -10,
+		                style: {
+		                	fontWeight: 'bold',
+		                }
+		            }
+		        }
+		    });
+		    $('#container').highcharts({
+		        chart: {
+		            type: 'line',
+		        },
+		        yAxis: [{
+		            visible: false,
+		        }, {
+		            title: {text: axis_texts[0]},
+		            labels: labels_formatter(0),
+		        }, {
+		            title: {text: axis_texts[1]},
+		            labels: labels_formatter(1),
+		        }, {
+		        	title: {text: axis_texts[2]},
+		            labels: labels_formatter(2),
+		        }, {
+		            title: {text: axis_texts[3]},
+		            labels: labels_formatter(3),
+		        }, {
+		        	title: {text: axis_texts[4]},
+		            tickPositions: $.unique(colData[4].sort().filter(nonNull)).reverse(),
+		            labels: labels_formatter(4),
+		        }],
+		        
+		        series: [
+		        /** These series are only here so that yAxes get their ticks' labels */
+		        {
+		            color: 'transparent',
+		            data: colData[0],
+		            yAxis: 1
+		        }, {
+		            color: 'transparent',
+		            data: colData[1],
+		            yAxis: 2
+		        }, {
+		            color: 'transparent',
+		            data: colData[2],
+		            yAxis: 3
+		        }, {
+		            color: 'transparent',
+		            data: colData[3],
+		            yAxis: 4
+		        }, {
+		            color: 'transparent',
+		            data: colData[4],
+		            yAxis: 5
+		        },
+		        
+		        
+		        {
+		            data: data[0],
+		        }, {
+		            data: data[1],
+		        }, {
+		            data: data[2],
+		        },  {
+		            data: data[3],
+		        },  {
+		            data: data[4],
+		        },  {
+		            data: data[5],
+		        },]
+		    }, function(chart) {
+		    	chart.redraw();
+		        chart.redraw();
+		        
+		        // Center yAxis labels
+		        $('.highcharts-yaxis-title').each(function(i) {
+		            chart.yAxis[i + 1].update({
+		            	title: {offset: -this.getBBox().width/2}
+		            }, false);
+		        });
+		        // Decrease color opacity
+		        $.each(chart.series, function(i, series) {
+		        	series.graph.attr('opacity', INACTIVE_OPACITY);
+		        });
+		        chart.redraw();
+		    });
+		});
 	}
 	
 });
