@@ -85,6 +85,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 							  }); 
 				  }
 				  
+				  
 			  }
 			 
 			  
@@ -372,8 +373,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			                name: region,
 			                borderColor:"#000000"
 			            };
-			            
-			            console.log(regionP);
 			            countryI = 0;
 			            for (country in info[region]) {
 			                if (info[region].hasOwnProperty(country)) {
@@ -451,7 +450,10 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		            animationLimit: 1000,
 		            turboThreshold: 0,
 		            dataLabels: {
-		                enabled: false
+		                enabled: false,
+	                    formatter: function(e) {
+	                        return this.point.name;
+	                    }
 		            },
 		            levelIsConstant: false,
 		            levels: [{
@@ -462,50 +464,62 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		                },
 		                borderWidth: 3
 		            }],
-		            data: points,
-		            events: {
-		            	 click: function(e) {
-//                             console.log(e.point.id);
-		            		 console.log(e);
-                         },
-                         contextmenu: function(e) {
-                        	 console.log(e);
-                         }
-			        }
-		            
+		            data: points           
 		        }],
 		        subtitle: {
 		            text: ''
 		        },
 		        title: {
 		            text: 'Results'
-		        },
-//		        tooltip: {
-//		            pointFormat: Object.keys(info)[0]
-//		        },
-		        
+		        }
 		       };
 			    var chart = Highcharts.chart('container', options);
 			    console.timeEnd("highcharts");
 		  }
 		  
 	}
-	$(function() {
-        $.contextMenu({
-            selector: '.high', 
-            callback: function(key, options) {
-                var m = "clicked: " + key;
-                console.log(options);
-//                window.console && console.log(m) || alert(m); 
-                codeParallel();
-            },
-            items: {
-                "open": {name: "Open on Parallel Coordinates", icon: "edit"}
-            }
-        });  
-    });
 	
-	function codeParallel () {
+	$(document).on('click', function () {
+		var eleClicked;
+		$(".highcharts-text-outline").on('click', function (e) { 
+			 eleClicked = $(this).text();
+//			 codeParallel(eleClicked);
+			 console.log("ENTROU AQUI");
+			 for (var count = 0; count < $scope.tagsLoaded.length; count++) {
+				 $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.tagsLoaded[count].name, "repositoryId":$scope.repoSelected }}).success(function (tagRes){
+					 		$http.get('rest/wDirectories/get-by-id-parallel', {params: {"fileHash": tagRes.commit}}).success(function (response){
+								 console.log(response);
+							 });
+						  }); 
+//				 console.log($scope.tagsLoaded[count].name);
+			 }
+			
+			 
+		});
+//		$(function() {
+//		  $.contextMenu({
+//		      selector: ".highcharts-text-outline", 
+//		      callback: function(key, options) {
+//		          var m = "clicked: " + key;
+//		          console.log(eleClicked);
+////		          $(".highcharts-text-outline").on("click", function (e) { 
+////		 			 eleClicked = $(this).text();
+////		 			 console.log($(this).text());
+////		 			 codeParallel(eleClicked);
+////		 		  });
+//		          
+//		      },
+//		      items: {
+//		          "open": {name: "Open on Parallel Coordinates", icon: "edit"}
+//		      }
+//		  });  
+//		});
+		
+
+	});
+	
+	function codeParallel (eleClicked) {
+		console.log(eleClicked);
 		var INACTIVE_OPACITY = .67
 
 		// This is input.
@@ -739,3 +753,5 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 	}
 	
 });
+
+

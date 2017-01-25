@@ -163,6 +163,49 @@ public class WorkingDirectoryController {
 		return metricList.toString();
 	}
 	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("get-by-id-parallel")
+	public String getDirectoryParallel(@QueryParam("fileHash") String fileHash) { 
+//		System.out.println(fileHash);
+		List<String> metricList = new ArrayList<>();
+		Map<String, JSONObject> items = new HashMap<String, JSONObject>();
+		JSONObject packages1 = new JSONObject();
+		//JSONObject result = new JSONObject();
+		Document data = new Document();
+		data = directoryHandler.findById(fileHash);
+		JsonReader reader = Json.createReader(new StringReader(data.toJson()));
+        JsonObject dataJson = reader.readObject();
+        reader.close();
+        
+        
+        JsonArray filesArray = dataJson.getJsonArray("files");
+        //JsonArray checkoutArray = dataJson.getJsonArray("checkout");
+        System.out.println("Processing " + fileHash);
+        for (JsonValue jsonValue : filesArray) {
+        	JSONObject jo = new JSONObject(jsonValue.toString());
+            String infoFiles = us.encodeToCRC32(jo.getString("file"));
+            String infoCheckouts = jo.getString("checkout");
+            String info = us.getMetricsByCommit(infoFiles,infoCheckouts);
+            if (info != "") {
+            	try{
+            		JSONObject obj = new JSONObject(info.toString());
+                	//JSONObject obj2 = new JSONObject(obj.getJSONArray("abstract_types").get(0).toString());
+            		JSONObject obj2 = new JSONObject(obj.getJSONArray("abstract_types").get(0).toString());
+                	packages1.append(obj.getString("package"), obj2);
+                    items.put(obj.getString("package").toString(), obj2);
+            	}
+            	catch (Exception e) {
+            		//System.out.println("Error");
+            	}
+            	metricList.add(info);
+            }
+        }
+        System.out.println("Done");
+		
+		return metricList.toString();
+	}
+	
 	
 	
 	@GET
