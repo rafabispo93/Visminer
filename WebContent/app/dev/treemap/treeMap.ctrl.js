@@ -480,18 +480,18 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 	}
 	
 	$(document).on('click', function () {
-		var eleClicked;
+		var eleClicked, version;
 		$(".highcharts-text-outline").on('click', function (e) { 
 			 eleClicked = $(this).text();
 //			 codeParallel(eleClicked);
 			 console.log("ENTROU AQUI");
 			 for (var count = 0; count < $scope.tagsLoaded.length; count++) {
+				 version = $scope.tagsLoaded[count].name;
 				 $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.tagsLoaded[count].name, "repositoryId":$scope.repoSelected }}).success(function (tagRes){
-					 		$http.get('rest/wDirectories/get-by-id-parallel', {params: {"fileHash": tagRes.commit}}).success(function (response){
+					 		$http.get('rest/wDirectories/get-by-id-parallel', {params: {"fileHash": tagRes.commit, "version": tagRes.version}}).success(function (response){
 								 console.log(response);
 							 });
 						  }); 
-//				 console.log($scope.tagsLoaded[count].name);
 			 }
 			
 			 

@@ -41,6 +41,7 @@ public class ReferenceController {
 
 		String lastCommit = ((List<String>) doc.get("commits")).get(0);
 		infoToPut.put("commit", lastCommit);
+		infoToPut.put("version", tag);
 		return infoToPut.toString();
 	}
 }
