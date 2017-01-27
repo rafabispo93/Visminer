@@ -166,7 +166,7 @@ public class WorkingDirectoryController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("get-by-id-parallel")
-	public String getDirectoryParallel(@QueryParam("fileHash") String fileHash, @QueryParam("version") String version) { 
+	public String getDirectoryParallel(@QueryParam("fileHash") String fileHash, @QueryParam("version") String version, @QueryParam("eleCliked") String eleCliked) { 
 //		System.out.println(fileHash);
 		List<String> metricList = new ArrayList<>();
 		JSONObject  responseList = new JSONObject();
@@ -178,7 +178,6 @@ public class WorkingDirectoryController {
 		JsonReader reader = Json.createReader(new StringReader(data.toJson()));
         JsonObject dataJson = reader.readObject();
         reader.close();
-        
         
         JsonArray filesArray = dataJson.getJsonArray("files");
         //JsonArray checkoutArray = dataJson.getJsonArray("checkout");
@@ -203,10 +202,11 @@ public class WorkingDirectoryController {
             }
         }
         System.out.println("Done");
-		String value = mTm.parallelCoordinates(metricList);
+		String value = mTm.parallelCoordinates(metricList, eleCliked);
 		responseList.put(version , value);
-//		return metricList.toString();
-		return responseList.toString();
+//		System.out.println(responseList.toString());
+		return metricList.toString();
+//		return responseList.toString();
 	}
 	
 	

@@ -12,10 +12,10 @@ import org.json.JSONObject;
 public class MakeTMap {
 	
 	
-	public String parallelCoordinates (List<String> metricList) {
+	public String parallelCoordinates (List<String> metricList, String eleCliked) {
 		JSONObject response = new JSONObject();
 		
-		
+//		metricList.size()
 		for (int count = 0; count < metricList.size(); count++) {
 			JSONObject listElement = new JSONObject(metricList.get(count).toString());
 			JSONArray typesArray = (JSONArray) listElement.get("abstract_types");
@@ -29,26 +29,33 @@ public class MakeTMap {
 					boolean resp2 = metricInfo.has("methods");
 					if(resp == true) {
 						int value = Integer.parseInt(metricInfo.get("accumulated").toString());
-						if (response.has(metricInfo.getString("name"))) {
-							int aux = Integer.parseInt(response.get(metricInfo.get("name").toString()).toString()) ;
-							value = value + aux;
-							response.put(metricInfo.get("name").toString(), value);
-						} else {
-							response.put(metricInfo.get("name").toString(), value);
+						if(metricInfo.get("name").equals("ATFD")) {
+							System.out.println(value + " , " + metricInfo.get("name"));
+							response.append(metricInfo.get("name").toString(), value);
 						}
+							
+//						if (response.has(metricInfo.getString("name"))) {
+//							int aux = Integer.parseInt(response.get(metricInfo.get("name").toString()).toString()) ;
+//							value = value + aux;
+//							System.out.println(value + " , " + metricInfo.get("name"));
+//							response.put(metricInfo.get("name").toString(), value);
+//						} else {
+//							response.put(metricInfo.get("name").toString(), value);
+//						}
 
 					}
 					
-					if(resp == false && resp2 == true) {
-						JSONArray methods = (JSONArray)  metricInfo.get("methods");
-						int methodsSize = methods.length();
-						int value = 0;
-						for (int z = 0; z < methodsSize; z++) {
-							JSONObject method = (JSONObject) methods.get(z);
-							value = Integer.parseInt(method.get("value").toString()) + value;	
-						}
-						response.put(metricInfo.get("name").toString(), value);
-					}
+					
+//					if(resp == false && resp2 == true) {
+//						JSONArray methods = (JSONArray)  metricInfo.get("methods");
+//						int methodsSize = methods.length();
+//						int value = 0;
+//						for (int z = 0; z < methodsSize; z++) {
+//							JSONObject method = (JSONObject) methods.get(z);
+//							value = Integer.parseInt(method.get("value").toString()) + value;	
+//						}
+//						response.put(metricInfo.get("name").toString(), value);
+//					}
 				}
 			}	
 			
