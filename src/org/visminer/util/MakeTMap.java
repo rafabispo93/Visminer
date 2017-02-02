@@ -12,53 +12,57 @@ import org.json.JSONObject;
 public class MakeTMap {
 	
 	
-	public String parallelCoordinates (List<String> metricList, String eleCliked) {
+	public String parallelCoordinates (List<String> metricList, String eleClicked) {
 		JSONObject response = new JSONObject();
 		
 //		metricList.size()
 		for (int count = 0; count < metricList.size(); count++) {
 			JSONObject listElement = new JSONObject(metricList.get(count).toString());
 			JSONArray typesArray = (JSONArray) listElement.get("abstract_types");
-			if(typesArray.length() > 0) {
-				JSONObject zero = (JSONObject) typesArray.get(0);
-				JSONArray metrics = (JSONArray) zero.get("metrics");
-				int metricsSize = metrics.length();
-				for (int x = 0; x < metricsSize; x++) {
-					JSONObject metricInfo = (JSONObject) metrics.get(x);
-					boolean resp = metricInfo.has("accumulated");
-					boolean resp2 = metricInfo.has("methods");
-					if(resp == true) {
-						int value = Integer.parseInt(metricInfo.get("accumulated").toString());
-						if (response.has(metricInfo.getString("name"))) {
-							int aux = Integer.parseInt(response.get(metricInfo.get("name").toString()).toString()) ;
-							value = value + aux;
-							response.put(metricInfo.get("name").toString(), value);
-						} else {
-							response.put(metricInfo.get("name").toString(), value);
-						}
+			if(listElement.get("package").toString().endsWith(eleClicked.toString())) {
+				
+				if(typesArray.length() > 0) {
+					JSONObject zero = (JSONObject) typesArray.get(0);
+					JSONArray metrics = (JSONArray) zero.get("metrics");
+					int metricsSize = metrics.length();
+					for (int x = 0; x < metricsSize; x++) {
+						JSONObject metricInfo = (JSONObject) metrics.get(x);
+						boolean resp = metricInfo.has("accumulated");
+						boolean resp2 = metricInfo.has("methods");
+						if(resp == true) {
+							int value = Integer.parseInt(metricInfo.get("accumulated").toString());
+							if (response.has(metricInfo.getString("name"))) {
+								int aux = Integer.parseInt(response.get(metricInfo.get("name").toString()).toString()) ;
+								value = value + aux;
+								response.put(metricInfo.get("name").toString(), value);
+							} else {
+								response.put(metricInfo.get("name").toString(), value);
+							}
 
-					}
-					
-					
-					if(resp == false && resp2 == true) {
-						JSONArray methods = (JSONArray)  metricInfo.get("methods");
-						int methodsSize = methods.length();
-						int value = 0;
-						for (int z = 0; z < methodsSize; z++) {
-							JSONObject method = (JSONObject) methods.get(z);
-							value = Integer.parseInt(method.get("value").toString()) + value;
-						}
-						if (response.has(metricInfo.getString("name"))) {
-							int aux = Integer.parseInt(response.get(metricInfo.getString("name")).toString());
-							response.put(metricInfo.get("name").toString(), value + aux);
-						}
-						else {
-							response.put(metricInfo.get("name").toString(), value);
 						}
 						
+						
+						if(resp == false && resp2 == true) {
+							JSONArray methods = (JSONArray)  metricInfo.get("methods");
+							int methodsSize = methods.length();
+							int value = 0;
+							for (int z = 0; z < methodsSize; z++) {
+								JSONObject method = (JSONObject) methods.get(z);
+								value = Integer.parseInt(method.get("value").toString()) + value;
+							}
+							if (response.has(metricInfo.getString("name"))) {
+								int aux = Integer.parseInt(response.get(metricInfo.getString("name")).toString());
+								response.put(metricInfo.get("name").toString(), value + aux);
+							}
+							else {
+								response.put(metricInfo.get("name").toString(), value);
+							}
+							
+						}
 					}
 				}
-			}	
+			}
+				
 			
 		}
 		

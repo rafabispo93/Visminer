@@ -410,16 +410,21 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 	$(document).on('click', function () {
 		$(".highcharts-text-outline").on('click', function (e) { 
 			 $scope.eleClicked = $(this).text();
-//			 codeParallel(eleClicked);
+			 var dataParallel = {};
 			 console.log("ENTROU AQUI");
 			 for (var count = 0; count < $scope.tagsLoaded.length; count++) {
 				 $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.tagsLoaded[count].name, "repositoryId":$scope.repoSelected }}).success(function (tagRes){
-					 		$http.get('rest/wDirectories/get-by-id-parallel', {params: {"fileHash": tagRes.commit, "version": tagRes.version, "eleCliked": $scope.eleClicked}}).success(function (response){
-								 console.log(response, tagRes.version);
+					 		$http.get('rest/wDirectories/get-by-id-parallel', {params: {"fileHash": tagRes.commit, "version": tagRes.version, "eleClicked": $scope.eleClicked}}).success(function (response){
+//								 console.log(response, tagRes.version);
+					 			 veTag = tagRes.version;
+								 dataParallel.veTag = response;
 							 });
 						  }); 
 			 }
-			
+			 
+//			 console.log(dataParallel);
+			 
+			 codeParallel(dataParallel);
 			 
 		});
 //		$(function() {
@@ -444,13 +449,14 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 
 	});
 	
-	function codeParallel (eleClicked) {
-		console.log(eleClicked);
+	function codeParallel (dataParallel) {
 		var INACTIVE_OPACITY = .67
-
+//		var obj = JSON.parse(dataParallel);
+		console.log(Object.keys(dataParallel));
 		// This is input.
 		var isDiscrete = [false, false, false, false, ['setosa', 'versicolor', 'virginica']];
-		var axis_texts = ['sepal length', 'sepal width', 'petal length', 'petal width', 'iris'];
+//		var axis_texts = ['sepal length', 'sepal width', 'petal length', 'petal width', 'iris'];
+		var axis_texts = [];
 		var data = [
 		    [5.1, 3.5, 1.4, .2, null],
 		    [4.9, 3, 1.4, .2, 0],
@@ -460,9 +466,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		    [5.2, 3, 4, 1.1, 1],
 		    [3.2, 1.5, 1.8, .2, 1],
 		];
-
-
-
+		
 		/** Transpose the data to get columns */
 		var colData = [];
 		for (var j=0; j<data[0].length; ++j) {
