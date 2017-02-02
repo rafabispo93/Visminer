@@ -112,6 +112,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  		$http.get('rest/wDirectories/get-by-id-single', {params: {"fileHash": $scope.tagCommit}}).success(function (response)
 						  { 
 		  					console.timeEnd("JAVA");
+		  					console.log(response);
 					  		var result1 = [];
 					  		var a, aSize;
 				  			for (packName in response) {
@@ -219,10 +220,10 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 						  				var valueArray = [];
 							  	    	name = $scope.allMetrics[chosenMetric].methods[i].method.toString();
 							  	    	causeName[name] = $scope.allMetrics[chosenMetric].methods[i].method;
-//							  	    	value +
-							  	    	value = value + parseInt($scope.allMetrics[chosenMetric].methods[i].value);
-//							  	    	value = 1;
-							  	    	valueColor = valueColor + parseInt($scope.allMetrics[chosenMetric2].methods[i].value);
+//							  	    	value = value + parseInt($scope.allMetrics[chosenMetric].methods[i].value);
+							  	    	value = parseInt($scope.allMetrics[chosenMetric].methods[i].value);
+//							  	    	valueColor = valueColor + parseInt($scope.allMetrics[chosenMetric2].methods[i].value);
+							  	    	valueColor = parseInt($scope.allMetrics[chosenMetric2].methods[i].value);
 							  	    	var resVal = [];
 							  	    	resVal.push(value);
 							  	    	resVal.push(valueColor);
@@ -387,8 +388,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		            levels: [{
 		                level: 1,
 		                dataLabels: {
-		                    enabled: true,
-		                    pointFormat: "VAMO"
+		                    enabled: true
 		                },
 		                borderWidth: 3
 		            }],

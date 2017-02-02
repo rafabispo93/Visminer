@@ -205,8 +205,8 @@ public class WorkingDirectoryController {
 		String value = mTm.parallelCoordinates(metricList, eleCliked);
 		responseList.put(version , value);
 //		System.out.println(responseList.toString());
-		return metricList.toString();
-//		return responseList.toString();
+//		return metricList.toString();
+		return responseList.toString();
 	}
 	
 	
