@@ -401,43 +401,27 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		            text: 'Results'
 		        }
 		       };
-			    var chart = Highcharts.chart('container', options);
+			    $scope.chart = Highcharts.chart('container', options);
 			    console.timeEnd("highcharts");
 		  }
 		  
 	}
 	
 	$(document).on('click', function () {
-		$(".highcharts-text-outline").on('click', function (e) { 
+		$(".highcharts-text-outline").on('click', function (e) {
+			 $('#parallel').empty();
 			 $scope.eleClicked = $(this).text();
 			 $scope.dataParallel = [];
 			 console.log("ENTROU AQUI");
-			 var callback = parallelService();
+//			 if($scope.eleClicked.indexOf('(') == -1 ) {
+//				 var callback = parallelService();
+//				}
+			 
 //			 console.log(dataParallel);
 			 
 //			 codeParallel(dataParallel);
 			 
 		});
-//		$(function() {
-//		  $.contextMenu({
-//		      selector: ".highcharts-text-outline", 
-//		      callback: function(key, options) {
-//		          var m = "clicked: " + key;
-//		          console.log(eleClicked);
-////		          $(".highcharts-text-outline").on("click", function (e) { 
-////		 			 eleClicked = $(this).text();
-////		 			 console.log($(this).text());
-////		 			 codeParallel(eleClicked);
-////		 		  });
-//		          
-//		      },
-//		      items: {
-//		          "open": {name: "Open on Parallel Coordinates", icon: "edit"}
-//		      }
-//		  });  
-//		});
-		
-
 	});
 	
 	function parallelService () {
@@ -445,14 +429,12 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		 for (var count = 0; count < $scope.tagsLoaded.length; count++) {
 			 $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.tagsLoaded[count].name, "repositoryId":$scope.repoSelected }}).success(function (tagRes){
 				 		$http.get('rest/wDirectories/get-by-id-parallel', {params: {"fileHash": tagRes.commit, "version": tagRes.version, "eleClicked": $scope.eleClicked}}).success(function (response){
-//							 console.log(response, tagRes.version);
 				 			 var version = tagRes.version;
 				 			 var dataToParallel = {
 				 					 "version": tagRes.version,
 				 					 "metrics": response
 				 			 }
 				 			 $scope.dataParallel.push(dataToParallel);
-//							 console.log( $scope.dataParallel);
 				 			 aux++;
 				 			 if (aux == $scope.tagsLoaded.length) {
 				 				codeParallel($scope.dataParallel);
@@ -464,16 +446,35 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 	}
 	
 	function codeParallel (dataParallel) {
+//		while($scope.chart.series.length > 0)
+//			$scope.chart.series[0].remove(true);
+//		$('#container').empty();
+		$('#parallel').show();
+		var data = [];
+		for (var count = 0; count < dataParallel.length; count++) {
+			var version = dataParallel[count].version;
+			var metrics = JSON.parse(dataParallel[count].metrics[version]);
+			var result = {};
+			result["version"] = version;
+			
+			for (var metric in metrics) {
+				result[metric] = metrics[metric];
+			}
+			
+			data.push(result);
+			
+		}
+		console.log(data);
 		var foods = [
-			  {name: "Asparagus", protein: 2.2, calcium: 0.024, sodium: 0.002},
-			  {name: "Butter", protein: 0.85, calcium: 0.024, sodium: 0.714},
-			  {name: "Coffeecake", protein: 6.8, calcium: 0.054, sodium: 0.351},
-			  {name: "Pork", protein: 28.5, calcium: 0.016, sodium: 0.056},
-			  {name: "Provolone", protein: 25.58, calcium: 0.756, sodium: 0.876}
+			  {name: "Asparagus", "protein": 2.2, calcium: 0.024, sodium: 0.002},
+			  {name: "Butter", "protein": 0.85, calcium: 0.024, sodium: 0.714},
+			  {name: "Coffeecake", "protein": 6.8, calcium: 0.054, sodium: 0.351},
+			  {name: "Pork", "protein": 28.5, calcium: 0.016, sodium: 0.056},
+			  {name: "Provolone", "protein": 25.58, calcium: 0.756, sodium: 0.876}
 			];
 
-			var pc = d3.parcoords()("#container")
-			  .data(foods)
+			var pc = d3.parcoords()("#parallel")
+			  .data(data)
 			  .render()
 			  .createAxes();
 	}
