@@ -410,21 +410,12 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 	$(document).on('click', function () {
 		$(".highcharts-text-outline").on('click', function (e) { 
 			 $scope.eleClicked = $(this).text();
-			 var dataParallel = {};
+			 $scope.dataParallel = [];
 			 console.log("ENTROU AQUI");
-			 for (var count = 0; count < $scope.tagsLoaded.length; count++) {
-				 $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.tagsLoaded[count].name, "repositoryId":$scope.repoSelected }}).success(function (tagRes){
-					 		$http.get('rest/wDirectories/get-by-id-parallel', {params: {"fileHash": tagRes.commit, "version": tagRes.version, "eleClicked": $scope.eleClicked}}).success(function (response){
-//								 console.log(response, tagRes.version);
-					 			 veTag = tagRes.version;
-								 dataParallel.veTag = response;
-							 });
-						  }); 
-			 }
-			 
+			 var callback = parallelService();
 //			 console.log(dataParallel);
 			 
-			 codeParallel(dataParallel);
+//			 codeParallel(dataParallel);
 			 
 		});
 //		$(function() {
@@ -449,237 +440,42 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 
 	});
 	
-	function codeParallel (dataParallel) {
-		var INACTIVE_OPACITY = .67
-//		var obj = JSON.parse(dataParallel);
-		console.log(Object.keys(dataParallel));
-		// This is input.
-		var isDiscrete = [false, false, false, false, ['setosa', 'versicolor', 'virginica']];
-//		var axis_texts = ['sepal length', 'sepal width', 'petal length', 'petal width', 'iris'];
-		var axis_texts = [];
-		var data = [
-		    [5.1, 3.5, 1.4, .2, null],
-		    [4.9, 3, 1.4, .2, 0],
-		    [7, 3.2, null, 1.4, 1],
-		    [6.3, 2.9, 5.6, 1.8, 2],
-		    [2.9, 5.6, 1.8, 1.5, 2],
-		    [5.2, 3, 4, 1.1, 1],
-		    [3.2, 1.5, 1.8, .2, 1],
-		];
+	function parallelService () {
+		 var aux = 1; 
+		 for (var count = 0; count < $scope.tagsLoaded.length; count++) {
+			 $http.get('rest/tags/get-tags-reference', {params: {"tag": $scope.tagsLoaded[count].name, "repositoryId":$scope.repoSelected }}).success(function (tagRes){
+				 		$http.get('rest/wDirectories/get-by-id-parallel', {params: {"fileHash": tagRes.commit, "version": tagRes.version, "eleClicked": $scope.eleClicked}}).success(function (response){
+//							 console.log(response, tagRes.version);
+				 			 var version = tagRes.version;
+				 			 var dataToParallel = {
+				 					 "version": tagRes.version,
+				 					 "metrics": response
+				 			 }
+				 			 $scope.dataParallel.push(dataToParallel);
+//							 console.log( $scope.dataParallel);
+				 			 aux++;
+				 			 if (aux == $scope.tagsLoaded.length) {
+				 				codeParallel($scope.dataParallel);
+				 			 }
+						 });
+					  }); 
+		 }
 		
-		/** Transpose the data to get columns */
-		var colData = [];
-		for (var j=0; j<data[0].length; ++j) {
-			colData[j] = [];
-			for (var i=0; i<data.length; ++i)
-		    	colData[j][i] = data[i][j];
-		}
+	}
+	
+	function codeParallel (dataParallel) {
+		var foods = [
+			  {name: "Asparagus", protein: 2.2, calcium: 0.024, sodium: 0.002},
+			  {name: "Butter", protein: 0.85, calcium: 0.024, sodium: 0.714},
+			  {name: "Coffeecake", protein: 6.8, calcium: 0.054, sodium: 0.351},
+			  {name: "Pork", protein: 28.5, calcium: 0.016, sodium: 0.056},
+			  {name: "Provolone", protein: 25.58, calcium: 0.756, sodium: 0.876}
+			];
 
-		/** Get per-column extremes and scale columns onto [0, 1] */
-		var colLimits = [];
-		function nonNull(el) { return el != null; };
-		for (var j=0, col; j<colData.length; ++j) {
-			col = colData[j];
-			var nncol = col.filter(nonNull);
-			colLimits.push([Math.min.apply(null, nncol), 
-		                    Math.max.apply(null, nncol)]);
-		    for (var i=0, val; i<col.length; ++i) {
-		    	val = col[i];
-		    	if (nonNull(val))
-		        	data[i][j] = colData[j][i] = (val - colLimits[j][0]) / (colLimits[j][1] - colLimits[j][0]);
-		    }
-		}
-		console.log(data);
-
-		/** Convert value from [0, 1] back to columns real span */
-		function toValue(value, column) {
-			return value * (colLimits[column][1] - colLimits[column][0]) + colLimits[column][0];
-		}
-
-		/** Align yAxes onto the integer ticks of the xAxis.
-		 */
-		var _in_redraw = false;
-		function reposition_yaxes() {
-		    if (_in_redraw)
-		        return;
-		    _in_redraw = true;
-		    var ax = this.xAxis[0],
-		        ex = ax.getExtremes(),
-		        spacing = (ax.toPixels(ex.max) - ax.toPixels(ex.min)) / (ex.max - ex.min);
-		    for (var i=1; i<this.yAxis.length; ++i)
-		        this.yAxis[i].update({offset: - (i - 1) * spacing}, false);
-		    this.redraw(false);
-		    _in_redraw = false;
-		}
-
-		$(function () {
-
-			function labels_formatter(col) {
-		    	return {
-		        	reserveSpace: false,
-		            x: -3,
-		        	formatter: function() {
-		                var value = toValue(this.value, col);
-		                return isDiscrete[col][Math.round(value)] || Highcharts.numberFormat(value, 2);
-		            }
-		        };
-		    };
-		    
-		    Highcharts.setOptions({
-		    	chart: {
-		            zoomType: 'y',
-		            alignTicks: false,
-		            events: { redraw: reposition_yaxes }
-		        },
-		        tooltip: {
-		            shared: false,
-		            followPointer: true,
-		            formatter: function() {
-		            	if (this.series.color == 'transparent')
-		                	return false;
-		            	var str = [],
-		                    yAxis = this.series.chart.yAxis,
-		                    data = this.series.data;
-		                for (var i=0, value; i<data.length; ++i) {
-		                	value = '—';
-		                    if (data[i] && !data[i].isNull) {
-		                    	value = toValue(data[i].y, i);
-		                        if (isDiscrete[i])
-		                        	value = isDiscrete[i][value];
-		                    }
-		                	str.push('<b>' + yAxis[i + 1].userOptions.title.text + ':</b> ' + value);
-		                }
-		                return str.join('<br>');
-		            },
-		        },
-		        legend: {
-		        	enabled: false
-		        },
-		        plotOptions: {
-		        	series: { 
-		            	marker: {
-		                	enabled: false,
-		                    states: {
-		                    	hover: { enabled: false }
-		                    }
-		                },
-		                events: {
-		                    mouseOver: function() {
-		                        this.group.toFront();
-		                        this.group.attr('opacity', 1);
-		                        this.chart.tooltip.refresh(this.data[0]);
-		                    },
-		                    mouseOut: function() {
-		                    	this.group.attr('opacity', INACTIVE_OPACITY);
-		                    }
-		                },
-		                states: {
-		                	hover: { lineWidthPlus: 2 }
-		                }
-		            },
-		            line: { lineWidth: .8 }
-		        },
-		        xAxis: { 
-		        	visible: false,
-		            maxPadding: 0,
-		            minPadding:0,
-		            max: colData.length - 1,
-		        },
-		        yAxis: {
-		        	lineWidth: 1,
-		            lineColor: 'black',
-		            max: 1,
-		            min: 0,
-		            gridLineWidth: 0,
-					title: {
-		            	align: 'high',
-		                rotation: 0,
-		                y: -10,
-		                style: {
-		                	fontWeight: 'bold',
-		                }
-		            }
-		        }
-		    });
-		    $('#container').highcharts({
-		        chart: {
-		            type: 'line',
-		        },
-		        yAxis: [{
-		            visible: false,
-		        }, {
-		            title: {text: axis_texts[0]},
-		            labels: labels_formatter(0),
-		        }, {
-		            title: {text: axis_texts[1]},
-		            labels: labels_formatter(1),
-		        }, {
-		        	title: {text: axis_texts[2]},
-		            labels: labels_formatter(2),
-		        }, {
-		            title: {text: axis_texts[3]},
-		            labels: labels_formatter(3),
-		        }, {
-		        	title: {text: axis_texts[4]},
-		            tickPositions: $.unique(colData[4].sort().filter(nonNull)).reverse(),
-		            labels: labels_formatter(4),
-		        }],
-		        
-		        series: [
-		        /** These series are only here so that yAxes get their ticks' labels */
-		        {
-		            color: 'transparent',
-		            data: colData[0],
-		            yAxis: 1
-		        }, {
-		            color: 'transparent',
-		            data: colData[1],
-		            yAxis: 2
-		        }, {
-		            color: 'transparent',
-		            data: colData[2],
-		            yAxis: 3
-		        }, {
-		            color: 'transparent',
-		            data: colData[3],
-		            yAxis: 4
-		        }, {
-		            color: 'transparent',
-		            data: colData[4],
-		            yAxis: 5
-		        },
-		        
-		        
-		        {
-		            data: data[0],
-		        }, {
-		            data: data[1],
-		        }, {
-		            data: data[2],
-		        },  {
-		            data: data[3],
-		        },  {
-		            data: data[4],
-		        },  {
-		            data: data[5],
-		        },]
-		    }, function(chart) {
-		    	chart.redraw();
-		        chart.redraw();
-		        
-		        // Center yAxis labels
-		        $('.highcharts-yaxis-title').each(function(i) {
-		            chart.yAxis[i + 1].update({
-		            	title: {offset: -this.getBBox().width/2}
-		            }, false);
-		        });
-		        // Decrease color opacity
-		        $.each(chart.series, function(i, series) {
-		        	series.graph.attr('opacity', INACTIVE_OPACITY);
-		        });
-		        chart.redraw();
-		    });
-		});
+			var pc = d3.parcoords()("#container")
+			  .data(foods)
+			  .render()
+			  .createAxes();
 	}
 	
 });
