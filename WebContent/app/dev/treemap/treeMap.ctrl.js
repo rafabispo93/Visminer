@@ -404,23 +404,22 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			    $scope.chart = Highcharts.chart('container', options);
 			    console.timeEnd("highcharts");
 		  }
-		  
+		
 	}
 	
-	$(document).on('click', function () {
-		$(".highcharts-text-outline").on('click', function (e) {
+	$(document).on('mouseover', function () {
+		$(".highcharts-text-outline").off().css('cursor', 'zoom-in');
+		console.log($(".highcharts-text-outline"));
+		$(".highcharts-text-outline").off().css('background-color', 'yellow');
+		$(".highcharts-text-outline").off().on('click', function (e) {
 			 $('#parallel').empty();
 			 $scope.eleClicked = $(this).text();
 			 $scope.dataParallel = [];
 			 console.log("ENTROU AQUI");
-//			 if($scope.eleClicked.indexOf('(') == -1 ) {
-//				 var callback = parallelService();
-//				}
-			 
-//			 console.log(dataParallel);
-			 
-//			 codeParallel(dataParallel);
-			 
+			 if($scope.eleClicked.indexOf('(') == -1 ) {
+				 var callback = parallelService();
+				}
+//			 var callback = parallelService();
 		});
 	});
 	
@@ -464,19 +463,35 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			data.push(result);
 			
 		}
-		console.log(data);
-		var foods = [
-			  {name: "Asparagus", "protein": 2.2, calcium: 0.024, sodium: 0.002},
-			  {name: "Butter", "protein": 0.85, calcium: 0.024, sodium: 0.714},
-			  {name: "Coffeecake", "protein": 6.8, calcium: 0.054, sodium: 0.351},
-			  {name: "Pork", "protein": 28.5, calcium: 0.016, sodium: 0.056},
-			  {name: "Provolone", "protein": 25.58, calcium: 0.756, sodium: 0.876}
-			];
-
-			var pc = d3.parcoords()("#parallel")
-			  .data(data)
-			  .render()
-			  .createAxes();
+//		var foods = [
+//			  {name: "Asparagus", "protein": 2.2, calcium: 0.024, sodium: 0.002},
+//			  {name: "Butter", "protein": 0.85, calcium: 0.024, sodium: 0.714},
+//			  {name: "Coffeecake", "protein": 6.8, calcium: 0.054, sodium: 0.351},
+//			  {name: "Pork", "protein": 28.5, calcium: 0.016, sodium: 0.056},
+//			  {name: "Provolone", "protein": 25.58, calcium: 0.756, sodium: 0.876}
+//			];
+			
+//		var blue_to_red = d3.scale.linear()
+//		  .domain([9, 50])
+//		  .range(["blue", "red"])
+//		  .interpolate(d3.interpolateLab);
+		
+		var colorgen = d3.scale.ordinal()
+	    .range(["#a6cee3","#1f78b4","#b2df8a","#33a02c",
+	            "#fb9a99","#e31a1c","#fdbf6f","#ff7f00",
+	            "#cab2d6","#6a3d9a","#ffff99","#b15928"]);
+		var pc = d3.parcoords()("#parallel")
+		  .data(data)
+//		  .color(function(d) {
+//		    // d corresponds to the individual data object
+//			console.log(d);
+////			return blue_to_red(d[version]);
+//			return colorgen(d[version]);
+//		  })
+		  .render()
+		  .brushMode("1D-axes")
+		  .reorderable();
+//		  .createAxes();
 	}
 	
 });

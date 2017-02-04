@@ -19,7 +19,7 @@ public class MakeTMap {
 		for (int count = 0; count < metricList.size(); count++) {
 			JSONObject listElement = new JSONObject(metricList.get(count).toString());
 			JSONArray typesArray = (JSONArray) listElement.get("abstract_types");
-			if(listElement.get("package").toString().endsWith(eleClicked.toString()) || listElement.get("filename").toString().endsWith(eleClicked.toString())) {
+			if(listElement.get("package").toString().contains(eleClicked.toString()) || listElement.get("filename").toString().endsWith(eleClicked.toString())) {
 				
 				if(typesArray.length() > 0) {
 					JSONObject zero = (JSONObject) typesArray.get(0);
