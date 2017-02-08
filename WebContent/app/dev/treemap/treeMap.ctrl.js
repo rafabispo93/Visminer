@@ -409,9 +409,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 	
 	$(document).on('mouseover', function () {
 		$(".highcharts-text-outline").off().css('cursor', 'zoom-in');
-		console.log($(".highcharts-text-outline"));
-		$(".highcharts-text-outline").off().css('background-color', 'yellow');
-		$(".highcharts-text-outline").off().on('click', function (e) {
+		$(".highcharts-text-outline").off().on('contextmenu', function (e) {
 			 $('#parallel').empty();
 			 $scope.eleClicked = $(this).text();
 			 $scope.dataParallel = [];
@@ -419,6 +417,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			 if($scope.eleClicked.indexOf('(') == -1 ) {
 				 var callback = parallelService();
 				}
+			 return false;
 //			 var callback = parallelService();
 		});
 	});
