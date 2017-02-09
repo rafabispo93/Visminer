@@ -462,6 +462,39 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			data.push(result);
 			
 		}
+		
+		var dataC = [];
+		for (var count = 0; count < data.length; count++) {
+			var dataKeys = Object.keys(data[count])
+			for (var x = 1; x < dataKeys.length; x++) {
+				if(dataC.length < dataKeys.length) {
+					dataC.push(dataKeys[x]);
+				}
+				
+			}
+		}
+//		console.log(dataC);
+		var secData = [];
+		for (count = 0; count < data.length; count++) {
+			for (z = 0; z < dataC.length; z++) {
+				var json = {};
+				var version = String(data[count].version);
+				var value = data[count][String(dataC[z])];
+				var metric = dataC[z];
+				
+				json["metric"] = metric;
+				json[version] = value;
+				secData.push(json);
+			}
+		}
+		
+		var lastData = [];
+		for(var a = 0; a < secData.length; secData++) {
+			console.log(secData[a]);
+			for (z = 0; z < secData.length; z++) {
+				
+			}
+		}
 //		var foods = [
 //			  {name: "Asparagus", "protein": 2.2, calcium: 0.024, sodium: 0.002},
 //			  {name: "Butter", "protein": 0.85, calcium: 0.024, sodium: 0.714},
