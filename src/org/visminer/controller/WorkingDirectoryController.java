@@ -19,12 +19,15 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import org.bson.Document;
 import org.repositoryminer.persistence.handler.WorkingDirectoryDocumentHandler;
 import org.visminer.util.MakeTMap;
 import org.visminer.util.UtilsString;
+
+import com.beust.jcommander.internal.Console;
 
 
 @Path("wDirectories")
@@ -209,7 +212,64 @@ public class WorkingDirectoryController {
 		return responseList.toString();
 	}
 	
-	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("organize-parallel")
+	public String organizeParallel(@QueryParam("array") String array) {
+		JSONObject res = new JSONObject();
+		JSONObject obj = new JSONObject(array);
+		JSONArray arrayInfo = (JSONArray) obj.get("info");
+		JSONArray arrayResponse = new JSONArray();
+		for (int a = 0; a < arrayInfo.length(); a++) {
+			JSONObject currentObj = (JSONObject) arrayInfo.get(a);
+			Iterator<?> keys = currentObj.keys();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				if (!key.equals("version")) {	
+					JSONObject inf = new JSONObject();
+					inf.put(currentObj.get("version").toString(), currentObj.get(key));
+					
+					res.accumulate(key,inf);
+					
+				}
+				
+			}
+		}
+		Iterator<?> keys = res.keys();
+		while (keys.hasNext()) {
+			String key = (String)keys.next();
+			JSONObject inf = new JSONObject();
+			inf.put("metric", key);
+			res.accumulate(key, inf);
+			
+		}
+		
+		Iterator<?> keys2 = res.keys();
+		JSONObject merge = new JSONObject();
+		while (keys2.hasNext()) {
+			String key = (String)keys2.next();
+			JSONObject merge2 = new JSONObject();
+			JSONArray objsT = (JSONArray) res.get(key);
+			for(int count = 0; count < objsT.length(); count++) {
+				JSONObject subObj = (JSONObject) objsT.get(count);
+				for(String k : JSONObject.getNames(subObj))
+				{
+				  merge2.put(k, subObj.get(k));
+				}
+			}
+			merge.put(key, merge2);
+			
+		}
+		
+		Iterator<?> keys3 = merge.keys();
+		while (keys3.hasNext()) {
+			String key = (String)keys3.next();
+			arrayResponse.put(merge.get(key));
+			
+		}
+		System.out.println(arrayResponse);
+		return arrayResponse.toString();
+	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
