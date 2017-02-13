@@ -493,7 +493,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				{"metric":"MAXNESTING","0.6.0":2,"0.7.0":2,"0.4.0":2,"0.5.0":2,"0.8.0":29,"0.9.0":66,"0.3.0":5,"0.1.0":2,"1.3.1":29,"1.0":9,"1.2":25,"1.3":29,"1.4":29},
 				{"metric":"ATFD","0.6.0":20,"0.7.0":20,"0.4.0":22,"0.5.0":20,"0.8.0":59,"0.9.0":46,"0.3.0":24,"0.1.0":20,"1.3.1":6,"1.0":11,"1.2":6,"1.3":6,"1.4":4},
 			];
-		console.log(foods);
 		var maxVer;
 		for (var w = 0; w < dataParallel.length; w++) {
 			var keys = Object.keys(dataParallel[w]);
@@ -511,22 +510,19 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				
 			}
 		}
-		
-		
-		
 		var colorgen = d3.scale.ordinal()
-	  .range(["#a6cee3","#1f78b4","#b2df8a","#33a02c",
-	          "#fb9a99","#e31a1c","#fdbf6f","#ff7f00",
-	          "#cab2d6","#6a3d9a","#ffff99","#b15928"]);
+	    .range(["#a6cee3","#1f78b4","#b2df8a","#33a02c",
+	            "#fb9a99","#e31a1c","#fdbf6f","#ff7f00",
+	            "#cab2d6","#6a3d9a","#ffff99","#b15928"]);
+
+		var blue_to_brown = d3.scale.linear()
+		  .domain([9, 50])
+		  .range(["steelblue", "brown"])
+		  .interpolate(d3.interpolateLab);
+	
 		var pc = d3.parcoords()("#parallel")
-	//	  .data(data)
 		  .data(dataParallel)
-	//	  .color(function(d) {
-	//	    // d corresponds to the individual data object
-	//		console.log(d);
-	////		return blue_to_red(d[version]);
-	//		return colorgen(d[version]);
-	//	  })
+		  .color(function(d) { return colorgen(d['metric']); })
 		  .render()
 		  .brushMode("1D-axes")
 		  .reorderable();
