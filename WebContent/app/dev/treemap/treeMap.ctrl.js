@@ -414,12 +414,16 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			 $scope.eleClicked = $(this).text();
 			 $scope.dataParallel = [];
 			 console.log("ENTROU AQUI");
-			 if($scope.eleClicked.indexOf('(') == -1 ) {
+//			 if($scope.eleClicked.indexOf('(') == -1 ) {
 				 var callback = parallelService();
-				}
+//				}
 			 return false;
 //			 var callback = parallelService();
 		});
+//		$("rect").off().on('contextmenu', function (e) {
+//			console.log("HBAH");
+////			console.log($("rect").siblings(".highcharts-text-outline"));
+//		});
 	});
 	
 	function parallelService () {

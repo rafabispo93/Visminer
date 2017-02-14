@@ -14,12 +14,13 @@ public class MakeTMap {
 	
 	public String parallelCoordinates (List<String> metricList, String eleClicked) {
 		JSONObject response = new JSONObject();
-		
 //		metricList.size()
 		for (int count = 0; count < metricList.size(); count++) {
 			JSONObject listElement = new JSONObject(metricList.get(count).toString());
 			JSONArray typesArray = (JSONArray) listElement.get("abstract_types");
-			if(listElement.get("package").toString().contains(eleClicked.toString()) || listElement.get("filename").toString().endsWith(eleClicked.toString())) {
+			
+			
+			if(listElement.get("package").toString().contains(eleClicked.toString()) || listElement.get("filename").toString().endsWith(eleClicked.toString()) || eleClicked.toString().indexOf(')') >=0) {
 				
 				if(typesArray.length() > 0) {
 					JSONObject zero = (JSONObject) typesArray.get(0);
@@ -29,7 +30,7 @@ public class MakeTMap {
 						JSONObject metricInfo = (JSONObject) metrics.get(x);
 						boolean resp = metricInfo.has("accumulated");
 						boolean resp2 = metricInfo.has("methods");
-						if(resp == true) {
+						if(resp == true && (listElement.get("package").toString().contains(eleClicked.toString()) || listElement.get("filename").toString().endsWith(eleClicked.toString()))) {
 							int value = Integer.parseInt(metricInfo.get("accumulated").toString());
 							if (response.has(metricInfo.getString("name"))) {
 								int aux = Integer.parseInt(response.get(metricInfo.get("name").toString()).toString()) ;
@@ -42,28 +43,55 @@ public class MakeTMap {
 						}
 						
 						
-						if(resp == false && resp2 == true) {
+						if(resp2 == true) {
 							JSONArray methods = (JSONArray)  metricInfo.get("methods");
 							int methodsSize = methods.length();
 							int value = 0;
-							for (int z = 0; z < methodsSize; z++) {
-								JSONObject method = (JSONObject) methods.get(z);
-								value = Integer.parseInt(method.get("value").toString()) + value;
-							}
-							if (response.has(metricInfo.getString("name"))) {
-								int aux = Integer.parseInt(response.get(metricInfo.getString("name")).toString());
-								response.put(metricInfo.get("name").toString(), value + aux);
+//							System.out.println(eleClicked.toString());
+							if(eleClicked.toString().indexOf(')') >=0) {
+//								response.keySet().clear();
+								
+								for (int z = 0; z < methodsSize; z++) {
+									JSONObject method = (JSONObject) methods.get(z);
+//									System.out.println(method.get("method"));
+									if (method.get("method").toString().equals(eleClicked.toString())) {
+										value = Integer.parseInt(method.get("value").toString()) + value;
+									}
+									
+								}
+								if (response.has(metricInfo.getString("name"))) {
+									int aux = Integer.parseInt(response.get(metricInfo.getString("name")).toString());
+									response.put(metricInfo.get("name").toString(), value + aux);
+								}
+								else {
+									response.put(metricInfo.get("name").toString(), value);
+									
+								}
 							}
 							else {
-								response.put(metricInfo.get("name").toString(), value);
+								if(listElement.get("package").toString().contains(eleClicked.toString()) || listElement.get("filename").toString().endsWith(eleClicked.toString())) {
+									for (int z = 0; z < methodsSize; z++) {
+										JSONObject method = (JSONObject) methods.get(z);
+										value = Integer.parseInt(method.get("value").toString()) + value;
+									}
+									if (response.has(metricInfo.getString("name"))) {
+										int aux = Integer.parseInt(response.get(metricInfo.getString("name")).toString());
+										response.put(metricInfo.get("name").toString(), value + aux);
+									}
+									else {
+										response.put(metricInfo.get("name").toString(), value);
+									}
+								}
+								
 							}
+							
+							
 							
 						}
 					}
 				}
 			}
 				
-			
 		}
 		
 		return response.toString();
