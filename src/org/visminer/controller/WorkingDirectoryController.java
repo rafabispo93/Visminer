@@ -339,11 +339,11 @@ public class WorkingDirectoryController {
             }
         }
         System.out.println("Done");
-		//mTm.differentialRelative(metricList, metricList2);
         JSONObject packagesResult = new JSONObject();
-        packagesResult.put("commit1", packages1);
-        packagesResult.put("commit2", packages2);
-
-		return mTm.differentialRelative(packagesResult, chosenMetric).toString();
+        packagesResult.put("version1", packages1);
+        packagesResult.put("version2", packages2);
+        mTm.differentialRelative(packagesResult, chosenMetric);
+//		return mTm.differentialRelative(packagesResult, chosenMetric).toString();
+        return packagesResult.toString();
 	}
 }
