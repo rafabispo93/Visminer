@@ -169,11 +169,12 @@ public class MakeTMap {
 		ArrayList commonPacks = new ArrayList();
 		ArrayList objsVersion1 = new ArrayList();
 		ArrayList objsVersion2 = new ArrayList();
-		
 		JSONObject version1 = (JSONObject) packagesResult.get("version1");
 		JSONObject version2 = (JSONObject) packagesResult.get("version2");
 		Iterator<?> keys1 = version1.keys();
 		Iterator<?> keys2 = version2.keys();
+		JSONObject r = new JSONObject();
+		List<String> resultList = new ArrayList<>();
 		
 		while (keys1.hasNext()) {
 			String key1 = (String)keys1.next();
@@ -199,22 +200,49 @@ public class MakeTMap {
 		}
 		for (int x = 0; x < objsVersion1.size(); x++) {
 			JSONArray classesVersion1 = (JSONArray) objsVersion1.get(x);
+			JSONObject resOBJ3 = new JSONObject();
 			for (int z = 0; z < classesVersion1.length(); z++) {
 				JSONObject clazz = (JSONObject) classesVersion1.get(z);
 //				System.out.println(clazz.get("name"));
 				for (int x2 = 0; x2 < objsVersion2.size(); x2++) {
 					JSONArray classesVersion2 = (JSONArray) objsVersion2.get(x2);
+					
 					for (int z2 = 0; z2 < classesVersion2.length(); z2++) {
 						JSONObject clazz2 = (JSONObject) classesVersion2.get(z2);
+						
 						if(clazz.get("name").toString().equals(clazz2.get("name"))) {
-							System.out.println(clazz2.get("name"));
+							JSONArray metrics1 = (JSONArray) clazz.get("metrics");
+							JSONArray metrics2 = (JSONArray) clazz2.get("metrics");
+							JSONObject resOBJ = new JSONObject();
+							for (int mtrSize = 0; mtrSize < metrics1.length(); mtrSize++) {
+								for (int mtrSize2 = 0; mtrSize2 < metrics2.length(); mtrSize2++) {
+									JSONObject chosen1 = (JSONObject) metrics1.get(chosenMetric);
+									JSONObject chosen2 = (JSONObject) metrics2.get(chosenMetric);
+									JSONArray methods1 = (JSONArray) chosen1.get("methods");
+									JSONArray methods2 = (JSONArray) chosen2.get("methods");
+									for(int methodsSize1 = 0; methodsSize1 < methods1.length(); methodsSize1++){
+										for(int methodsSize2 = 0; methodsSize2 < methods2.length(); methodsSize2++){
+											JSONObject method1 = (JSONObject) methods1.get(methodsSize1);
+											JSONObject method2 = (JSONObject) methods2.get(methodsSize2);				
+											if(method1.get("method").equals(method2.get("method"))) {
+												int res = Integer.parseInt(method1.get("value").toString()) - Integer.parseInt(method2.get("value").toString());
+												resOBJ.put(method1.get("method").toString(), res);
+												
+											}
+										}
+									}
+								}
+							}
+							JSONObject resOBJ2 = new JSONObject();
+							resOBJ2.accumulate(clazz.get("name").toString(),resOBJ);
+							resOBJ3.accumulate(commonPacks.get(x).toString(), resOBJ2);
+							r.accumulate(commonPacks.get(x).toString(), resOBJ2);
 						}
 						
 					}
 				}
 			}
 		}
-		
-		return "";
+		return r.toString();
 	}
 }

@@ -343,7 +343,7 @@ public class WorkingDirectoryController {
         packagesResult.put("version1", packages1);
         packagesResult.put("version2", packages2);
         mTm.differentialRelative(packagesResult, chosenMetric);
-//		return mTm.differentialRelative(packagesResult, chosenMetric).toString();
-        return packagesResult.toString();
+		return mTm.differentialRelative(packagesResult, chosenMetric).toString();
+//        return packagesResult.toString();
 	}
 }

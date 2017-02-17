@@ -112,7 +112,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  		$http.get('rest/wDirectories/get-by-id-single', {params: {"fileHash": $scope.tagCommit}}).success(function (response)
 						  { 
 		  					console.timeEnd("JAVA");
-		  					console.log(response);
+		  					console.log(response,"SINGLE");
 					  		var result1 = [];
 					  		var a, aSize;
 				  			for (packName in response) {
