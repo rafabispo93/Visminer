@@ -218,25 +218,35 @@ public class MakeTMap {
 								for (int mtrSize2 = 0; mtrSize2 < metrics2.length(); mtrSize2++) {
 									JSONObject chosen1 = (JSONObject) metrics1.get(chosenMetric);
 									JSONObject chosen2 = (JSONObject) metrics2.get(chosenMetric);
-									JSONArray methods1 = (JSONArray) chosen1.get("methods");
-									JSONArray methods2 = (JSONArray) chosen2.get("methods");
-									for(int methodsSize1 = 0; methodsSize1 < methods1.length(); methodsSize1++){
-										for(int methodsSize2 = 0; methodsSize2 < methods2.length(); methodsSize2++){
-											JSONObject method1 = (JSONObject) methods1.get(methodsSize1);
-											JSONObject method2 = (JSONObject) methods2.get(methodsSize2);				
-											if(method1.get("method").equals(method2.get("method"))) {
-												int res = Integer.parseInt(method1.get("value").toString()) - Integer.parseInt(method2.get("value").toString());
-												resOBJ.put(method1.get("method").toString(), res);
-												
+									if (chosen1.has("methods") && chosen2.has("methods")) {
+										JSONArray methods1 = (JSONArray) chosen1.get("methods");
+										JSONArray methods2 = (JSONArray) chosen2.get("methods");
+										for(int methodsSize1 = 0; methodsSize1 < methods1.length(); methodsSize1++){
+											for(int methodsSize2 = 0; methodsSize2 < methods2.length(); methodsSize2++){
+												JSONObject method1 = (JSONObject) methods1.get(methodsSize1);
+												JSONObject method2 = (JSONObject) methods2.get(methodsSize2);				
+												if(method1.get("method").equals(method2.get("method"))) {
+													int res = Integer.parseInt(method1.get("value").toString()) - Integer.parseInt(method2.get("value").toString());
+													resOBJ.put(method1.get("method").toString(), res);
+													
+												}
 											}
 										}
 									}
+									else {
+										System.out.println(chosen1.get("name"));
+										double res = Double.parseDouble(chosen1.get("value").toString()) - Double.parseDouble(chosen2.get("value").toString());
+										resOBJ.put(chosen1.get("name").toString(), res);
+									}
+									
 								}
 							}
 							JSONObject resOBJ2 = new JSONObject();
-							resOBJ2.accumulate(clazz.get("name").toString(),resOBJ);
+							String st = clazz.get("name").toString();
+							resOBJ2.accumulate(st.substring(st.lastIndexOf(".") + 1).trim(),resOBJ);
 							resOBJ3.accumulate(commonPacks.get(x).toString(), resOBJ2);
-							r.accumulate(commonPacks.get(x).toString(), resOBJ2);
+							String str = commonPacks.get(x).toString();
+							r.accumulate(str.substring(str.lastIndexOf(".") + 1).trim(), resOBJ2);
 						}
 						
 					}

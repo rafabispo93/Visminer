@@ -8,7 +8,7 @@ homeApp.controller('HomeCtrl', function ($scope, $timeout, $http,
   $scope.committers = [];
   $scope.repositories = [];
   $scope.tagsLoaded = [];
-  $scope.metricsLoaded = ['ATFD', 'CYCLO', 'LVAR', 'MAXNESTING', 'MLOC', 'NOM', 'NOA', 'NOAV', 'PAR', 'LOC', 'TCC', 'WMC'];
+  $scope.metricsLoaded = ['ATFD', 'CYCLO', 'LVAR', 'MAXNESTING', 'MLOC', 'NOM', 'NOA', 'NOAV', 'PAR', 'TCC', 'WMC', 'LOC'];
   $scope.metricNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   $scope.tags = [];
   $scope.tagTypesSelect = sidebarService.getTagTypesSelect();

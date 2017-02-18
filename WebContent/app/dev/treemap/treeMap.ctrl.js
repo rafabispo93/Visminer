@@ -98,12 +98,36 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	   var chosenMetric2 = $scope.metrics2;
 		  	   
 		  	 $http.get('rest/wDirectories/get-by-id-relative', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2, "chosenMetric": chosenMetric}}).success(function (response) {
-		  		 console.log(response);
 		  		 
+		  		infoGeneral = response;
+  				var respToMap = [];
+  				Object.keys(infoGeneral).filter(
+						function (e) {
+							if (isNaN(parseInt(e))) {
+								respToMap[e] = infoGeneral[e];
+							}
+						}
+				);
+  				var resF = [];
+  				
+  				for (var element in respToMap) {
+  					resF[element] = {};
+  					if(respToMap[element] instanceof Array) {
+  						for(czz in respToMap[element]) {
+  							var content = Object.keys(respToMap[element][czz])[0];
+  							resF[element][content] = {};
+  							resF[element][content]= respToMap[element][czz][content];
+  						}
+  					}else {
+  						resF[element] = respToMap[element];
+  					}
+  				}
+  				
+  				console.log(resF);
+  				mappingRela(respToMap);
 		  	 });
 					   
 		   }
-		  
 		  
 		  	function singleVersion () {
 		  		var chosenMetric = $scope.metrics;
@@ -170,7 +194,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  		});
 		  		
 		  	}
-		  	
 		  	
 
 		  	function makeMap(data1, colorD, chosenMetric, chosenMetric2) {
@@ -261,10 +284,163 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 									}
 								}
 						);
+		  				console.log(respToMap, "SINGLE");
 		  				mapping(respToMap, colorD, valueAux1);
 		  				return r;
 			  }
+		  
 		  	
+		  	 function mappingRela(info) {
+				  console.time("javascript");
+//				  var one = (valueAux/10).toString(),
+//		  			two = one * 2,
+//		  			three = one * 3,
+//		  			four = one * 4,
+//		  			five = one * 5,
+//		  			six = one * 6,
+//		  			seven = one * 7,
+//		  			eight = one * 8,
+//		  			nine = one * 9,
+//		  			ten = valueAux,
+//		  			colorsData;
+//		  			
+//			  		colorsData = {
+//							
+//					};
+//		  			colorsData[one] = "#c3834c";
+//		  			colorsData[two] = "#af7544";
+//		  			colorsData[three] = "#9c683c";
+//		  			colorsData[four] = "#885b35";
+//		  			colorsData[five] = "#754e2d";
+//		  			colorsData[six] = "#614126";
+//		  			colorsData[seven] = "#4e341e";
+//		  			colorsData[eight] = "#3a2716";
+//		  			colorsData[nine] = "#271a0f";
+//		  			colorsData[ten] = "#130d07";
+		  		
+				  for (region in info) {
+				        if (info.hasOwnProperty(region)) {
+				            regionVal = 0;
+				            regionP = {
+				                id: 'id_' + regionI,
+				                name: region,
+				                borderColor:"#000000"
+				            };
+				            countryI = 0;
+				            var nCountry;
+				            for (country in info[region]) {
+				                if (info[region].hasOwnProperty(country)) {
+				                	if(Object.keys(info[region][country])[0]) {
+				                		ncountry = Object.keys(info[region][country])[0];
+				                	}
+				                	else {
+				                		ncountry = country;
+				                	}
+				                    countryP = {
+				                        id: regionP.id + '_' + countryI,
+				                        name: ncountry,
+				                        parent: regionP.id,
+				                        borderColor:"#fff000"
+				                    };
+				                    points.push(countryP);
+				                    causeI = 0;
+				                    for (cause in info[region][country]) {
+				                        if (info[region][country].hasOwnProperty(cause)) {
+						                	
+						                	var causesR = [];
+						                	var causesN = Object.keys(info[region][country][cause]);
+						                	console.log(causesN);
+						                	for (var x = 0; x < causesN.length; x++) {
+//				                        	var result;
+//				                        	var rValue = Math.round(+info[region][country][cause][1])
+//				                        	if (rValue >=0 && rValue <= one) {
+//				                        		result = "#c3834c";
+//				                        	}
+//				                        	if (rValue >one && rValue <= two) {
+//				                        		result = "#af7544";
+//				                        	}
+//				                        	if (rValue >two && rValue <= three) {
+//				                        		result = "#9c683c";
+//				                        	}
+//				                        	if (rValue >three && rValue <= four) {
+//				                        		result = "#885b35";
+//				                        	}
+//				                        	if (rValue >four && rValue <= five) {
+//				                        		result = "#754e2d";
+//				                        	}
+//				                        	if (rValue >five && rValue <= six) {
+//				                        		result = "#614126";
+//				                        	}
+//				                        	if (rValue >six && rValue <= seven) {
+//				                        		result = "#4e341e";
+//				                        	}
+//				                        	if (rValue >seven && rValue <= eight) {
+//				                        		result = "#3a2716";
+//				                        	}
+//				                        	if (rValue >eight && rValue <= nine) {
+//				                        		result = "#271a0f";
+//				                        	}
+//				                        	if (rValue >nine && rValue <= ten) {
+//				                        		result = "#130d07";
+//				                        	}
+				                            causeP = {
+				                                id: countryP.id + '_' + causeI,
+				                                name: causesN[x],
+				                                parent: countryP.id,
+				                                color: "#00ff00",
+				                                value: 1,
+				                                borderColor: "#ff0000"
+
+				                            };
+				                            regionVal += causeP.value;
+				                            points.push(causeP);
+				                            causeI = causeI + 1;
+						                  }
+				                        }
+				                    }
+				                    countryI = countryI + 1;
+				                }
+				            }
+				            regionP.value = regionVal;
+				            points.push(regionP);
+				            regionI = regionI + 1;
+				        }
+				    }
+				  	
+				  console.timeEnd("javascript");
+				  console.time("highcharts");
+				  var options = { series: [{
+			            type: 'treemap',
+			            layoutAlgorithm: 'squarified',
+			            allowDrillToNode: true,
+			            animationLimit: 1000,
+			            turboThreshold: 0,
+			            dataLabels: {
+			                enabled: false,
+		                    formatter: function(e) {
+		                        return this.point.name;
+		                    }
+			            },
+			            levelIsConstant: false,
+			            levels: [{
+			                level: 1,
+			                dataLabels: {
+			                    enabled: true
+			                },
+			                borderWidth: 3
+			            }],
+			            data: points           
+			        }],
+			        subtitle: {
+			            text: ''
+			        },
+			        title: {
+			            text: 'Results'
+			        }
+			       };
+				    $scope.chart = Highcharts.chart('container', options);
+				    console.timeEnd("highcharts");
+			  }
 
 		  function mapping(info, colorD, valueAux) {
 			  console.time("javascript");
@@ -315,6 +491,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			                    causeI = 0;
 			                    for (cause in info[region][country]) {
 			                        if (info[region][country].hasOwnProperty(cause)) {
+			                        	console.log(info[region][country][cause]);
 			                        	var result;
 			                        	var rValue = Math.round(+info[region][country][cause][1])
 			                        	if (rValue >=0 && rValue <= one) {
