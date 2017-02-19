@@ -331,71 +331,113 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				            for (country in info[region]) {
 				                if (info[region].hasOwnProperty(country)) {
 				                	if(Object.keys(info[region][country])[0]) {
-				                		ncountry = Object.keys(info[region][country])[0];
+				                		
+				                		if (country.match(/^[0-9]+$/) !== null) {
+				                			ncountry = Object.keys(info[region][country])[0];
+				                		}
+				                		else {
+				                			ncountry = country;
+				                			
+				                		}
 				                	}
 				                	else {
 				                		ncountry = country;
 				                	}
 				                    countryP = {
 				                        id: regionP.id + '_' + countryI,
-				                        name: ncountry,
+				                        name: ncountry + '.java',
 				                        parent: regionP.id,
 				                        borderColor:"#fff000"
 				                    };
 				                    points.push(countryP);
 				                    causeI = 0;
+				                    var shouldGet = "true";
 				                    for (cause in info[region][country]) {
 				                        if (info[region][country].hasOwnProperty(cause)) {
-						                	
-						                	var causesR = [];
 						                	var causesN = Object.keys(info[region][country][cause]);
-						                	console.log(causesN);
-						                	for (var x = 0; x < causesN.length; x++) {
-//				                        	var result;
-//				                        	var rValue = Math.round(+info[region][country][cause][1])
-//				                        	if (rValue >=0 && rValue <= one) {
-//				                        		result = "#c3834c";
-//				                        	}
-//				                        	if (rValue >one && rValue <= two) {
-//				                        		result = "#af7544";
-//				                        	}
-//				                        	if (rValue >two && rValue <= three) {
-//				                        		result = "#9c683c";
-//				                        	}
-//				                        	if (rValue >three && rValue <= four) {
-//				                        		result = "#885b35";
-//				                        	}
-//				                        	if (rValue >four && rValue <= five) {
-//				                        		result = "#754e2d";
-//				                        	}
-//				                        	if (rValue >five && rValue <= six) {
-//				                        		result = "#614126";
-//				                        	}
-//				                        	if (rValue >six && rValue <= seven) {
-//				                        		result = "#4e341e";
-//				                        	}
-//				                        	if (rValue >seven && rValue <= eight) {
-//				                        		result = "#3a2716";
-//				                        	}
-//				                        	if (rValue >eight && rValue <= nine) {
-//				                        		result = "#271a0f";
-//				                        	}
-//				                        	if (rValue >nine && rValue <= ten) {
-//				                        		result = "#130d07";
-//				                        	}
-				                            causeP = {
-				                                id: countryP.id + '_' + causeI,
-				                                name: causesN[x],
-				                                parent: countryP.id,
-				                                color: "#00ff00",
-				                                value: 1,
-				                                borderColor: "#ff0000"
+						                	if (causesN.length > 0) {
+						                		for (var x = 0; x < causesN.length; x++) {
+						                			var methodC = causesN[x];
+						                			var methodV = info[region][country][cause][methodC];
+						                			if (parseInt(methodV) === 0) {
+						                				methodV = 0.1;
+						                			}
+//						                        	var result;
+//						                        	var rValue = Math.round(+info[region][country][cause][1])
+//						                        	if (rValue >=0 && rValue <= one) {
+//						                        		result = "#c3834c";
+//						                        	}
+//						                        	if (rValue >one && rValue <= two) {
+//						                        		result = "#af7544";
+//						                        	}
+//						                        	if (rValue >two && rValue <= three) {
+//						                        		result = "#9c683c";
+//						                        	}
+//						                        	if (rValue >three && rValue <= four) {
+//						                        		result = "#885b35";
+//						                        	}
+//						                        	if (rValue >four && rValue <= five) {
+//						                        		result = "#754e2d";
+//						                        	}
+//						                        	if (rValue >five && rValue <= six) {
+//						                        		result = "#614126";
+//						                        	}
+//						                        	if (rValue >six && rValue <= seven) {
+//						                        		result = "#4e341e";
+//						                        	}
+//						                        	if (rValue >seven && rValue <= eight) {
+//						                        		result = "#3a2716";
+//						                        	}
+//						                        	if (rValue >eight && rValue <= nine) {
+//						                        		result = "#271a0f";
+//						                        	}
+//						                        	if (rValue >nine && rValue <= ten) {
+//						                        		result = "#130d07";
+//						                        	}
+						                            causeP = {
+						                                id: countryP.id + '_' + causeI,
+						                                name: causesN[x],
+						                                parent: countryP.id,
+						                                color: "#00ff00",
+						                                value: methodV,
+						                                borderColor: "#ff0000"
 
-				                            };
-				                            regionVal += causeP.value;
-				                            points.push(causeP);
-				                            causeI = causeI + 1;
-						                  }
+						                            };
+						                            regionVal += causeP.value;
+						                            points.push(causeP);
+						                            causeI = causeI + 1;
+								                  }
+						                	}
+						                	else {
+						                		if (shouldGet === "true") {
+						                			if(info[region][ncountry]) {
+						                				var altCauses = Object.keys(info[region][ncountry]);
+								                		for (var x = 0; x < altCauses.length; x++) {
+								                			var methodC = altCauses[x];
+								                			var methodV = info[region][ncountry][methodC];
+								                			if (parseInt(methodV) === 0) {
+								                				methodV = 0.1;
+								                			}
+								                			causeP = {
+									                                id: countryP.id + '_' + causeI,
+									                                name: altCauses[x],
+									                                parent: countryP.id,
+									                                color: "#00ff00",
+									                                value: methodV,
+									                                borderColor: "#ff0000"
+
+									                            };
+								                            regionVal += causeP.value;
+								                            points.push(causeP);
+								                            causeI = causeI + 1;
+								                		}
+						                			}
+						                			
+						                		}
+						                		shouldGet = false;
+						                		
+						                	}
+						                	
 				                        }
 				                    }
 				                    countryI = countryI + 1;
