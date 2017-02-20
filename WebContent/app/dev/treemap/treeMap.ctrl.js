@@ -96,36 +96,65 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		   function differentialRelative () {
 			   var chosenMetric = $scope.metrics;
 		  	   var chosenMetric2 = $scope.metrics2;
-		  	   
-		  	 $http.get('rest/wDirectories/get-by-id-relative', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2, "chosenMetric": chosenMetric}}).success(function (response) {
+		  	 $http.get('rest/wDirectories/get-by-id-relative', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2, "chosenMetric": chosenMetric2}}).success(function (response) {
 		  		 
-		  		infoGeneral = response;
-  				var respToMap = [];
-  				Object.keys(infoGeneral).filter(
-						function (e) {
-							if (isNaN(parseInt(e))) {
-								respToMap[e] = infoGeneral[e];
+			  		infoGeneral = response;
+	  				var respToMap = [];
+	  				Object.keys(infoGeneral).filter(
+							function (e) {
+								if (isNaN(parseInt(e))) {
+									respToMap[e] = infoGeneral[e];
+								}
 							}
-						}
-				);
-  				var resF = [];
-  				
-  				for (var element in respToMap) {
-  					resF[element] = {};
-  					if(respToMap[element] instanceof Array) {
-  						for(czz in respToMap[element]) {
-  							var content = Object.keys(respToMap[element][czz])[0];
-  							resF[element][content] = {};
-  							resF[element][content]= respToMap[element][czz][content];
-  						}
-  					}else {
-  						resF[element] = respToMap[element];
-  					}
-  				}
-  				
-  				console.log(resF);
-  				mappingRela(respToMap);
-		  	 });
+					);
+	  				var resF = [];
+	  				
+	  				for (var element in respToMap) {
+	  					resF[element] = {};
+	  					if(respToMap[element] instanceof Array) {
+	  						for(czz in respToMap[element]) {
+	  							var content = Object.keys(respToMap[element][czz])[0];
+	  							resF[element][content] = {};
+	  							resF[element][content]= respToMap[element][czz][content];
+	  						}
+	  					}else {
+	  						resF[element] = respToMap[element];
+	  					}
+	  				}
+	  				
+	  				console.log(resF," Color ", chosenMetric2);
+	  				$scope.relativeColor = respToMap;
+	  				 $http.get('rest/wDirectories/get-by-id-relative', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2, "chosenMetric": chosenMetric}}).success(function (response) {
+	  			  		 
+	  			  		infoGeneral = response;
+	  	  				var respToMap = [];
+	  	  				Object.keys(infoGeneral).filter(
+	  							function (e) {
+	  								if (isNaN(parseInt(e))) {
+	  									respToMap[e] = infoGeneral[e];
+	  								}
+	  							}
+	  					);
+	  	  				var resF = [];
+	  	  				
+	  	  				for (var element in respToMap) {
+	  	  					resF[element] = {};
+	  	  					if(respToMap[element] instanceof Array) {
+	  	  						for(czz in respToMap[element]) {
+	  	  							var content = Object.keys(respToMap[element][czz])[0];
+	  	  							resF[element][content] = {};
+	  	  							resF[element][content]= respToMap[element][czz][content];
+	  	  						}
+	  	  					}else {
+	  	  						resF[element] = respToMap[element];
+	  	  					}
+	  	  				}
+	  	  				
+	  	  			console.log(resF," Area ", chosenMetric);
+	  	  				mappingRela(respToMap);
+	  			  	 });
+			  	 });
+		  	
 					   
 		   }
 		  
@@ -292,31 +321,8 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	
 		  	 function mappingRela(info) {
 				  console.time("javascript");
-//				  var one = (valueAux/10).toString(),
-//		  			two = one * 2,
-//		  			three = one * 3,
-//		  			four = one * 4,
-//		  			five = one * 5,
-//		  			six = one * 6,
-//		  			seven = one * 7,
-//		  			eight = one * 8,
-//		  			nine = one * 9,
-//		  			ten = valueAux,
-//		  			colorsData;
-//		  			
-//			  		colorsData = {
-//							
-//					};
-//		  			colorsData[one] = "#c3834c";
-//		  			colorsData[two] = "#af7544";
-//		  			colorsData[three] = "#9c683c";
-//		  			colorsData[four] = "#885b35";
-//		  			colorsData[five] = "#754e2d";
-//		  			colorsData[six] = "#614126";
-//		  			colorsData[seven] = "#4e341e";
-//		  			colorsData[eight] = "#3a2716";
-//		  			colorsData[nine] = "#271a0f";
-//		  			colorsData[ten] = "#130d07";
+				  var maxPositive = 0;
+              	  var maxNegative = 0;
 		  		
 				  for (region in info) {
 				        if (info.hasOwnProperty(region)) {
@@ -352,53 +358,74 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				                    points.push(countryP);
 				                    causeI = 0;
 				                    var shouldGet = "true";
+				                    
 				                    for (cause in info[region][country]) {
 				                        if (info[region][country].hasOwnProperty(cause)) {
 						                	var causesN = Object.keys(info[region][country][cause]);
+						                	var causesObj = info[region][country][cause];
+						       
 						                	if (causesN.length > 0) {
+						                		for (var key in causesObj) {
+						                			  if (causesObj[key] > 0) {
+						                				  if (causesObj[key] > maxPositive) {
+						                					  maxPositive = causesObj[key];
+						                				  }
+						                			  }
+						                			  if (causesObj[key] < 0) {
+						                				  if (causesObj[key] < maxNegative) {
+						                					  maxNegative = causesObj[key];
+						                				  }
+						                			  }
+						                		}
 						                		for (var x = 0; x < causesN.length; x++) {
 						                			var methodC = causesN[x];
 						                			var methodV = info[region][country][cause][methodC];
+						                			var methodColorV = $scope.relativeColor[region][country][cause][methodC];
+						                			if (parseInt(methodColorV) === 0) {
+						                				color = "#ffffff";
+						                			}
+						                			else if (parseInt(methodColorV) > 0) {
+						                				if (parseInt(methodColorV) > 0 && parseInt(methodColorV) <= maxPositive/5) {
+						                					color = "#FF0000";
+						                					console.log("One");
+						                				} if (parseInt(methodColorV) > maxPositive/5 && parseInt(methodColorV) <= maxPositive/5 * 2) {
+						                					color = "#cc0000";
+						                					console.log("Two");
+						                				} if (parseInt(methodColorV) > maxPositive/5 * 2 && parseInt(methodColorV) <= maxPositive/5 * 3) {
+						                					color = "#b20000";
+						                					console.log("Three", maxPositive/5 * 2, maxPositive/5 * 3);
+						                				} if (parseInt(methodColorV) >= maxPositive/5 * 3 * 2 && parseInt(methodColorV) <= maxPositive/5 * 4) {
+						                					color = "#660000";
+						                					console.log("Four");
+						                				}
+						                				
+						                			}
+						                			else if (parseInt(methodColorV) < 0) {
+						                				if (parseInt(methodColorV) < 0 && parseInt(methodColorV) >= maxNegative/5) {
+						                					color = "#00FF00";
+						                					console.log("One");
+						                				} if (parseInt(methodColorV) < maxNegative/5 && parseInt(methodColorV) >= maxNegative/5 * 2) {
+						                					color = "#00cc00";
+						                					console.log("Two");
+						                				} if (parseInt(methodColorV) < maxNegative/5 * 2 && parseInt(methodColorV) >= maxNegative/5 * 3) {
+						                					color = "#009900";
+						                					console.log("Three", maxPositive/5 * 2, maxPositive/5 * 3);
+						                				} if (parseInt(methodColorV) <= maxNegative/5 * 3 * 2 && parseInt(methodColorV) >= maxNegative/5 * 4) {
+						                					color = "#003300";
+						                					console.log("Four");
+						                				}
+						                			}
 						                			if (parseInt(methodV) === 0) {
 						                				methodV = 0.1;
 						                			}
-//						                        	var result;
-//						                        	var rValue = Math.round(+info[region][country][cause][1])
-//						                        	if (rValue >=0 && rValue <= one) {
-//						                        		result = "#c3834c";
-//						                        	}
-//						                        	if (rValue >one && rValue <= two) {
-//						                        		result = "#af7544";
-//						                        	}
-//						                        	if (rValue >two && rValue <= three) {
-//						                        		result = "#9c683c";
-//						                        	}
-//						                        	if (rValue >three && rValue <= four) {
-//						                        		result = "#885b35";
-//						                        	}
-//						                        	if (rValue >four && rValue <= five) {
-//						                        		result = "#754e2d";
-//						                        	}
-//						                        	if (rValue >five && rValue <= six) {
-//						                        		result = "#614126";
-//						                        	}
-//						                        	if (rValue >six && rValue <= seven) {
-//						                        		result = "#4e341e";
-//						                        	}
-//						                        	if (rValue >seven && rValue <= eight) {
-//						                        		result = "#3a2716";
-//						                        	}
-//						                        	if (rValue >eight && rValue <= nine) {
-//						                        		result = "#271a0f";
-//						                        	}
-//						                        	if (rValue >nine && rValue <= ten) {
-//						                        		result = "#130d07";
-//						                        	}
+						                			if (parseInt(methodV) < 0) {
+						                				methodV = 0.001;
+						                			}
 						                            causeP = {
 						                                id: countryP.id + '_' + causeI,
 						                                name: causesN[x],
 						                                parent: countryP.id,
-						                                color: "#00ff00",
+						                                color: color,
 						                                value: methodV,
 						                                borderColor: "#ff0000"
 
@@ -412,17 +439,68 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 						                		if (shouldGet === "true") {
 						                			if(info[region][ncountry]) {
 						                				var altCauses = Object.keys(info[region][ncountry]);
+						                				var causesObj = info[region][ncountry];
+									                	for (var key in causesObj) {
+								                			  if (causesObj[key] > 0) {
+								                				  if (causesObj[key] > maxPositive) {
+								                					  maxPositive = causesObj[key];
+								                				  }
+								                			  }
+								                			  if (causesObj[key] < 0) {
+								                				  if (causesObj[key] < maxNegative) {
+								                					  maxNegative = causesObj[key];
+								                				  }
+								                			  }
+								                			}
 								                		for (var x = 0; x < altCauses.length; x++) {
 								                			var methodC = altCauses[x];
 								                			var methodV = info[region][ncountry][methodC];
+								                			var methodColorV = $scope.relativeColor[region][ncountry][methodC];
+								                			var color;
+								                			if (parseInt(methodColorV) === 0) {
+								                				color = "#ffffff";
+								                			}
+								                			else if (parseInt(methodColorV) > 0) {
+								                				if (parseInt(methodColorV) > 0 && parseInt(methodColorV) <= maxPositive/5) {
+								                					color = "#FF0000";
+								                					console.log("One");
+								                				} if (parseInt(methodColorV) > maxPositive/5 && parseInt(methodColorV) <= maxPositive/5 * 2) {
+								                					color = "#cc0000";
+								                					console.log("Two");
+								                				} if (parseInt(methodColorV) > maxPositive/5 * 2 && parseInt(methodColorV) <= maxPositive/5 * 3) {
+								                					color = "#b20000";
+								                					console.log("Three", maxPositive/5 * 2, maxPositive/5 * 3);
+								                				} if (parseInt(methodColorV) >= maxPositive/5 * 3 * 2 && parseInt(methodColorV) <= maxPositive/5 * 4) {
+								                					color = "#660000";
+								                					console.log("Four");
+								                				}
+								                				
+								                			}else if (parseInt(methodColorV) < 0) {
+								                				if (parseInt(methodColorV) < 0 && parseInt(methodColorV) >= maxNegative/5) {
+								                					color = "#00FF00";
+								                					console.log("One");
+								                				} if (parseInt(methodColorV) < maxNegative/5 && parseInt(methodColorV) >= maxNegative/5 * 2) {
+								                					color = "#00cc00";
+								                					console.log("Two");
+								                				} if (parseInt(methodColorV) < maxNegative/5 * 2 && parseInt(methodColorV) >= maxNegative/5 * 3) {
+								                					color = "#009900";
+								                					console.log("Three", maxPositive/5 * 2, maxPositive/5 * 3);
+								                				} if (parseInt(methodColorV) <= maxNegative/5 * 3 * 2 && parseInt(methodColorV) >= maxNegative/5 * 4) {
+								                					color = "#003300";
+								                					console.log("Four");
+								                				}
+								                			}
 								                			if (parseInt(methodV) === 0) {
 								                				methodV = 0.1;
+								                			}
+								                			if (parseInt(methodV) < 0) {
+								                				methodV = 0.001;
 								                			}
 								                			causeP = {
 									                                id: countryP.id + '_' + causeI,
 									                                name: altCauses[x],
 									                                parent: countryP.id,
-									                                color: "#00ff00",
+									                                color: color,
 									                                value: methodV,
 									                                borderColor: "#ff0000"
 
@@ -448,7 +526,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 				            regionI = regionI + 1;
 				        }
 				    }
-				  	
+				  console.log(maxPositive, maxNegative);
 				  console.timeEnd("javascript");
 				  console.time("highcharts");
 				  var options = { series: [{

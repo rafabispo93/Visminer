@@ -228,14 +228,15 @@ public class MakeTMap {
 												if(method1.get("method").equals(method2.get("method"))) {
 													int res = Integer.parseInt(method1.get("value").toString()) - Integer.parseInt(method2.get("value").toString());
 													resOBJ.put(method1.get("method").toString(), res);
-													
 												}
 											}
 										}
 									}
 									else {
-										System.out.println(chosen1.get("name"));
 										double res = Double.parseDouble(chosen1.get("value").toString()) - Double.parseDouble(chosen2.get("value").toString());
+										if( res != 0) {
+											System.out.println(res);
+										}
 										resOBJ.put(chosen1.get("name").toString(), res);
 									}
 									
