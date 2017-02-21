@@ -175,6 +175,8 @@ public class MakeTMap {
 		Iterator<?> keys2 = version2.keys();
 		JSONObject r = new JSONObject();
 		List<String> resultList = new ArrayList<>();
+		int maxPositive = 0;
+		int maxNegative = 0;
 		
 		while (keys1.hasNext()) {
 			String key1 = (String)keys1.next();
@@ -227,6 +229,12 @@ public class MakeTMap {
 												JSONObject method2 = (JSONObject) methods2.get(methodsSize2);				
 												if(method1.get("method").equals(method2.get("method"))) {
 													int res = Integer.parseInt(method1.get("value").toString()) - Integer.parseInt(method2.get("value").toString());
+													if (res > 0 && res > maxPositive) {
+														maxPositive = res;
+													}
+													if (res < 0 && res < maxNegative) {
+														maxNegative = res;
+													}
 													resOBJ.put(method1.get("method").toString(), res);
 												}
 											}
@@ -248,6 +256,8 @@ public class MakeTMap {
 							resOBJ3.accumulate(commonPacks.get(x).toString(), resOBJ2);
 							String str = commonPacks.get(x).toString();
 							r.accumulate(str.substring(str.lastIndexOf(".") + 1).trim(), resOBJ2);
+							r.put("maxPositive", maxPositive);
+							r.put("maxNegative", maxNegative);
 						}
 						
 					}
