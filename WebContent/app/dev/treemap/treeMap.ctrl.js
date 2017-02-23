@@ -594,7 +594,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			                    causeI = 0;
 			                    for (cause in info[region][country]) {
 			                        if (info[region][country].hasOwnProperty(cause)) {
-			                        	console.log(info[region][country][cause]);
 			                        	var result;
 			                        	var rValue = Math.round(+info[region][country][cause][1])
 			                        	if (rValue >=0 && rValue <= one) {
@@ -694,9 +693,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 			 $scope.eleClicked = $(this).text();
 			 $scope.dataParallel = [];
 			 console.log("ENTROU AQUI");
-//			 if($scope.eleClicked.indexOf('(') == -1 ) {
-				 var callback = parallelService();
-//				}
+			 var callback = parallelService();
 			 return false;
 //			 var callback = parallelService();
 		});
@@ -768,15 +765,6 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 //			  {name: "Provolone", "protein": 25.58, calcium: 0.756, sodium: 0.876},
 //			];
 			
-			var foods = [
-				{"metric":"PAR","0.6.0":94,"0.7.0":94,"0.4.0":97,"0.5.0":94,"0.8.0":162,"0.9.0":372,"0.3.0":115,"0.1.0":86,"1.3.1":195,"1.0":65,"1.2":165,"1.3":195,"1.4":218},
-				{"metric":"NOAV","0.6.0":245,"0.7.0":245,"0.4.0":250,"0.5.0":245,"0.8.0":489,"0.9.0":1146,"0.3.0":317,"0.1.0":219,"1.3.1":576,"1.0":193,"1.2":508,"1.3":576,"1.4":640},
-				{"metric":"MLOC","0.6.0":603,"0.7.0":603,"0.4.0":621,"0.5.0":603,"0.8.0":1098,"0.9.0":3980,"0.3.0":771,"0.1.0":544,"1.3.1":1092,"1.0":643,"1.2":964,"1.3":1092,"1.4":1214},
-				{"metric":"LVAR","0.6.0":6,"0.7.0":6,"0.4.0":6,"0.5.0":6,"0.8.0":40,"0.9.0":127,"0.3.0":15,"0.1.0":3,"1.3.1":56,"1.0":12,"1.2":54,"1.3":56,"1.4":62},
-				{"metric":"CYCLO","0.6.0":176,"0.7.0":176,"0.4.0":180,"0.5.0":176,"0.8.0":323,"0.9.0":688,"0.3.0":222,"0.1.0":164,"1.3.1":302,"1.0":121,"1.2":262,"1.3":302,"1.4":328},
-				{"metric":"MAXNESTING","0.6.0":2,"0.7.0":2,"0.4.0":2,"0.5.0":2,"0.8.0":29,"0.9.0":66,"0.3.0":5,"0.1.0":2,"1.3.1":29,"1.0":9,"1.2":25,"1.3":29,"1.4":29},
-				{"metric":"ATFD","0.6.0":20,"0.7.0":20,"0.4.0":22,"0.5.0":20,"0.8.0":59,"0.9.0":46,"0.3.0":24,"0.1.0":20,"1.3.1":6,"1.0":11,"1.2":6,"1.3":6,"1.4":4},
-			];
 		var maxVer;
 		for (var w = 0; w < dataParallel.length; w++) {
 			var keys = Object.keys(dataParallel[w]);
@@ -811,6 +799,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  .brushMode("1D-axes")
 		  .reorderable();
 	//	  .createAxes();
+		$("#parallel").append("<h4 style = 'text-align: center;'>" + $scope.eleClicked + "</h4>");
 		}
 	
 });
