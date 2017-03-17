@@ -96,9 +96,10 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		   function differentialRelative () {
 			   var chosenMetric = $scope.metrics;
 		  	   var chosenMetric2 = $scope.metrics2;
-		  	 $http.get('rest/wDirectories/get-by-id-relative', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2, "chosenMetric": chosenMetric2}}).success(function (response) {
+		  	 $http.get('rest/wDirectories/get-by-id-relative', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2, "chosenMetric": chosenMetric2, "area": 0}}).success(function (response) {
 		  		 
 			  		infoGeneral = response;
+			  		console.log(response, "RELA COLOR");
 	  				var respToMap = [];
 	  				Object.keys(infoGeneral).filter(
 							function (e) {
@@ -121,50 +122,70 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 	  						resF[element] = respToMap[element];
 	  					}
 	  				}
-	  				
+	  				console.log(resF, "RELA COLOR");
 	  				console.log(resF," Color ", chosenMetric2);
 	  				$scope.maxPositiveColor = response.maxPositive;
 	  				$scope.maxNegativeColor = response.maxNegative;
 	  				console.log(response.maxPositive, response.maxNegative, "AQUIII");
-	  				$scope.relativeColor = respToMap;
-	  				 $http.get('rest/wDirectories/get-by-id-relative', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2, "chosenMetric": chosenMetric}}).success(function (response) {
-	  			  		 
-	  			  		infoGeneral = response;
-	  	  				var respToMap = [];
-	  	  				Object.keys(infoGeneral).filter(
-	  							function (e) {
-	  								if (isNaN(parseInt(e))) {
-	  									respToMap[e] = infoGeneral[e];
-	  								}
-	  							}
-	  					);
-	  	  				var resF = [];
-	  	  				
-	  	  				for (var element in respToMap) {
-	  	  					resF[element] = {};
-	  	  					if(respToMap[element] instanceof Array) {
-	  	  						for(czz in respToMap[element]) {
-	  	  							var content = Object.keys(respToMap[element][czz])[0];
-	  	  							resF[element][content] = {};
-	  	  							resF[element][content]= respToMap[element][czz][content];
-	  	  						}
-	  	  					}else {
-	  	  						resF[element] = respToMap[element];
-	  	  					}
-	  	  				}
-	  	  				
-	  	  			console.log(resF," Area ", chosenMetric);
-//		  	  		$scope.maxPositiveArea = response.maxPositive;
-//	  				$scope.maxNegativeArea = response.maxNegative;
-	  				if (response.maxPositive >= Math.abs(response.maxNegative)) {
-	  					$scope.maxArea = response.maxPositive;
-	  				} else {
-	  					$scope.maxArea = Math.abs(response.maxNegative);
-	  				}
-	  				
-	  				console.log(response.maxPositive, response.maxNegative, "AQUIII2");
-	  	  			mappingRela(respToMap);
-	  			  	 });
+//	  				$scope.relativeColor = respToMap;
+	  				$scope.relativeColor = resF;
+	  				$http.get('rest/wDirectories/get-by-id-single', {params: {"fileHash": $scope.tagCommit2}}).success(function (response)
+							  { 
+			  					console.timeEnd("JAVA");
+			  					console.log(response,"RELAARE");
+						  		var result1 = [];
+						  		var a, aSize;
+					  			for (packName in response) {
+				  					var resultObj1 = {};
+					  				resultObj1["package"] = response[packName].package;
+					  				resultObj1["filename"] = response[packName].filename;
+					  				resultObj1["abstract_types"] = [];
+					  				if(response[packName].abstract_types[0]){
+					  					resultObj1["abstract_types"].push(response[packName].abstract_types[0].metrics);
+					  				}
+					  				
+					  				result1.push(resultObj1);
+					  				
+					  			}
+					  			makeMap(result1, "#0000FF", $scope.metrics,chosenMetric2, 1);
+							  });
+//	  				 $http.get('rest/wDirectories/get-by-id-relative', {params: {"fileHash": $scope.tagCommit, "fileHash2": $scope.tagCommit2, "chosenMetric": chosenMetric, "area": 1}}).success(function (response) {
+//	  			  		infoGeneral = response;
+//	  	  				var respToMap = [];
+//	  	  				Object.keys(infoGeneral).filter(
+//	  							function (e) {
+//	  								if (isNaN(parseInt(e))) {
+//	  									respToMap[e] = infoGeneral[e];
+//	  								}
+//	  							}
+//	  					);
+//	  	  				var resF = [];
+//	  	  				
+//	  	  				for (var element in respToMap) {
+//	  	  					resF[element] = {};
+//	  	  					if(respToMap[element] instanceof Array) {
+//	  	  						for(czz in respToMap[element]) {
+//	  	  							var content = Object.keys(respToMap[element][czz])[0];
+//	  	  							resF[element][content] = {};
+//	  	  							resF[element][content]= respToMap[element][czz][content];
+//	  	  						}
+//	  	  					}else {
+//	  	  						resF[element] = respToMap[element];
+//	  	  					}
+//	  	  				}
+//	  	  				
+//	  	  			console.log(resF," Area ", chosenMetric);
+////		  	  		$scope.maxPositiveArea = response.maxPositive;
+////	  				$scope.maxNegativeArea = response.maxNegative;
+//	  				if (response.maxPositive >= Math.abs(response.maxNegative)) {
+//	  					$scope.maxArea = response.maxPositive;
+//	  				} else {
+//	  					$scope.maxArea = Math.abs(response.maxNegative);
+//	  				}
+//	  				
+//	  				console.log(response.maxPositive, response.maxNegative, "AQUIII2");
+//	  				mappingRela(respToMap);
+//	  			  	 });
 			  	 });
 		  	
 					   
@@ -237,7 +258,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  	}
 		  	
 
-		  	function makeMap(data1, colorD, chosenMetric, chosenMetric2) {
+		  	function makeMap(data1, colorD, chosenMetric, chosenMetric2, rela) {
 		  		var count, diffCounter, commitID, diffHash, filesHash, countHash = [], valueAux1 = 0;
 		  		var r = $.Deferred();
 		  		for (count = 0;count < data1.length; ++count) {
@@ -325,11 +346,142 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 									}
 								}
 						);
-		  				console.log(respToMap, "SINGLE");
-		  				mapping(respToMap, colorD, valueAux1);
-		  				return r;
+		  				if (!rela) {
+		  					console.log(respToMap, "SINGLE");
+			  				mapping(respToMap, colorD, valueAux1);
+			  				return r;
+		  				}
+		  				else {
+		  					console.log(respToMap, "Relative");
+			  				mapping2(respToMap);
+			  				return r;
+		  				}
+		  				
 			  }
-		  
+		  	function mapping2(info) {
+				  console.log($scope.relativeColor, "COLOE");
+				  console.log(info, "ifo");
+				  for (region in info) {
+				        if (info.hasOwnProperty(region)) {
+				            regionVal = 0;
+				            regionP = {
+				                id: 'id_' + regionI,
+				                name: region,
+				                borderColor:"#000000"
+				            };
+				            countryI = 0;
+				            for (country in info[region]) {
+				                if (info[region].hasOwnProperty(country)) {
+				                    countryP = {
+				                        id: regionP.id + '_' + countryI,
+				                        name: country,
+				                        parent: regionP.id,
+				                        borderColor:"#fff000"
+				                    };
+				                    points.push(countryP);
+				                    causeI = 0;
+				                    for (cause in info[region][country]) {
+				                        if (info[region][country].hasOwnProperty(cause)) {
+				                        	var color = "#ffffff";
+				                        	if($scope.relativeColor[region]) {
+				                        		if ($scope.relativeColor[region][country.split('.')[0]]) {
+				                        			if ($scope.relativeColor[region][country.split('.')[0]][cause]) {
+					                        			var methodColorV = $scope.relativeColor[region][country.split('.')[0]][cause];
+					                        			if (parseInt(methodColorV) > 0) {
+							                				if (parseInt(methodColorV) > 0 && parseInt(methodColorV) <= $scope.maxPositiveColor/4) {
+							                					color = "#FF0000";
+							                					console.log("One");
+							                				} if (parseInt(methodColorV) > $scope.maxPositiveColor/4 && parseInt(methodColorV) <= $scope.maxPositiveColor/4 * 2) {
+							                					color = "#cc0000";
+							                					console.log("Two");
+							                				} if (parseInt(methodColorV) > $scope.maxPositiveColor/4 * 2 && parseInt(methodColorV) <= $scope.maxPositiveColor/4 * 3) {
+							                					color = "#b20000";
+							                				} if (parseInt(methodColorV) >= $scope.maxPositiveColor/4 * 3 && parseInt(methodColorV) <= $scope.maxPositiveColor/4 * 4) {
+							                					color = "#660000";
+							                					console.log("Four");
+							                				}
+							                				
+							                			}
+							                			else if (parseInt(methodColorV) < 0) {
+							                				if (parseInt(methodColorV) < 0 && parseInt(methodColorV) >= $scope.maxNegativeColor/4) {
+							                					color = "#00FF00";
+							                					console.log("One");
+							                				} if (parseInt(methodColorV) < $scope.maxNegativeColor/4 && parseInt(methodColorV) >= $scope.maxNegativeColor/4 * 2) {
+							                					color = "#00cc00";
+							                					console.log("Two");
+							                				} if (parseInt(methodColorV) < $scope.maxNegativeColor/4 * 2 && parseInt(methodColorV) >= $scope.maxNegativeColor/4 * 3) {
+							                					color = "#009900";
+							                					console.log("Three", $scope.maxNegativeColor/4 * 2, $scope.maxNegativeColor/4 * 3);
+							                				} if (parseInt(methodColorV) <= $scope.maxNegativeColor/4 * 3 && parseInt(methodColorV) >= $scope.maxNegativeColor/4 * 4) {
+							                					color = "#003300";
+							                					console.log("Four");
+							                				}
+							                			}
+					                        		}
+				                        		}
+				                        		
+				                        		
+				                        	}
+				                        	
+				                        	
+						                	
+				                            causeP = {
+				                                id: countryP.id + '_' + causeI,
+				                                name: causeName[cause],
+				                                parent: countryP.id,
+				                                color: color,
+				                                value: Math.round(+info[region][country][cause][0]),
+				                                borderColor: "#ff0000"
+
+				                            };
+				                            regionVal += causeP.value;
+				                            points.push(causeP);
+				                            causeI = causeI + 1;
+				                        }
+				                    }
+				                    countryI = countryI + 1;
+				                }
+				            }
+				            regionP.value = regionVal;
+				            points.push(regionP);
+				            regionI = regionI + 1;
+				        }
+				    }
+				  	
+				  console.timeEnd("javascript");
+				  console.time("highcharts");
+				  var options = { series: [{
+			            type: 'treemap',
+			            layoutAlgorithm: 'squarified',
+			            allowDrillToNode: true,
+			            animationLimit: 1000,
+			            turboThreshold: 0,
+			            dataLabels: {
+			                enabled: false,
+		                    formatter: function(e) {
+		                        return this.point.name;
+		                    }
+			            },
+			            levelIsConstant: false,
+			            levels: [{
+			                level: 1,
+			                dataLabels: {
+			                    enabled: true
+			                },
+			                borderWidth: 3
+			            }],
+			            data: points           
+			        }],
+			        subtitle: {
+			            text: ''
+			        },
+			        title: {
+			            text: 'Results'
+			        }
+			       };
+				    $scope.chart = Highcharts.chart('container', options);
+				    console.timeEnd("highcharts");
+			  }
 		  	
 		  	 function mappingRela(info) {
 				  console.time("javascript");
@@ -424,7 +576,8 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 						                                name: causesN[x],
 						                                parent: countryP.id,
 						                                color: color,
-						                                value: methodV + $scope.maxArea,
+//						                                value: methodV + $scope.maxArea,
+						                                value: methodV,
 						                                borderColor: "#ff0000"
 
 						                            };
@@ -485,7 +638,8 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 									                                name: altCauses[x],
 									                                parent: countryP.id,
 									                                color: color,
-									                                value: methodV + $scope.maxArea,
+//									                                value: methodV + $scope.maxArea,
+									                                value: methodV,
 									                                borderColor: "#ff0000"
 
 									                            };
@@ -524,6 +678,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		                        return this.point.name;
 		                    }
 			            },
+			            tooltip: false,
 			            levelIsConstant: false,
 			            levels: [{
 			                level: 1,
@@ -799,7 +954,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  .brushMode("1D-axes")
 		  .reorderable();
 	//	  .createAxes();
-		$("#parallel").append("<h4 style = 'text-align: center;'>" + $scope.eleClicked + "</h4>");
+		$("#parallel").append("<h4 style = 'text-align: left;'>" + $scope.eleClicked + "</h4>");
 		}
 	
 });

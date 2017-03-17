@@ -163,7 +163,7 @@ public class MakeTMap {
 		return packagesRes.toString();
 	}
 
-	public String differentialRelative(JSONObject packagesResult, int chosenMetric) {
+	public String differentialRelative(JSONObject packagesResult, int chosenMetric, int area) {
 		ArrayList keysVersion1 = new ArrayList();
 		ArrayList keysVersion2 = new ArrayList();
 		ArrayList commonPacks = new ArrayList();
@@ -226,17 +226,29 @@ public class MakeTMap {
 										for(int methodsSize1 = 0; methodsSize1 < methods1.length(); methodsSize1++){
 											for(int methodsSize2 = 0; methodsSize2 < methods2.length(); methodsSize2++){
 												JSONObject method1 = (JSONObject) methods1.get(methodsSize1);
-												JSONObject method2 = (JSONObject) methods2.get(methodsSize2);				
+												JSONObject method2 = (JSONObject) methods2.get(methodsSize2);
+
 												if(method1.get("method").equals(method2.get("method"))) {
-													int res = Integer.parseInt(method1.get("value").toString()) - Integer.parseInt(method2.get("value").toString());
-													if (res > 0 && res > maxPositive) {
-														maxPositive = res;
+													
+													if(area == 1) {
+														int res = Integer.parseInt(method2.get("value").toString());
+														if (res > 0 && res > maxPositive) {
+															maxPositive = res;
+														}
+														if (res < 0 && res < maxNegative) {
+															maxNegative = res;
+														}
+														resOBJ.put(method2.get("method").toString(), res);
 													}
-													if (res < 0 && res < maxNegative) {
-														maxNegative = res;
+														int res = Integer.parseInt(method1.get("value").toString()) - Integer.parseInt(method2.get("value").toString());
+														if (res > 0 && res > maxPositive) {
+															maxPositive = res;
+														}
+														if (res < 0 && res < maxNegative) {
+															maxNegative = res;
+														}
+														resOBJ.put(method1.get("method").toString(), res);
 													}
-													resOBJ.put(method1.get("method").toString(), res);
-												}
 											}
 										}
 									}

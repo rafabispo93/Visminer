@@ -274,7 +274,7 @@ public class WorkingDirectoryController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("get-by-id-relative")
-	public String getDirectoryRelative(@QueryParam("fileHash") String fileHash, @QueryParam("fileHash2") String fileHash2, @QueryParam("chosenMetric") int chosenMetric) { 
+	public String getDirectoryRelative(@QueryParam("fileHash") String fileHash, @QueryParam("fileHash2") String fileHash2, @QueryParam("chosenMetric") int chosenMetric, @QueryParam("area") int area) { 
 		List<String> metricList = new ArrayList<>();
 		Map<String, JSONObject> items = new HashMap<String, JSONObject>();
 		JSONObject packages1 = new JSONObject();
@@ -342,8 +342,8 @@ public class WorkingDirectoryController {
         JSONObject packagesResult = new JSONObject();
         packagesResult.put("version1", packages1);
         packagesResult.put("version2", packages2);
-        mTm.differentialRelative(packagesResult, chosenMetric);
-		return mTm.differentialRelative(packagesResult, chosenMetric).toString();
+        mTm.differentialRelative(packagesResult, chosenMetric, area);
+		return mTm.differentialRelative(packagesResult, chosenMetric, area).toString();
 //        return packagesResult.toString();
 	}
 }
