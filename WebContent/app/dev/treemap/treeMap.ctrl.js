@@ -954,7 +954,7 @@ homeApp.controller('DEVTreeMapCtrl', function($scope,$http, $location, $route, $
 		  .brushMode("1D-axes")
 		  .reorderable();
 	//	  .createAxes();
-		$("#parallel").append("<h4 style = 'text-align: left;'>" + $scope.eleClicked + "</h4>");
+//		$("#parallel").append("<h4 style = 'text-align: left;'>" + $scope.eleClicked + "</h4>");
 		}
 	
 });
